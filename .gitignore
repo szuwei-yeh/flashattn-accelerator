@@ -1,0 +1,11 @@
+# Verilator build output
+sim/verilator/obj_dir/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# macOS
+.DS_Store
