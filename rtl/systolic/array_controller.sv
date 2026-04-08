@@ -1,10 +1,11 @@
 // ============================================================
-//  array_controller.sv  —  feeds skewed inputs to systolic array
+//  array_controller.sv
 //
-//  Icarus-safe version:
-//    - No 2D arrays in generate blocks
-//    - Shift registers in a single always_ff with for loops
-//    - clear and en both asserted during CLEAR state
+//  Timing fix: COMPUTE_CYCLES = 3*SIZE-2
+//
+//  Push-in phase : cycle_cnt 0..SIZE-1     → feed real data
+//  Drain phase   : cycle_cnt SIZE..3*SIZE-3 → feed zeros
+//                  (data flows through shift-regs to far-corner PE)
 // ============================================================
 `timescale 1ns/1ps
 
@@ -24,16 +25,11 @@ module array_controller #(
     output logic signed [31:0] acc [SIZE*SIZE-1:0]
 );
 
-    // ── Flat shift register arrays ───────────────────────────
-    // a_sr[row * SIZE + stage]  :  row = 0..SIZE-1, stage = 0..SIZE-1
-    // a_skewed[row] = a_sr[row * SIZE + row]  (delay = row cycles)
     logic signed [7:0] a_sr [SIZE*SIZE-1:0];
     logic signed [7:0] b_sr [SIZE*SIZE-1:0];
-
     logic signed [7:0] a_skewed [SIZE-1:0];
     logic signed [7:0] b_skewed [SIZE-1:0];
 
-    // ── FSM ─────────────────────────────────────────────────
     typedef enum logic [1:0] {
         IDLE    = 2'b00,
         CLEAR   = 2'b01,
@@ -45,15 +41,18 @@ module array_controller #(
     logic [5:0] cycle_cnt;
     logic [4:0] feed_col;
 
-    // 2*SIZE-1 cycles: SIZE to push all columns in, SIZE-1 to drain
-    localparam int COMPUTE_CYCLES = 2 * SIZE - 1;
+    localparam int COMPUTE_CYCLES = 3 * SIZE - 1;
 
     logic en_sr;
     logic clear_pe;
+    logic in_push_phase;
 
-    assign en_sr    = (state == COMPUTE) || (state == CLEAR);
-    assign clear_pe = (state == CLEAR);
+    assign en_sr         = (state == COMPUTE) || (state == CLEAR);
+    assign clear_pe      = (state == CLEAR);
+    // in_push_phase: true during the first SIZE cycles of COMPUTE
+    assign in_push_phase = (state == COMPUTE) && (cycle_cnt < 6'(SIZE));
 
+    // ── FSM ─────────────────────────────────────────────────
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             state     <= IDLE;
@@ -76,8 +75,10 @@ module array_controller #(
                     state     <= COMPUTE;
                 end
                 COMPUTE: begin
-                    if (feed_col < 5'(SIZE - 1))
+                    
+                    if (in_push_phase && feed_col < 5'(SIZE - 1))
                         feed_col <= feed_col + 1;
+
                     if (cycle_cnt == 6'(COMPUTE_CYCLES - 1))
                         state <= FINISH;
                     else
@@ -92,7 +93,7 @@ module array_controller #(
         end
     end
 
-    // ── Shift registers (single always_ff, for-loops inside) ─
+    // ── Shift registers ──────────────────────────────────────
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             for (int i = 0; i < SIZE*SIZE; i++) begin
@@ -101,24 +102,30 @@ module array_controller #(
             end
         end else if (en_sr) begin
             for (int row = 0; row < SIZE; row++) begin
-                // Stage 0: load or zero
-                a_sr[row * SIZE + 0] <= clear_pe ? 8'sd0 : a_flat[row * SIZE + int'(feed_col)];
-                b_sr[row * SIZE + 0] <= clear_pe ? 8'sd0 : b_flat[feed_col * SIZE + row];
-                // Stages 1..SIZE-1: shift or zero
+                
+                if (clear_pe || !in_push_phase) begin
+                    a_sr[row*SIZE + 0] <= 8'sd0;
+                    b_sr[row*SIZE + 0] <= 8'sd0;
+                end else begin
+                    a_sr[row*SIZE + 0] <= a_flat[row*SIZE + int'(feed_col)];
+                    b_sr[row*SIZE + 0] <= b_flat[int'(feed_col)*SIZE + row];
+                end
+                
+                // Stages 1..SIZE-1: always shift (zero on clear)
                 for (int s = 1; s < SIZE; s++) begin
-                    a_sr[row * SIZE + s] <= clear_pe ? 8'sd0 : a_sr[row * SIZE + s - 1];
-                    b_sr[row * SIZE + s] <= clear_pe ? 8'sd0 : b_sr[row * SIZE + s - 1];
+                    a_sr[row*SIZE + s] <= clear_pe ? 8'sd0 : a_sr[row*SIZE + s - 1];
+                    b_sr[row*SIZE + s] <= clear_pe ? 8'sd0 : b_sr[row*SIZE + s - 1];
                 end
             end
         end
     end
 
-    // Tap skewed outputs (combinational)
+    // Tap: row i taps delay stage i
     genvar gi;
     generate
         for (gi = 0; gi < SIZE; gi++) begin : tap
-            assign a_skewed[gi] = a_sr[gi * SIZE + gi];
-            assign b_skewed[gi] = b_sr[gi * SIZE + gi];
+            assign a_skewed[gi] = a_sr[gi*SIZE + gi];
+            assign b_skewed[gi] = b_sr[gi*SIZE + gi];
         end
     endgenerate
 

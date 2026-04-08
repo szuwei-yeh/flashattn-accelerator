@@ -1,5 +1,11 @@
 # Verilator build output
 sim/verilator/obj_dir/
+sim/verilator/obj_*/
+obj_dir_ctrl/
+
+# Icarus Verilog build output
+sim/icarus/*.out
+sim/icarus/*.vcd
 
 # Python
 __pycache__/
@@ -9,3 +15,9 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Claude Code local memory
+.claude/
+
+# Internal progress log
+PROGRESS.md
