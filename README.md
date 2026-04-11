@@ -1,6 +1,21 @@
 # FlashAttention Hardware Accelerator
 
-A cycle-accurate FlashAttention accelerator implemented in SystemVerilog, verified with Verilator (391 test cases, 0 mismatches).
+A cycle-accurate RTL implementation of the FlashAttention algorithm in
+SystemVerilog, verified with Verilator (391 test cases, 0 mismatches).
+
+---
+
+## Problem Statement
+
+Standard scaled dot-product attention materializes an N×N score matrix,
+requiring O(N²) memory bandwidth to HBM. For N=1024 this is ~4 MB of
+intermediate data written and read back per attention layer — bandwidth,
+not compute, is the bottleneck.
+
+FlashAttention tiles the computation into TILE_SIZE×TILE_SIZE blocks and
+uses online softmax (running max + running sum) so intermediate scores
+never leave on-chip SRAM. This design implements that algorithm in
+hardware using INT8 quantization and a systolic array.
 
 ---
 
@@ -42,14 +57,68 @@ AXI4-Stream OUT (attention output)
 
 ---
 
+## Key Design Decisions
+
+**16×16 INT8 Systolic Array**
+The array size matches HEAD_DIM=16, so one tile fits exactly one
+attention head dimension. INT8×INT8→INT32 accumulation prevents
+overflow across 16 multiply-accumulate operations. The same array
+is reused for both QK^T and PV phases via an input mux, reducing
+area at the cost of serializing the two matrix multiplications.
+
+**Online Softmax with exp LUT**
+Hardware exp is expensive. A 256-entry ROM covers exp(x) for
+x ∈ [-8, 0] in Q8.8 format — sufficient because scores are always
+normalized to (score − running_max) ≤ 0, and exp(x < -8) ≈ 0.
+16 softmax instances run in parallel, one per Q row.
+
+**K Transpose at Load Time**
+QK^T requires K transposed. Rather than a separate transpose unit,
+K is stored into tile registers with swapped address nibbles during
+LOAD_KV, so K_reg is naturally laid out as K^T. No extra logic or
+cycles required.
+
+**Flat SRAM + Global Offset Addressing**
+All Q/K/V data is preloaded into flat SRAMs before start. The address
+generator computes `global_offset = tile_row × HEAD_DIM` and adds a
+local counter, supporting multi-tile sequences (N=16/64/128/256)
+without architectural changes.
+
+**KV Cache for Decode Mode**
+Two SRAMs store K/V vectors indexed by token position (max 256 tokens).
+In decode mode (mode=1) the tile_controller outer loop runs once, and
+kv_len sets the inner loop bound dynamically, enabling autoregressive
+generation without recomputing past keys and values.
+
+---
+
+## Performance
+
+Simulation cycles (Verilator, TILE_SIZE=16, HEAD_DIM=16):
+
+| Sequence Length | Cycles  | Tile iterations |
+|----------------|---------|-----------------|
+| N=16           | 917     | 1×1 = 1         |
+| N=64           | 11,549  | 4×4 = 16        |
+| N=128          | 44,121  | 8×8 = 64        |
+| N=256          | 172,337 | 16×16 = 256     |
+
+4-head AXI top (N=64): done at cycle 36,134, all heads max_err=0.
+
+---
+
 ## Features
 
-- **Tiled online softmax** — never materializes the full N×N score matrix; uses running max + running sum with a 256-entry exp LUT (Q8.8)
-- **16×16 INT8 systolic array** — skewed input feeding, INT8×INT8→INT32 MAC, configurable systolic array controller
-- **4 parallel attention heads** — each head is an independent `flash_attn_core` instance, all fed and drained through a single AXI4-Stream interface
-- **KV Cache** — `kv_cache.sv` stores K/V vectors token-by-token; `tile_controller` supports `mode=0` (prefill) and `mode=1` (decode) with runtime `kv_len`
-- **AXI4-Stream interface** — slave handles Q→K→V byte-stream routing per head; master streams INT32 output row-major with 3-stage pipeline to compensate SRAM read latency
-- **Sequence length scalable** — flat SRAM + global address offset; tested N=16/64/128/256
+- **Tiled online softmax** — never materializes the full N×N score matrix;
+  uses running max + running sum with a 256-entry exp LUT (Q8.8)
+- **16×16 INT8 systolic array** — skewed input feeding, INT8×INT8→INT32
+  MAC, reused for both QK^T and PV phases
+- **4 parallel attention heads** — each head is an independent
+  `flash_attn_core` instance fed through a single AXI4-Stream interface
+- **KV Cache** — append-only token storage supporting prefill and decode modes
+- **AXI4-Stream interface** — slave routes Q/K/V byte streams per head;
+  master streams INT32 output row-major
+- **Scalable sequence length** — tested N=16/64/128/256
 
 ---
 
@@ -81,8 +150,8 @@ AXI4-Stream OUT (attention output)
 
 ## Verification
 
-| Module | Test scenarios | Cases | Mismatches |
-|--------|---------------|-------|------------|
+| Module | Scenarios | Cases | Mismatches |
+|--------|-----------|-------|------------|
 | systolic_array | identity, all-ones, ramp, negative, back-to-back, random INT8 | 10 | 0 |
 | quantizer | random Q8.8, scale sweep | 100 | 0 |
 | exp_lut | full 256-entry sweep | 256 | 0 |
@@ -104,10 +173,7 @@ AXI4-Stream OUT (attention output)
 ### Prerequisites
 
 ```bash
-# Verilator (macOS)
-brew install verilator
-
-# Python golden models
+brew install verilator   # macOS
 pip install numpy
 ```
 
@@ -115,8 +181,7 @@ pip install numpy
 
 ```bash
 cd sim/verilator
-make regression        # all testbenches (Week 1–7)
-make coverage          # regression + coverage summary
+make regression
 ```
 
 ### Individual targets
@@ -134,10 +199,10 @@ make kv_decode         # prefill + decode end-to-end
 ### Regenerate test vectors
 
 ```bash
-python golden/generate_test_vectors.py      # N=16 Q/K/V + float expected
-python golden/generate_hw_expected.py       # HW-accurate expected (exp LUT sim)
-python golden/generate_multihead_data.py    # 4-head AXI test data
-python golden/generate_kv_cache_test.py     # KV cache prefill/decode data
+python golden/generate_test_vectors.py
+python golden/generate_hw_expected.py
+python golden/generate_multihead_data.py
+python golden/generate_kv_cache_test.py
 ```
 
 ---
@@ -147,34 +212,17 @@ python golden/generate_kv_cache_test.py     # KV cache prefill/decode data
 ```
 flashattn-accelerator/
 ├── rtl/
-│   ├── systolic/         pe, systolic_array, array_controller
-│   ├── quantization/     quantizer, dequantizer
-│   ├── softmax/          exp_lut, online_softmax
-│   ├── memory/           sram_1r1w, kv_cache, q_tile_buffer, kv_tile_buffer, output_buffer
-│   ├── ctrl/             addr_gen, tile_controller
-│   ├── interface/        axi4_stream_slave, axi4_stream_master
-│   └── top/              flash_attn_top, flash_attn_core, flash_attn_top_axi
+│   ├── systolic/       pe, systolic_array, array_controller
+│   ├── quantization/   quantizer, dequantizer
+│   ├── softmax/        exp_lut, online_softmax
+│   ├── memory/         sram_1r1w, kv_cache, tile buffers, output_buffer
+│   ├── ctrl/           addr_gen, tile_controller
+│   ├── interface/      axi4_stream_slave, axi4_stream_master
+│   └── top/            flash_attn_top, flash_attn_core, flash_attn_top_axi
 ├── sim/verilator/
-│   ├── Makefile           regression / coverage / per-module targets
-│   ├── sim_main.cpp       systolic array testbench
-│   ├── tb_quantizer.cpp
-│   ├── tb_exp_lut.cpp
-│   ├── tb_online_softmax.cpp
-│   ├── tb_sram.cpp
-│   ├── tb_addr_gen.cpp
-│   ├── tb_kv_buf.cpp
-│   ├── tb_flash_attn_top.cpp
-│   ├── tb_axi_slave.cpp
-│   ├── tb_flash_attn_top_axi.cpp
-│   ├── tb_kv_cache.cpp
-│   └── tb_kv_decode.cpp
+│   ├── Makefile
+│   └── tb_*.cpp
 ├── golden/
-│   ├── flash_attention.py
-│   ├── int8_attention.py
-│   ├── generate_exp_lut.py
-│   ├── generate_test_vectors.py
-│   ├── generate_hw_expected.py
-│   ├── generate_multihead_data.py
-│   └── generate_kv_cache_test.py
-└── data/                 N16 / N64 / N128 / N256 / N64_axi / kv_decode
+│   └── *.py
+└── data/
 ```
