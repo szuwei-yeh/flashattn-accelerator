@@ -1,0 +1,6 @@
+scale_q_q88 = 0x0006
+scale_k_q88 = 0x0006
+scale_v_q88 = 0x0005
+N           = 16
+d           = 16
+seed        = 42
