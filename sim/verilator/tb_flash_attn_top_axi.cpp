@@ -5,10 +5,14 @@
 //  waits for done, receives output via AXI4-Stream master, then compares
 //  each head's output against the per-head expected hex files.
 //
+//  Supports GQA via --KV_HEADS: when KV_HEADS < HEADS, K/V input files
+//  contain only NUM_KV_HEADS heads worth of data (smaller bandwidth).
+//
 //  Usage:
 //    ./tb_top_axi_N64 [--N <seq_len>] [--data <data_dir>]
+//    ./tb_top_axi_N64_gqa --N 64 --KV_HEADS 2 --data ../../data/N64_gqa
 //  Default:
-//    --N 64  --data ../../data/N64_axi
+//    --N 64  --HD 64  --PHD 16  --KV_HEADS <HEADS>  --data ../../data/N64_axi
 // ============================================================
 
 #include "Vflash_attn_top_axi.h"
@@ -132,33 +136,43 @@ static void stream_matrix(const std::vector<uint8_t>& mat) {
 
 int main(int argc, char** argv) {
     int         N        = 64;
-    int         HD       = 64;   // total head dimension
-    int         HEADS    = 4;
+    int         HD       = 64;   // total Q head dimension
     int         PHD      = 16;   // per-head dimension
+    int         KV_HEADS = -1;   // -1 = default to HEADS (MHA); set for GQA
     std::string data_dir = "../../data/N64_axi";
 
     for (int i = 1; i < argc; i++) {
-        if (!strcmp(argv[i], "--N")    && i+1 < argc) N        = atoi(argv[++i]);
-        if (!strcmp(argv[i], "--data") && i+1 < argc) data_dir = argv[++i];
+        if (!strcmp(argv[i], "--N")       && i+1 < argc) N        = atoi(argv[++i]);
+        if (!strcmp(argv[i], "--HD")      && i+1 < argc) HD       = atoi(argv[++i]);
+        if (!strcmp(argv[i], "--PHD")     && i+1 < argc) PHD      = atoi(argv[++i]);
+        if (!strcmp(argv[i], "--KV_HEADS")&& i+1 < argc) KV_HEADS = atoi(argv[++i]);
+        if (!strcmp(argv[i], "--data")    && i+1 < argc) data_dir = argv[++i];
     }
 
-    max_cycle = N * N * 80 > 500000 ? N * N * 80 : 500000;
+    int HEADS = HD / PHD;
+    if (KV_HEADS < 0) KV_HEADS = HEADS;  // default: MHA (KV_HEADS == HEADS)
+    max_cycle = N * N * 80 * (PHD / 16) > 500000 ? N * N * 80 * (PHD / 16) : 500000;
 
     VerilatedContext* ctx = new VerilatedContext;
     ctx->commandArgs(argc, argv);
     dut = new Vflash_attn_top_axi{ctx};
 
-    printf("=== flash_attn_top_axi test: N=%d HD=%d heads=%d ===\n", N, HD, HEADS);
+    int GQA_RATIO = HEADS / KV_HEADS;
+    printf("=== flash_attn_top_axi test: N=%d HD=%d heads=%d kv_heads=%d"
+           " gqa_ratio=%d ===\n", N, HD, HEADS, KV_HEADS, GQA_RATIO);
     printf("Data dir: %s\n", data_dir.c_str());
 
     // ── Load test vectors ────────────────────────────────────────────
+    // Q: N × HD bytes (full Q head dim)
+    // K/V: N × (KV_HEADS * PHD) bytes (may be smaller than Q for GQA)
     std::vector<uint8_t> Q_bytes, K_bytes, V_bytes;
-    int total = N * HD;
+    int total_q  = N * HD;
+    int total_kv = N * KV_HEADS * PHD;
 
-    if (!load_int8_hex(data_dir + "/q_input.hex", Q_bytes, total)) return 1;
-    if (!load_int8_hex(data_dir + "/k_input.hex", K_bytes, total)) return 1;
-    if (!load_int8_hex(data_dir + "/v_input.hex", V_bytes, total)) return 1;
-    printf("Loaded %d bytes per matrix\n", total);
+    if (!load_int8_hex(data_dir + "/q_input.hex", Q_bytes, total_q)) return 1;
+    if (!load_int8_hex(data_dir + "/k_input.hex", K_bytes, total_kv)) return 1;
+    if (!load_int8_hex(data_dir + "/v_input.hex", V_bytes, total_kv)) return 1;
+    printf("Loaded Q: %d bytes, K/V: %d bytes each\n", total_q, total_kv);
 
     uint16_t scale_q = 0x0100, scale_k = 0x0100, scale_v = 0x0100;
     load_scales(data_dir + "/scales.txt", scale_q, scale_k, scale_v);
@@ -172,13 +186,13 @@ int main(int argc, char** argv) {
     dut->scale_v = (int16_t)scale_v;
 
     // ── Stream Q, K, V ──────────────────────────────────────────────
-    printf("Streaming Q (%d bytes)...\n", total);
+    printf("Streaming Q (%d bytes)...\n", total_q);
     stream_matrix(Q_bytes);
 
-    printf("Streaming K (%d bytes)...\n", total);
+    printf("Streaming K (%d bytes)...\n", total_kv);
     stream_matrix(K_bytes);
 
-    printf("Streaming V (%d bytes)...\n", total);
+    printf("Streaming V (%d bytes)...\n", total_kv);
     stream_matrix(V_bytes);
 
     // ── Wait for done ────────────────────────────────────────────────

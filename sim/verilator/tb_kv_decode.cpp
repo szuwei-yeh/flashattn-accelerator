@@ -28,9 +28,16 @@
 #include "Vflash_attn_core.h"
 #include "verilated.h"
 
-static const int N_PREFILL = 32;
-static const int HEAD_DIM  = 16;
-static const int N_WORDS   = (HEAD_DIM * 8 + 31) / 32;   // 4 for 128-bit
+#ifndef KVC_HEAD_DIM
+#define KVC_HEAD_DIM 16
+#endif
+#ifndef KVC_N_PREFILL
+#define KVC_N_PREFILL 32
+#endif
+
+static const int N_PREFILL = KVC_N_PREFILL;
+static const int HEAD_DIM  = KVC_HEAD_DIM;
+static const int N_WORDS   = (KVC_HEAD_DIM * 8 + 31) / 32;  // 4 for d=16, 16 for d=64
 
 // ------------------------------------------------------------------ helpers
 
