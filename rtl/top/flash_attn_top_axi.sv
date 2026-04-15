@@ -1,20 +1,23 @@
 // ============================================================
-//  flash_attn_top_axi.sv — Week 5: 4-head FlashAttention with AXI4-Stream I/O
+//  flash_attn_top_axi.sv — FlashAttention 4-head AXI wrapper (with GQA)
 //
-//  4 parallel flash_attn_core instances (one per head) + AXI4-Stream wrapper.
+//  4 parallel flash_attn_core instances (one per Q-head) + AXI4-Stream.
 //
-//  Flow:
-//    AXI slave loads Q/K/V (routed per head) → all 4 cores compute
-//    in parallel → AXI master streams INT32 output row-major
-//    (within each row: head0 values, head1, head2, head3).
+//  GQA (Grouped-Query Attention):
+//    GQA_RATIO = 1 → MHA: each head has its own K/V (default)
+//    GQA_RATIO = 2 → GQA: 4 Q-heads, 2 KV-heads (LLaMA 2/3 style)
+//      Q-heads 0,1 share KV-head 0; Q-heads 2,3 share KV-head 1.
+//    The K/V AXI stream is NUM_KV_HEADS heads wide (halved for GQA_RATIO=2),
+//    reducing KV cache bandwidth by GQA_RATIO.
 //
 //  Parameters:
 //    SEQ_LEN      = sequence length (e.g. 64)
-//    HEAD_DIM     = total head dimension (e.g. 64 = 4 heads × 16)
-//    NUM_HEADS    = number of attention heads (4)
+//    HEAD_DIM     = total Q head dimension (e.g. 64 = 4 heads × 16)
+//    NUM_HEADS    = number of Q-heads (4)
+//    GQA_RATIO    = Q-heads per KV-head (1=MHA, 2=GQA, 4=MQA)
 //    TILE_SIZE    = systolic array size (16)
 //    SRAM_DEPTH   = SRAM depth per core (4096 supports up to SEQ_LEN=256)
-//    PER_HEAD_DIM = HEAD_DIM / NUM_HEADS (= 16, matches TILE_SIZE)
+//    PER_HEAD_DIM = HEAD_DIM / NUM_HEADS (= 16)
 // ============================================================
 `timescale 1ns/1ps
 
@@ -22,9 +25,11 @@ module flash_attn_top_axi #(
     parameter int SEQ_LEN      = 64,
     parameter int HEAD_DIM     = 64,
     parameter int NUM_HEADS    = 4,
+    parameter int GQA_RATIO    = 1,                     // 1=MHA, 2=GQA, 4=MQA
     parameter int TILE_SIZE    = 16,
     parameter int SRAM_DEPTH   = 4096,
-    parameter int PER_HEAD_DIM = HEAD_DIM / NUM_HEADS   // = 16
+    parameter int PER_HEAD_DIM = HEAD_DIM / NUM_HEADS,  // = 16
+    localparam int NUM_KV_HEADS = NUM_HEADS / GQA_RATIO // = 2 for GQA_RATIO=2
 )(
     input  logic clk,
     input  logic rst_n,
@@ -63,6 +68,7 @@ module flash_attn_top_axi #(
         .SEQ_LEN(SEQ_LEN),
         .HEAD_DIM(HEAD_DIM),
         .NUM_HEADS(NUM_HEADS),
+        .NUM_KV_HEADS(NUM_KV_HEADS),  // GQA: K/V stream is NUM_KV_HEADS-wide
         .PER_HEAD_DIM(PER_HEAD_DIM)
     ) u_slave (
         .clk(clk), .rst_n(rst_n),
@@ -75,17 +81,19 @@ module flash_attn_top_axi #(
 
     // ====================================================================
     // Per-head write enable decode
-    //   slv_head_sel (0-3) and slv_mat_sel (0=Q,1=K,2=V) select one SRAM.
-    //   The address and data are broadcast to all cores; only the enabled
-    //   core's SRAM write fires.
+    //   slv_head_sel cycles 0..NUM_HEADS-1 for Q, 0..NUM_KV_HEADS-1 for K/V.
+    //   Q: each core gets its own Q data (head_sel == h).
+    //   K/V: GQA groups — core h receives KV-head (h/GQA_RATIO).
+    //        For GQA_RATIO=2: cores 0,1 share KV-head 0; cores 2,3 share KV-head 1.
+    //        For GQA_RATIO=1 (MHA): each core gets its own K/V (head_sel == h).
     // ====================================================================
     logic [NUM_HEADS-1:0] core_q_we, core_k_we, core_v_we;
 
     always_comb begin
         for (int h = 0; h < NUM_HEADS; h++) begin
-            core_q_we[h] = slv_we & (slv_head_sel == 2'(h)) & (slv_mat_sel == 2'd0);
-            core_k_we[h] = slv_we & (slv_head_sel == 2'(h)) & (slv_mat_sel == 2'd1);
-            core_v_we[h] = slv_we & (slv_head_sel == 2'(h)) & (slv_mat_sel == 2'd2);
+            core_q_we[h] = slv_we & (slv_head_sel == 2'(h))            & (slv_mat_sel == 2'd0);
+            core_k_we[h] = slv_we & (slv_head_sel == 2'(h/GQA_RATIO)) & (slv_mat_sel == 2'd1);
+            core_v_we[h] = slv_we & (slv_head_sel == 2'(h/GQA_RATIO)) & (slv_mat_sel == 2'd2);
         end
     end
 
@@ -131,11 +139,12 @@ module flash_attn_top_axi #(
                 .scale_q(scale_q),
                 .scale_k(scale_k),
                 .scale_v(scale_v),
-                // Control — prefill-only mode (mode=0, kv_len unused)
+                // Control — prefill-only mode (mode=0, kv_len unused, causal=0)
                 .start(cores_start),
                 .done(core_done[h]),
                 .mode(1'b0),
                 .kv_len(16'b0),
+                .causal(1'b0),
                 // KV cache ports — not used in AXI top (tied off)
                 .kc_write_en(1'b0),
                 .kc_write_ptr(8'b0),

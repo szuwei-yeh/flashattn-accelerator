@@ -180,6 +180,77 @@ tb_top_all: tb_top_N16 tb_top_N64 tb_top_N128 tb_top_N256
 	@echo ""
 	@echo "=== All tests passed ==="
 
+# ── HEAD_DIM=64 inner-tiling tests (d=64, N=64/128/256) ──────────────────────
+../../data/N64_d64/expected.hex:
+	cd ../../ && python golden/generate_test_vectors.py --N 64 --d 64 --seed 42 --out data/N64_d64
+	cd ../../ && python golden/generate_hw_expected.py --data data/N64_d64
+
+tb_top_N64_d64: ../../data/N64_d64/expected.hex
+	$(VERILATOR) --cc --exe --build -Wall \
+	    --sv --Mdir obj_top_N64_d64 --top-module flash_attn_top \
+	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(RTL_TOP_SRCS) tb_flash_attn_top.cpp -o sim_top_N64_d64
+	./obj_top_N64_d64/sim_top_N64_d64 --N 64 --D 64 --data ../../data/N64_d64
+
+../../data/N128_d64/expected.hex:
+	cd ../../ && python golden/generate_test_vectors.py --N 128 --d 64 --seed 42 --out data/N128_d64
+	cd ../../ && python golden/generate_hw_expected.py --data data/N128_d64
+
+tb_top_N128_d64: ../../data/N128_d64/expected.hex
+	$(VERILATOR) --cc --exe --build -Wall \
+	    --sv --Mdir obj_top_N128_d64 --top-module flash_attn_top \
+	    -GSEQ_LEN=128 -GHEAD_DIM=64 \
+	    $(RTL_TOP_SRCS) tb_flash_attn_top.cpp -o sim_top_N128_d64
+	./obj_top_N128_d64/sim_top_N128_d64 --N 128 --D 64 --data ../../data/N128_d64
+
+../../data/N256_d64/expected.hex:
+	cd ../../ && python golden/generate_test_vectors.py --N 256 --d 64 --seed 42 --out data/N256_d64
+	cd ../../ && python golden/generate_hw_expected.py --data data/N256_d64
+
+tb_top_N256_d64: ../../data/N256_d64/expected.hex
+	$(VERILATOR) --cc --exe --build -Wall \
+	    --sv --Mdir obj_top_N256_d64 --top-module flash_attn_top \
+	    -GSEQ_LEN=256 -GHEAD_DIM=64 \
+	    $(RTL_TOP_SRCS) tb_flash_attn_top.cpp -o sim_top_N256_d64
+	./obj_top_N256_d64/sim_top_N256_d64 --N 256 --D 64 --data ../../data/N256_d64
+
+# ── Causal masking test (N=64) ────────────────────────────────────────────────
+# Reuses the same RTL binary as tb_top_N64 (causal is a runtime input port).
+# Generates its own expected.hex with --causal golden model.
+../../data/causal_N64/expected.hex:
+	cd ../../ && python golden/generate_test_vectors.py --N 64 --d 16 --seed 42 --out data/causal_N64
+	cd ../../ && python golden/generate_hw_expected.py --data data/causal_N64 --causal
+
+tb_top_causal_N64: ../../data/causal_N64/expected.hex
+	$(VERILATOR) --cc --exe --build -Wall \
+	    --sv --Mdir obj_top_causal_N64 --top-module flash_attn_top \
+	    -GSEQ_LEN=64 \
+	    $(RTL_TOP_SRCS) tb_flash_attn_top.cpp -o sim_top_causal_N64
+	./obj_top_causal_N64/sim_top_causal_N64 --N 64 --data ../../data/causal_N64 --causal
+
+../../data/causal_N256/expected.hex:
+	cd ../../ && python golden/generate_test_vectors.py --N 256 --d 16 --seed 42 --out data/causal_N256
+	cd ../../ && python golden/generate_hw_expected.py --data data/causal_N256 --causal
+
+tb_top_causal_N256: ../../data/causal_N256/expected.hex
+	$(VERILATOR) --cc --exe --build -Wall \
+	    --sv --Mdir obj_top_causal_N256 --top-module flash_attn_top \
+	    -GSEQ_LEN=256 \
+	    $(RTL_TOP_SRCS) tb_flash_attn_top.cpp -o sim_top_causal_N256
+	./obj_top_causal_N256/sim_top_causal_N256 --N 256 --data ../../data/causal_N256 --causal
+
+# ── Causal + HEAD_DIM=64 ──────────────────────────────────────────────────────
+../../data/causal_N64_d64/expected.hex:
+	cd ../../ && python golden/generate_test_vectors.py --N 64 --d 64 --seed 42 --out data/causal_N64_d64
+	cd ../../ && python golden/generate_hw_expected.py --data data/causal_N64_d64 --causal
+
+tb_top_causal_N64_d64: ../../data/causal_N64_d64/expected.hex
+	$(VERILATOR) --cc --exe --build -Wall \
+	    --sv --Mdir obj_top_causal_N64_d64 --top-module flash_attn_top \
+	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(RTL_TOP_SRCS) tb_flash_attn_top.cpp -o sim_top_causal_N64_d64
+	./obj_top_causal_N64_d64/sim_top_causal_N64_d64 --N 64 --D 64 --data ../../data/causal_N64_d64 --causal
+
 
 # ── Week 5 RTL source list (flash_attn_core + AXI interfaces) ────────────────
 RTL_AXI_SRCS := \
@@ -229,8 +300,42 @@ axi_top_N64: ../../data/N64_axi/expected_h0.hex
 	    -o tb_top_axi_N64
 	./obj_axi_top_N64/tb_top_axi_N64 --N 64 --data ../../data/N64_axi
 
+# ── AXI test: 4-head, d=64 per head (total HEAD_DIM=256) ─────────────────────
+../../data/N64_axi_d64/expected_h0.hex:
+	cd ../../ && python golden/generate_multihead_data.py \
+	    --N 64 --total_dim 256 --num_heads 4 --seed 42 \
+	    --out data/N64_axi_d64 --exp_lut data/exp_lut.hex
+
+axi_top_N64_d64: ../../data/N64_axi_d64/expected_h0.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 \
+	    --top-module flash_attn_top_axi \
+	    -Wall \
+	    --Mdir obj_axi_top_N64_d64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=256 \
+	    $(RTL_AXI_SRCS) \
+	    tb_flash_attn_top_axi.cpp \
+	    -o tb_top_axi_N64_d64
+	./obj_axi_top_N64_d64/tb_top_axi_N64_d64 --N 64 --HD 256 --PHD 64 --data ../../data/N64_axi_d64
+
+# ── AXI test: GQA 4 Q-heads + 2 KV-heads (LLaMA 2/3 style) ──────────────────
+../../data/N64_gqa/expected_h0.hex:
+	cd ../../ && python golden/generate_multihead_data.py \
+	    --N 64 --total_dim 64 --num_heads 4 --num_kv_heads 2 --seed 42 \
+	    --out data/N64_gqa --exp_lut data/exp_lut.hex
+
+axi_top_N64_gqa: ../../data/N64_gqa/expected_h0.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 \
+	    --top-module flash_attn_top_axi \
+	    -Wall \
+	    --Mdir obj_axi_top_N64_gqa \
+	    -GSEQ_LEN=64 -GGQA_RATIO=2 \
+	    $(RTL_AXI_SRCS) \
+	    tb_flash_attn_top_axi.cpp \
+	    -o tb_top_axi_N64_gqa
+	./obj_axi_top_N64_gqa/tb_top_axi_N64_gqa --N 64 --KV_HEADS 2 --data ../../data/N64_gqa
+
 # ── Week 5: all AXI tests ─────────────────────────────────────────────────────
-axi_all: tb_axi_slave axi_top_N64
+axi_all: tb_axi_slave axi_top_N64 axi_top_N64_d64 axi_top_N64_gqa
 	@echo ""
 	@echo "=== All Week 5 AXI tests passed ==="
 
@@ -278,13 +383,31 @@ tb_kv_decode: ../../data/kv_decode/expected_prefill.hex
 	    -o sim_kv_decode
 	./obj_kv_decode/sim_kv_decode --data ../../data/kv_decode
 
+# ── KV decode, HEAD_DIM=64 ───────────────────────────────────────────────────
+../../data/kv_decode_d64/expected_prefill.hex:
+	cd ../../ && python golden/generate_kv_cache_test.py \
+	    --out data/kv_decode_d64 --exp_lut data/exp_lut.hex --head_dim 64
+
+tb_kv_decode_d64: ../../data/kv_decode_d64/expected_prefill.hex
+	$(VERILATOR) --sv -cc --exe --build -Wall \
+	    --Mdir obj_kv_decode_d64 \
+	    --top-module flash_attn_core \
+	    -GSEQ_LEN=32 -GHEAD_DIM=64 \
+	    --CFLAGS "-DKVC_HEAD_DIM=64" \
+	    $(RTL_DECODE_SRCS) \
+	    tb_kv_decode.cpp \
+	    -o sim_kv_decode_d64
+	./obj_kv_decode_d64/sim_kv_decode_d64 --data ../../data/kv_decode_d64
+
 # ── Week 6: all tests (unit + decode) ────────────────────────────────────────
-week6_all: tb_kv_cache tb_kv_decode
+week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 	@echo ""
 	@echo "=== All Week 6 tests passed ==="
 
-# ── Full regression (Week 1–6) ────────────────────────────────────────────────
-regression: tb_top_all axi_all week6_all
+# ── Full regression (Week 1–7: all configs including GQA) ────────────────────
+regression: tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
+            tb_top_causal_N64 tb_top_causal_N64_d64 \
+            axi_all week6_all
 	@echo ""
 	@echo "=== Full regression PASS ==="
 
@@ -360,5 +483,6 @@ clean:
 	rm -rf $(SIM_DIR) obj_array_ctrl obj_quantizer obj_exp_lut \
 	        obj_softmax obj_addr_gen obj_sram obj_kv_buf \
 	        obj_top obj_top_N16 obj_top_N64 obj_top_N128 obj_top_N256 \
+	        obj_top_causal_N64 \
 	        obj_axi_slave obj_axi_top_N64 \
 	        obj_kv_cache obj_kv_decode

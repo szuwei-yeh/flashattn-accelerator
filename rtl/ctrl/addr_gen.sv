@@ -25,6 +25,9 @@ module addr_gen #(
     input  logic [15:0]       head_dim,  // Head dimension d (e.g., 64)
     input  logic [15:0]       tile_size, // Tile size (e.g., 16 or 64)
 
+    // === Counting mode ===
+    input  logic              short_cnt_mode, // 1 = count tile_size*tile_size instead of tile_size*head_dim
+
     // === Tile Coordinates (Driven by Tile Controller FSM) ===
     input  logic [15:0]       tile_row,  // Outer loop j (Q tile start index)
     input  logic [15:0]       tile_col,  // Inner loop i (K/V tile start index)
@@ -59,7 +62,8 @@ module addr_gen #(
     // FIX: same 32-bit cast applied to total_elements.
     // --------------------------------------------------------
     logic [31:0] total_elements;
-    assign total_elements = 32'(tile_size) * 32'(head_dim);
+    assign total_elements = short_cnt_mode ? (32'(tile_size) * 32'(tile_size))
+                                           : (32'(tile_size) * 32'(head_dim));
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

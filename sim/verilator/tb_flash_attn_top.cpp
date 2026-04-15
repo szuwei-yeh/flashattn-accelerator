@@ -125,18 +125,24 @@ int main(int argc, char **argv) {
     // ── Parse custom args BEFORE passing to Verilator ────────────────
     int  N        = 16;
     int  D        = 16;
+    bool causal   = false;
     std::string data_dir = "../../data";
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--N") == 0 && i+1 < argc) {
             N = atoi(argv[++i]);
+        } else if (strcmp(argv[i], "--D") == 0 && i+1 < argc) {
+            D = atoi(argv[++i]);
         } else if (strcmp(argv[i], "--data") == 0 && i+1 < argc) {
             data_dir = argv[++i];
+        } else if (strcmp(argv[i], "--causal") == 0) {
+            causal = true;
         }
     }
 
-    // MAX_CYCLE scales with N² (empirical: N=16 finishes at ~917 cycles)
-    int max_cycle    = (N * N * 15 > 100000) ? N * N * 15 : 100000;
+    // MAX_CYCLE scales with N² × (D/16) — extra factor for inner-dim chunks
+    int chunks       = D / 16;
+    int max_cycle    = (N * N * 15 * chunks > 100000) ? N * N * 15 * chunks : 100000;
     int print_every  = (N * N / 256 > 10) ? N * N / 256 : 10;
 
     std::string q_hex   = data_dir + "/q_input.hex";
@@ -152,7 +158,7 @@ int main(int argc, char **argv) {
     std::vector<int8_t>  q_data, k_data, v_data;
     std::vector<int32_t> expected;
 
-    printf("=== flash_attn_top test: N=%d D=%d ===\n", N, D);
+    printf("=== flash_attn_top test: N=%d D=%d causal=%d ===\n", N, D, (int)causal);
     printf("Loading test vectors from %s ...\n", data_dir.c_str());
     if (!load_int8_hex(q_hex.c_str(),   q_data,   N * D)) return 1;
     if (!load_int8_hex(k_hex.c_str(),   k_data,   N * D)) return 1;
@@ -166,6 +172,7 @@ int main(int argc, char **argv) {
            scale_q, scale_k, scale_v);
 
     reset(dut);
+    dut->causal  = causal ? 1 : 0;
     dut->scale_q = scale_q;
     dut->scale_k = scale_k;
     dut->scale_v = scale_v;
@@ -255,7 +262,7 @@ int main(int argc, char **argv) {
 
     printf("\n=== Coverage Summary ===\n");
     printf("Module           : flash_attn_top\n");
-    printf("Scenarios covered: end_to_end_N%d\n", N);
+    printf("Scenarios covered: end_to_end_N%d%s\n", N, causal ? "_causal" : "");
     printf("Test cases run   : 1\n");
     printf("Mismatches       : %d\n", fail_count);
     printf("Result           : %s\n", pass ? "PASS" : "FAIL");

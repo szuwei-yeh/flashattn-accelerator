@@ -19,6 +19,7 @@ module array_controller #(
     input  logic signed [7:0] b_flat [SIZE*SIZE-1:0],
 
     input  logic        start,
+    input  logic        no_clear,   // skip CLEAR state (accumulate across chunks)
     output logic        busy,
     output logic        done,
 
@@ -65,7 +66,14 @@ module array_controller #(
             case (state)
                 IDLE: begin
                     if (start) begin
-                        state <= CLEAR;
+                        if (no_clear) begin
+                            // Skip CLEAR: jump straight to COMPUTE and keep PE accumulators
+                            cycle_cnt <= '0;
+                            feed_col  <= '0;
+                            state     <= COMPUTE;
+                        end else begin
+                            state <= CLEAR;
+                        end
                         busy  <= '1;
                     end
                 end

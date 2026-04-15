@@ -29,6 +29,7 @@ module axi4_stream_slave #(
     parameter int SEQ_LEN      = 64,
     parameter int HEAD_DIM     = 64,
     parameter int NUM_HEADS    = 4,
+    parameter int NUM_KV_HEADS = NUM_HEADS,              // GQA: KV heads ≤ NUM_HEADS
     parameter int PER_HEAD_DIM = HEAD_DIM / NUM_HEADS  // 16
 )
 /* verilator lint_on UNUSEDPARAM */
@@ -55,13 +56,18 @@ module axi4_stream_slave #(
     // -------------------------------------------------------------------
     // Local parameters
     // -------------------------------------------------------------------
-    localparam int HEAD_LOG2 = $clog2(HEAD_DIM);     // e.g. 6 for HEAD_DIM=64
-    localparam int PHD_LOG2  = $clog2(PER_HEAD_DIM); // e.g. 4 for PHD=16
-    localparam int NH_LOG2   = $clog2(NUM_HEADS);     // e.g. 2 for 4 heads
+    localparam int HEAD_LOG2    = $clog2(HEAD_DIM);      // e.g. 6 for HEAD_DIM=64
+    localparam int PHD_LOG2     = $clog2(PER_HEAD_DIM);  // e.g. 4 for PHD=16
+    localparam int NH_LOG2      = $clog2(NUM_HEADS);      // e.g. 2 for 4 Q-heads
+    localparam int ROW_LOG2     = $clog2(SEQ_LEN);       // e.g. 6 for SEQ_LEN=64
+    // GQA: KV matrices are NUM_KV_HEADS heads wide instead of NUM_HEADS
+    localparam int KV_HEAD_DIM  = NUM_KV_HEADS * PER_HEAD_DIM;
+    localparam int KV_HEAD_LOG2 = $clog2(KV_HEAD_DIM);
+    // Safe: ensure ≥1 bit even for MQA (NUM_KV_HEADS=1 → $clog2=0)
+    localparam int NH_KV_LOG2   = (NUM_KV_HEADS > 1) ? $clog2(NUM_KV_HEADS) : 1;
 
-    // byte counter: max = SEQ_LEN*HEAD_DIM → need enough bits
-    // For SEQ_LEN=256, HEAD_DIM=64: max=16384 → 14 bits
-    localparam int CNT_W = 14;
+    // byte counter: sized for Q (largest packet = SEQ_LEN*HEAD_DIM bytes)
+    localparam int CNT_W = HEAD_LOG2 + ROW_LOG2;
 
     // -------------------------------------------------------------------
     // State machine
@@ -79,16 +85,41 @@ module axi4_stream_slave #(
 
     // -------------------------------------------------------------------
     // Address decomposition — pure bit-slicing, no division
+    //
+    //  Q phase  (HEAD_DIM-wide row):  head_sel cycles 0..NUM_HEADS-1
+    //  K/V phase (KV_HEAD_DIM-wide row): head_sel cycles 0..NUM_KV_HEADS-1
+    //  For MHA (NUM_KV_HEADS==NUM_HEADS) both paths are identical.
     // -------------------------------------------------------------------
-    logic [HEAD_LOG2-1:0] col_w;
-    logic [NH_LOG2-1:0]   head_w;
-    logic [PHD_LOG2-1:0]  phd_w;
-    logic [7:0]           row_w;   // supports up to SEQ_LEN=256
+    logic is_kv_phase;
+    assign is_kv_phase = (state == S_RECV_K || state == S_RECV_V);
 
-    assign col_w  = byte_cnt[HEAD_LOG2-1:0];
-    assign head_w = col_w[HEAD_LOG2-1 -: NH_LOG2];   // e.g. col_w[5:4]
-    assign phd_w  = col_w[PHD_LOG2-1:0];             // e.g. col_w[3:0]
-    assign row_w  = byte_cnt[HEAD_LOG2 +: 8];        // e.g. byte_cnt[13:6]
+    // Q decomposition
+    logic [HEAD_LOG2-1:0]    col_q;
+    logic [NH_LOG2-1:0]      head_q;
+    logic [PHD_LOG2-1:0]     phd_q;
+    logic [ROW_LOG2-1:0]     row_q;
+    assign col_q  = byte_cnt[HEAD_LOG2-1:0];
+    assign head_q = col_q[HEAD_LOG2-1 -: NH_LOG2];
+    assign phd_q  = col_q[PHD_LOG2-1:0];
+    assign row_q  = byte_cnt[HEAD_LOG2 +: ROW_LOG2];
+
+    // KV decomposition (KV_HEAD_DIM-wide row)
+    logic [KV_HEAD_LOG2-1:0] col_kv;
+    logic [NH_KV_LOG2-1:0]   head_kv;
+    logic [PHD_LOG2-1:0]     phd_kv;
+    logic [ROW_LOG2-1:0]     row_kv;
+    assign col_kv  = byte_cnt[KV_HEAD_LOG2-1:0];
+    assign head_kv = col_kv[KV_HEAD_LOG2-1 -: NH_KV_LOG2];
+    assign phd_kv  = col_kv[PHD_LOG2-1:0];
+    assign row_kv  = byte_cnt[KV_HEAD_LOG2 +: ROW_LOG2];
+
+    // Muxed address fields (GQA: switch to KV decomp during K/V phases)
+    logic [NH_LOG2-1:0]  head_w;
+    logic [PHD_LOG2-1:0] phd_w;
+    logic [ROW_LOG2-1:0] row_w;
+    assign head_w = is_kv_phase ? NH_LOG2'(head_kv) : head_q;
+    assign phd_w  = is_kv_phase ? phd_kv            : phd_q;
+    assign row_w  = is_kv_phase ? row_kv            : row_q;
 
     // -------------------------------------------------------------------
     // Combinational outputs
@@ -99,7 +130,7 @@ module axi4_stream_slave #(
     always_comb begin
         s_tready  = accepting;
         we        = accepting & s_tvalid;
-        waddr     = {row_w, phd_w};          // 12 bits: {8-bit row, 4-bit col}
+        waddr     = (12'(row_w) << PHD_LOG2) | 12'(phd_w); // row*PER_HEAD_DIM + col
         wdata     = s_tdata;
         head_sel  = head_w;
         load_done = (state == S_DONE);
