@@ -251,6 +251,17 @@ tb_top_causal_N64_d64: ../../data/causal_N64_d64/expected.hex
 	    $(RTL_TOP_SRCS) tb_flash_attn_top.cpp -o sim_top_causal_N64_d64
 	./obj_top_causal_N64_d64/sim_top_causal_N64_d64 --N 64 --D 64 --data ../../data/causal_N64_d64 --causal
 
+../../data/causal_N256_d64/expected.hex:
+	cd ../../ && python golden/generate_test_vectors.py --N 256 --d 64 --seed 42 --out data/causal_N256_d64
+	cd ../../ && python golden/generate_hw_expected.py --data data/causal_N256_d64 --causal
+
+tb_top_causal_N256_d64: ../../data/causal_N256_d64/expected.hex
+	$(VERILATOR) --cc --exe --build -Wall \
+	    --sv --Mdir obj_top_causal_N256_d64 --top-module flash_attn_top \
+	    -GSEQ_LEN=256 -GHEAD_DIM=64 \
+	    $(RTL_TOP_SRCS) tb_flash_attn_top.cpp -o sim_top_causal_N256_d64
+	./obj_top_causal_N256_d64/sim_top_causal_N256_d64 --N 256 --D 64 --data ../../data/causal_N256_d64 --causal
+
 
 # ── Week 5 RTL source list (flash_attn_core + AXI interfaces) ────────────────
 RTL_AXI_SRCS := \
@@ -406,7 +417,8 @@ week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 
 # ── Full regression (Week 1–7: all configs including GQA) ────────────────────
 regression: tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
-            tb_top_causal_N64 tb_top_causal_N64_d64 \
+            tb_top_causal_N64 tb_top_causal_N256 \
+            tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
             axi_all week6_all
 	@echo ""
 	@echo "=== Full regression PASS ==="
