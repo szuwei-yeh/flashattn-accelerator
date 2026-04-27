@@ -22,7 +22,11 @@ module exp_lut (
     logic [15:0] lut_mem [0:255];
 
     initial begin
+`ifdef SYNTHESIS
+        $readmemh("/rtl_data/exp_lut.hex", lut_mem);
+`else
         $readmemh("../../data/exp_lut.hex", lut_mem);
+`endif
     end
 
     always_ff @(posedge clk) begin

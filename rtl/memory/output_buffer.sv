@@ -1,3 +1,4 @@
+/// sta-blackbox
 // ============================================================
 //  output_buffer.sv — Accumulation / Rescale / Normalise Buffer
 //
