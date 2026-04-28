@@ -1,7 +1,7 @@
 # FlashAttention Hardware Accelerator
 
 A cycle-accurate RTL implementation of the FlashAttention algorithm in
-SystemVerilog, verified with Verilator across 13 test configurations, 0 mismatches.
+SystemVerilog, verified with Verilator across 18 regression targets, 0 mismatches.
 
 ---
 
@@ -138,7 +138,7 @@ Simulation cycles (Verilator, TILE_SIZE=16, with KV prefetch pipeline):
 
 Causal mode skips above-diagonal tiles (~50% fewer KV tiles at large N).
 
-4-head AXI top (N=64, d=16): done at cycle 21,785 (MHA), cycle 21,785 (GQA).
+4-head AXI top (N=64): core done at cycle 25,881 (MHA d=16), 101,589 (MHA d=64), 21,785 (GQA d=16).
 
 ---
 
@@ -212,9 +212,34 @@ Causal mode skips above-diagonal tiles (~50% fewer KV tiles at large N).
 | kv_cache | write/read, fill, overflow guard, reset | 0 |
 | flash_attn_core | prefill+decode N=32 d=16 | 0 |
 | flash_attn_core | prefill+decode N=32 d=64 | 0 |
-| **Total** | | **0 / 0** |
+| **Total** | | **0** |
 
 All tests run automatically via `make regression`.
+
+---
+
+## Synthesis (OpenLane v1.1.1, sky130A PDK)
+
+Target: `flash_attn_core` — single-head core including GQA, causal masking,
+KV-decode, and d=64 inner-dimension tiling.
+
+| Metric | Value |
+|--------|-------|
+| Tool | Yosys 0.38 + ABC + OpenSTA 2.5.0 |
+| Clock target | 20 ns (50 MHz) |
+| f_max (post-synth) | ~77 MHz |
+| Critical path | 12.945 ns (softmax index path) |
+| Setup slack (worst) | +6.94 ns (MET) |
+| Hold slack (worst) | +0.11 ns (MET) |
+| Standard cells | ~1,036,561 |
+| Core area (logic only) | ~11.25 mm² |
+
+`dequantizer` (×256) and `output_buffer` are blackboxed; their area is not
+included. Post-P&R was not attempted: `dequantizer` and `output_buffer`
+require LEF macros from a memory compiler (e.g. OpenRAM) for
+floorplan/placement.
+
+See [`synthesisprogress.md`](synthesisprogress.md) for the full flow log.
 
 ---
 
