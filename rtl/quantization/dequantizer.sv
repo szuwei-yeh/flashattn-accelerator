@@ -15,8 +15,8 @@
 `timescale 1ns/1ps
 
 module dequantizer #(
-    parameter int OUT_WIDTH = 16,
-    parameter int FRAC_BITS = 8
+    parameter OUT_WIDTH = 16,
+    parameter FRAC_BITS = 8
 )(
     input  logic                            clk,
     input  logic                            rst_n,

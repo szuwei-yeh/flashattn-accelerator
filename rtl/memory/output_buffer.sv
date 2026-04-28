@@ -14,10 +14,10 @@
 
 module output_buffer #(
     /* verilator lint_off UNUSEDPARAM */
-    parameter int DATA_WIDTH = 32,
+    parameter DATA_WIDTH = 32,
     /* verilator lint_on UNUSEDPARAM */
-    parameter int DEPTH      = 4096,
-    localparam int ADDR_WIDTH = $clog2(DEPTH)
+    parameter DEPTH      = 4096,
+    localparam ADDR_WIDTH = $clog2(DEPTH)
 )(
     input  logic                  clk,
     input  logic                  rst_n,
