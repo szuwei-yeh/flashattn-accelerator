@@ -1,3 +1,4 @@
+/// sta-blackbox
 // ============================================================
 //  sram_1r1w.sv — 1-Read 1-Write SRAM Behavioral Model
 //

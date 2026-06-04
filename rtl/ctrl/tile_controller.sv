@@ -207,7 +207,7 @@ module tile_controller #(
                     end
                     if (array_done) begin
                         array_started <= 1'b0;
-                        if (int'(chunk_cnt) < NUM_CHUNKS - 1) begin
+                        if (chunk_cnt < NUM_CHUNKS - 1) begin
                             // More inner chunks — advance chunk_cnt and restart array
                             chunk_cnt <= chunk_cnt + 1'b1;
                             k_chunk   <= chunk_cnt + 1'b1;
@@ -250,7 +250,7 @@ module tile_controller #(
                         cnt_en     <= 1'b0;
                         rescale_en <= 1'b0;
                         cnt_clr    <= 1'b1;
-                        if (int'(chunk_cnt) < NUM_CHUNKS - 1) begin
+                        if (chunk_cnt < NUM_CHUNKS - 1) begin
                             chunk_cnt <= chunk_cnt + 1'b1;
                             k_chunk   <= chunk_cnt + 1'b1;
                             state     <= S_RESCALE_OUTPUT;
@@ -287,7 +287,7 @@ module tile_controller #(
                         cnt_en   <= 1'b0;
                         accum_en <= 1'b0;
                         cnt_clr  <= 1'b1;
-                        if (int'(chunk_cnt) < NUM_CHUNKS - 1) begin
+                        if (chunk_cnt < NUM_CHUNKS - 1) begin
                             // More PV chunks to process
                             chunk_cnt <= chunk_cnt + 1'b1;
                             k_chunk   <= chunk_cnt + 1'b1;
@@ -337,7 +337,7 @@ module tile_controller #(
                         cnt_en  <= 1'b0;
                         norm_en <= 1'b0;
                         cnt_clr <= 1'b1;
-                        if (int'(chunk_cnt) < NUM_CHUNKS - 1) begin
+                        if (chunk_cnt < NUM_CHUNKS - 1) begin
                             chunk_cnt <= chunk_cnt + 1'b1;
                             k_chunk   <= chunk_cnt + 1'b1;
                             state     <= S_NORMALIZE;

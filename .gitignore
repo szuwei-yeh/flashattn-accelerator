@@ -23,3 +23,9 @@ __pycache__/
 PROGRESS.md
 progress2.0.md
 synthesisprogress.md
+
+# OpenLane synthesis runs (multi-GB artifacts — regenerable, not source)
+synthesis/
+
+# Transient build/run logs
+sim/verilator/_*.log

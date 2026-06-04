@@ -225,15 +225,15 @@ module flash_attn_top #(
 
     always_ff @(posedge clk) begin
         // Normal SRAM load: writes 0..KV_FLAT-1 sequentially
-        if (q_we_d)  Q_reg[reg_wr_addr] <= signed'(q_rdata);
+        if (q_we_d)  Q_reg[reg_wr_addr] <= $signed(q_rdata);
         if (kv_we_d) begin
-            K_reg[reg_wr_addr] <= signed'(k_rdata);   // row-major, no nibble-swap
-            V_reg[reg_wr_addr] <= signed'(v_rdata);
+            K_reg[reg_wr_addr] <= $signed(k_rdata);   // row-major, no nibble-swap
+            V_reg[reg_wr_addr] <= $signed(v_rdata);
         end
         // Prefetch write into shadow buffer
         if (pf_we_d) begin
-            K_reg_nxt[pf_cnt_d] <= signed'(k_rdata);
-            V_reg_nxt[pf_cnt_d] <= signed'(v_rdata);
+            K_reg_nxt[pf_cnt_d] <= $signed(k_rdata);
+            V_reg_nxt[pf_cnt_d] <= $signed(v_rdata);
         end
         // Swap: copy shadow → active
         if (kv_swap_banks && kv_prefetched) begin
@@ -309,26 +309,36 @@ module flash_attn_top #(
         // PV: a_in[gi]      = p_matrix_int8[gi]
         assign array_a_in[gi] = is_pv_phase
             ? p_matrix_int8[gi]
-            : Q_reg[(gi/SIZE)*HEAD_DIM + int'(k_chunk)*TILE_SIZE + (gi%SIZE)];
+            : Q_reg[(gi/SIZE)*HEAD_DIM + k_chunk*TILE_SIZE + (gi%SIZE)];
         // QK: b_in[k'*T+j]  = K_reg[j*D + c*T + k'],  k'=gi/T, j=gi%T
         // PV: b_in[k'*T+j]  = V_reg[k'*D + c*T + j]
         assign array_b_in[gi] = is_pv_phase
-            ? V_reg[(gi/SIZE)*HEAD_DIM + int'(k_chunk)*TILE_SIZE + (gi%SIZE)]
-            : K_reg[(gi%SIZE)*HEAD_DIM + int'(k_chunk)*TILE_SIZE + (gi/SIZE)];
+            ? V_reg[(gi/SIZE)*HEAD_DIM + k_chunk*TILE_SIZE + (gi%SIZE)]
+            : K_reg[(gi%SIZE)*HEAD_DIM + k_chunk*TILE_SIZE + (gi/SIZE)];
+    end
+
+    // Packed adapters for Yosys-compatible port connections
+    logic [FLAT*8-1:0]  array_a_in_packed;
+    logic [FLAT*8-1:0]  array_b_in_packed;
+    logic [FLAT*32-1:0] array_acc_packed;
+    for (genvar pk = 0; pk < FLAT; pk++) begin : gen_pack_io
+        assign array_a_in_packed[pk*8+:8] = array_a_in[pk];
+        assign array_b_in_packed[pk*8+:8] = array_b_in[pk];
+        assign array_acc[pk]               = $signed(array_acc_packed[pk*32+:32]);
     end
 
     array_controller #(.SIZE(SIZE)) u_array_ctrl (
         .clk(clk), .rst_n(rst_n),
-        .a_flat(array_a_in), .b_flat(array_b_in),
+        .a_flat(array_a_in_packed), .b_flat(array_b_in_packed),
         .start(array_start), .no_clear(array_no_clear),
         .busy(array_busy), .done(array_done),
-        .acc(array_acc)
+        .acc(array_acc_packed)
     );
 
     // =========================================================
     // 5. Dequantizers (triggered only on last QK chunk)
     // =========================================================
-    logic signed [15:0] dequant_out   [FLAT-1:0];
+    (* mem2reg *) logic signed [15:0] dequant_out   [FLAT-1:0];
     /* verilator lint_off UNUSEDSIGNAL */
     logic               dequant_valid [FLAT-1:0];
     /* verilator lint_on UNUSEDSIGNAL */
@@ -336,12 +346,24 @@ module flash_attn_top #(
     logic is_last_qk_chunk;
     assign is_last_qk_chunk = (k_chunk == CHUNK_W'(NUM_CHUNKS - 1));
 
+    logic signed [15:0] scale_q_bcast;
+    logic signed [15:0] scale_k_bcast;
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            scale_q_bcast <= 16'sh0100;
+            scale_k_bcast <= 16'sh0100;
+        end else begin
+            scale_q_bcast <= scale_q;
+            scale_k_bcast <= scale_k;
+        end
+    end
+
     for (genvar gi = 0; gi < FLAT; gi++) begin : gen_dequant
         dequantizer #(.OUT_WIDTH(16), .FRAC_BITS(8)) u_deq (
             .clk(clk), .rst_n(rst_n),
             .valid_in(array_done && !is_pv_phase && is_last_qk_chunk),
             .data_in(array_acc[gi]),
-            .scale_q(scale_q), .scale_k(scale_k),
+            .scale_q(scale_q_bcast), .scale_k(scale_k_bcast),
             .valid_out(dequant_valid[gi]),
             .data_out(dequant_out[gi])
         );
@@ -361,16 +383,16 @@ module flash_attn_top #(
     logic [31:0]        running_sum_arr  [SIZE-1:0];
 
     logic sfx_triggered;
+    logic tile_valid_pulse;
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)
             sfx_triggered <= 1'b0;
         else if (exp_out_valid_top)
             sfx_triggered <= 1'b0;
-        else if (softmax_tile_valid)
+        else if (tile_valid_pulse)
             sfx_triggered <= 1'b1;
     end
-    logic tile_valid_pulse;
-    assign tile_valid_pulse = softmax_tile_valid && !sfx_triggered;
+    assign tile_valid_pulse = softmax_tile_valid && dequant_valid[0] && !sfx_triggered;
 
     /* verilator lint_off UNUSEDSIGNAL */
     logic [2:0] sfx_dbg_state [SIZE-1:0];
@@ -384,7 +406,7 @@ module flash_attn_top #(
                                           ((tile_col == tile_row) && (c > r)));
             assign row_scores[c*16 +: 16] =
                 mask_elem ? 16'sh8000 : (dequant_out[r*SIZE + c] >>> SCALE_SHIFT);
-            assign p_matrix_int8[r*SIZE + c] = signed'(exp_flat_out[r][c*16 +: 8]);
+            assign p_matrix_int8[r*SIZE + c] = $signed(exp_flat_out[r][c*16 +: 8]);
         end
 
         online_softmax #(.DIM(SIZE)) u_softmax (
@@ -407,7 +429,7 @@ module flash_attn_top #(
     assign exp_out_valid_top = exp_out_valid_arr[0];
     assign softmax_out_valid = softmax_valid_arr[0];
 
-    assign dbg_sfx_tile_valid = softmax_tile_valid;
+    assign dbg_sfx_tile_valid = tile_valid_pulse;
     assign dbg_sfx_out_valid  = softmax_out_valid;
     assign dbg_softmax_state  = sfx_dbg_state[0];
     assign dbg_is_pv_phase    = is_pv_phase;
@@ -425,7 +447,7 @@ module flash_attn_top #(
     logic signed [47:0] pv_scaled_wide;
     /* verilator lint_on UNUSEDSIGNAL */
     logic signed [31:0] accum_data_in;
-    assign pv_scaled_wide = 48'(signed'(array_acc[sram_addr])) * 48'(signed'(scale_v));
+    assign pv_scaled_wide = $signed({{16{array_acc[sram_addr][31]}}, array_acc[sram_addr]}) * $signed({{32{scale_v[15]}}, scale_v});
     assign accum_data_in  = $signed(pv_scaled_wide[39:8]);
 
     logic [3:0]  qrow_sel;

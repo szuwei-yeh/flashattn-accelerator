@@ -5,6 +5,7 @@
 // b_wire[r][c]  = vertical   wire entering PE[r][c] from above
 // acc[r*SIZE+c] = PE[r][c] accumulator output (flat port for C++ TB)
 
+// Ports use packed vectors instead of unpacked arrays for Yosys compatibility.
 module systolic_array #(
     parameter int SIZE = 16
 )(
@@ -12,9 +13,9 @@ module systolic_array #(
     input  logic        rst_n,
     input  logic        en,
     input  logic        clear,
-    input  logic signed [7:0] a_in [SIZE-1:0],
-    input  logic signed [7:0] b_in [SIZE-1:0],
-    output logic signed [31:0] acc [SIZE*SIZE-1:0]
+    input  logic [SIZE*8-1:0]        a_in,  // packed: SIZE elements × 8b
+    input  logic [SIZE*8-1:0]        b_in,  // packed: SIZE elements × 8b
+    output logic [SIZE*SIZE*32-1:0]  acc    // packed: SIZE×SIZE elements × 32b
 );
     // a_wire[r][0..SIZE]: left-edge (col 0) fed from a_in[r],
     //                     col c+1 driven by PE[r][c].a_out
@@ -25,12 +26,12 @@ module systolic_array #(
 
     genvar r, c;
     generate
-        // Connect external inputs to left/top edge
+        // Unpack packed inputs to left/top edge
         for (r = 0; r < SIZE; r++) begin : ai
-            assign a_wire[r][0] = a_in[r];
+            assign a_wire[r][0] = a_in[r*8 +: 8];
         end
         for (c = 0; c < SIZE; c++) begin : bi
-            assign b_wire[0][c] = b_in[c];
+            assign b_wire[0][c] = b_in[c*8 +: 8];
         end
 
         // Instantiate SIZE×SIZE PEs
@@ -45,7 +46,7 @@ module systolic_array #(
                     .b_in  (b_wire[r][c]),
                     .a_out (a_wire[r][c+1]),
                     .b_out (b_wire[r+1][c]),
-                    .acc   (acc[r*SIZE + c])
+                    .acc   (acc[(r*SIZE+c)*32 +: 32])
                 );
             end
         end

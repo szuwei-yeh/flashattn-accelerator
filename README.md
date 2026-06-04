@@ -1,7 +1,7 @@
 # FlashAttention Hardware Accelerator
 
 A cycle-accurate RTL implementation of the FlashAttention algorithm in
-SystemVerilog, verified with Verilator across 13 test configurations, 0 mismatches.
+SystemVerilog, verified with Verilator across 18 test configurations, 0 mismatches.
 
 ---
 
@@ -152,8 +152,9 @@ Causal mode skips above-diagonal tiles (~50% fewer KV tiles at large N).
   backward-compatible with HEAD_DIM=16
 - **Causal masking** — decoder self-attention; above-diagonal tiles skipped
   entirely (no wasted cycles)
-- **KV prefetch pipeline** — double-buffer hides SRAM latency, ~20% cycle
-  reduction vs naive serial load
+- **KV prefetch pipeline** — double-buffer hides SRAM load latency behind
+  compute; measured cycle reduction vs serial load grows with sequence length:
+  18.5% (N=64), 23.0% (N=128), 25.5% (N=256)
 - **Dynamic SRAM depth** — `SEQ_LEN × HEAD_DIM`; tested N=16–256, d=16/64
 - **4-head parallel attention** — four `flash_attn_core` instances share one
   AXI4-Stream interface

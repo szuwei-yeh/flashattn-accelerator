@@ -41,7 +41,7 @@ module pe (
                 b_out <= b_in;
             end else begin
                 // INT8 × INT8  →  sign-extended to INT32 before adding
-                acc   <= acc + 32'(signed'(a_in) * signed'(b_in));
+                acc   <= acc + ($signed(a_in) * $signed(b_in));
                 a_out <= a_in;
                 b_out <= b_in;
             end

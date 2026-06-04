@@ -50,7 +50,7 @@ module online_softmax #(
     // ── Unpack input scores ───────────────────────────────────
     logic signed [15:0] scores_in [DIM];
     for (genvar g = 0; g < DIM; g++) begin : gen_unpack
-        assign scores_in[g] = signed'(scores_flat[g*16 +: 16]);
+        assign scores_in[g] = $signed(scores_flat[g*16 +: 16]);
     end
 
     // ── exp LUT ───────────────────────────────────────────────
@@ -95,7 +95,7 @@ module online_softmax #(
     logic        [31:0]  accum_sum;
 
     logic signed [15:0]  next_max;
-    assign next_max = (signed'(tile_max) > signed'(running_max)) ? tile_max : running_max;
+    assign next_max = ($signed(tile_max) > $signed(running_max)) ? tile_max : running_max;
 
     // rescale_prod = running_sum × exp(m_old − m_new)
     logic [63:0] rescale_prod;
@@ -180,7 +180,7 @@ module online_softmax #(
                 end
 
                 S_FIND_MAX: begin
-                    if (signed'(sc[idx[AIDX_W-1:0]]) > signed'(tile_max))
+                    if ($signed(sc[idx[AIDX_W-1:0]]) > $signed(tile_max))
                         tile_max <= sc[idx[AIDX_W-1:0]];
 
                     if (idx == IDX_W'(DIM - 1)) begin

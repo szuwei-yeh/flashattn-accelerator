@@ -15,21 +15,24 @@ module array_controller #(
     input  logic        clk,
     input  logic        rst_n,
 
-    input  logic signed [7:0] a_flat [SIZE*SIZE-1:0],
-    input  logic signed [7:0] b_flat [SIZE*SIZE-1:0],
+    // Ports use packed vectors instead of unpacked arrays for Yosys compatibility.
+    input  logic [SIZE*SIZE*8-1:0]   a_flat,  // packed: SIZE×SIZE elements × 8b
+    input  logic [SIZE*SIZE*8-1:0]   b_flat,  // packed: SIZE×SIZE elements × 8b
 
     input  logic        start,
     input  logic        no_clear,   // skip CLEAR state (accumulate across chunks)
     output logic        busy,
     output logic        done,
 
-    output logic signed [31:0] acc [SIZE*SIZE-1:0]
+    output logic [SIZE*SIZE*32-1:0]  acc      // packed: SIZE×SIZE elements × 32b
 );
 
     logic signed [7:0] a_sr [SIZE*SIZE-1:0];
     logic signed [7:0] b_sr [SIZE*SIZE-1:0];
     logic signed [7:0] a_skewed [SIZE-1:0];
     logic signed [7:0] b_skewed [SIZE-1:0];
+    logic [SIZE*8-1:0]       a_skewed_packed;
+    logic [SIZE*8-1:0]       b_skewed_packed;
 
     typedef enum logic [1:0] {
         IDLE    = 2'b00,
@@ -115,8 +118,8 @@ module array_controller #(
                     a_sr[row*SIZE + 0] <= 8'sd0;
                     b_sr[row*SIZE + 0] <= 8'sd0;
                 end else begin
-                    a_sr[row*SIZE + 0] <= a_flat[row*SIZE + int'(feed_col)];
-                    b_sr[row*SIZE + 0] <= b_flat[int'(feed_col)*SIZE + row];
+                    a_sr[row*SIZE + 0] <= a_flat[(row*SIZE + feed_col)*8 +: 8];
+                    b_sr[row*SIZE + 0] <= b_flat[(feed_col*SIZE + row)*8 +: 8];
                 end
                 
                 // Stages 1..SIZE-1: always shift (zero on clear)
@@ -132,8 +135,10 @@ module array_controller #(
     genvar gi;
     generate
         for (gi = 0; gi < SIZE; gi++) begin : tap
-            assign a_skewed[gi] = a_sr[gi*SIZE + gi];
-            assign b_skewed[gi] = b_sr[gi*SIZE + gi];
+            assign a_skewed[gi]             = a_sr[gi*SIZE + gi];
+            assign b_skewed[gi]             = b_sr[gi*SIZE + gi];
+            assign a_skewed_packed[gi*8+:8] = a_sr[gi*SIZE + gi];
+            assign b_skewed_packed[gi*8+:8] = b_sr[gi*SIZE + gi];
         end
     endgenerate
 
@@ -143,8 +148,8 @@ module array_controller #(
         .rst_n (rst_n),
         .en    (en_sr),
         .clear (clear_pe),
-        .a_in  (a_skewed),
-        .b_in  (b_skewed),
+        .a_in  (a_skewed_packed),
+        .b_in  (b_skewed_packed),
         .acc   (acc)
     );
 

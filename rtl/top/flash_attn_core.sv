@@ -228,14 +228,14 @@ module flash_attn_core #(
     end
 
     always_ff @(posedge clk) begin
-        if (q_we_d)  Q_reg[reg_wr_addr] <= signed'(q_rdata);
+        if (q_we_d)  Q_reg[reg_wr_addr] <= $signed(q_rdata);
         if (kv_we_d) begin
-            K_reg[reg_wr_addr] <= signed'(k_rdata);
-            V_reg[reg_wr_addr] <= signed'(v_rdata);
+            K_reg[reg_wr_addr] <= $signed(k_rdata);
+            V_reg[reg_wr_addr] <= $signed(v_rdata);
         end
         if (pf_we_d) begin
-            K_reg_nxt[pf_cnt_d] <= signed'(k_rdata);
-            V_reg_nxt[pf_cnt_d] <= signed'(v_rdata);
+            K_reg_nxt[pf_cnt_d] <= $signed(k_rdata);
+            V_reg_nxt[pf_cnt_d] <= $signed(v_rdata);
         end
         if (kv_swap_banks && kv_prefetched) begin
             for (int pi = 0; pi < KV_FLAT; pi++) begin
@@ -304,38 +304,119 @@ module flash_attn_core #(
     for (genvar gi = 0; gi < FLAT; gi++) begin : gen_mux
         assign array_a_in[gi] = is_pv_phase
             ? p_matrix_int8[gi]
-            : Q_reg[(gi/SIZE)*HEAD_DIM + int'(k_chunk)*TILE_SIZE + (gi%SIZE)];
+            : Q_reg[(gi/SIZE)*HEAD_DIM + k_chunk*TILE_SIZE + (gi%SIZE)];
         assign array_b_in[gi] = is_pv_phase
-            ? V_reg[(gi/SIZE)*HEAD_DIM + int'(k_chunk)*TILE_SIZE + (gi%SIZE)]
-            : K_reg[(gi%SIZE)*HEAD_DIM + int'(k_chunk)*TILE_SIZE + (gi/SIZE)];
+            ? V_reg[(gi/SIZE)*HEAD_DIM + k_chunk*TILE_SIZE + (gi%SIZE)]
+            : K_reg[(gi%SIZE)*HEAD_DIM + k_chunk*TILE_SIZE + (gi/SIZE)];
+    end
+
+    // Packed adapters for Yosys-compatible port connections
+    logic [FLAT*8-1:0]  array_a_in_packed;
+    logic [FLAT*8-1:0]  array_b_in_packed;
+    logic [FLAT*32-1:0] array_acc_packed;
+    for (genvar pk = 0; pk < FLAT; pk++) begin : gen_pack_io
+        assign array_a_in_packed[pk*8+:8] = array_a_in[pk];
+        assign array_b_in_packed[pk*8+:8] = array_b_in[pk];
+        assign array_acc[pk]               = $signed(array_acc_packed[pk*32+:32]);
     end
 
     array_controller #(.SIZE(SIZE)) u_array_ctrl (
         .clk(clk), .rst_n(rst_n),
-        .a_flat(array_a_in), .b_flat(array_b_in),
+        .a_flat(array_a_in_packed), .b_flat(array_b_in_packed),
         .start(array_start), .no_clear(array_no_clear),
         .busy(array_busy), .done(array_done),
-        .acc(array_acc)
+        .acc(array_acc_packed)
     );
 
     // =========================================================
-    // 5. Dequantizers (last QK chunk only)
+    // 5. Dequantizers — TIME-MULTIPLEXED (16 units x 16 passes)
+    //    Folds the former 256 parallel dequant units down to 16 (one
+    //    score-matrix row per pass) to remove the 256-way scale/valid
+    //    broadcast fanout and ~16x the area. Mirrors the PV-phase streaming
+    //    style (index array_acc by a counter). Dequant pipeline latency = 2,
+    //    so the sequence is 16 feed cycles + 2 drain.
+    //    Functionally identical: dequant_out[gi] = dequant(array_acc[gi]).
     // =========================================================
-    logic signed [15:0] dequant_out   [FLAT-1:0];
-    logic [FLAT-1:0]    dequant_valid;
+    (* mem2reg *) logic signed [15:0] dequant_out [FLAT-1:0];
+    logic dequant_done;                 // 1-cycle pulse: all 256 dequant_out ready
 
     logic is_last_qk_chunk;
     assign is_last_qk_chunk = (k_chunk == CHUNK_W'(NUM_CHUNKS - 1));
 
-    for (genvar gi = 0; gi < FLAT; gi++) begin : gen_dequant
+    // Registered scale broadcast (now drives only the 16 folded units)
+    logic signed [15:0] scale_q_bcast;
+    logic signed [15:0] scale_k_bcast;
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            scale_q_bcast <= 16'sh0100;
+            scale_k_bcast <= 16'sh0100;
+        end else begin
+            scale_q_bcast <= scale_q;
+            scale_k_bcast <= scale_k;
+        end
+    end
+
+    // ── Pass sequencer: feed one row (16 cols) per cycle, 16 rows ────────────
+    logic              deq_trigger;
+    assign deq_trigger = array_done && !is_pv_phase && is_last_qk_chunk;
+
+    logic              deq_feeding;                 // high during the 16 feed cycles
+    logic [LOG2_T-1:0] deq_pass;                    // 0..SIZE-1 : row being fed
+    logic              deq_fv_d1, deq_fv_d2;        // feeding delayed to match pipe (lat 2)
+    logic [LOG2_T-1:0] deq_pass_d1, deq_pass_d2;    // pass    delayed to match pipe (lat 2)
+    logic              deq_busy;
+    assign deq_busy = deq_feeding | deq_fv_d1 | deq_fv_d2;
+
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            deq_feeding  <= 1'b0;
+            deq_pass     <= '0;
+            deq_fv_d1    <= 1'b0;  deq_fv_d2   <= 1'b0;
+            deq_pass_d1  <= '0;    deq_pass_d2 <= '0;
+            dequant_done <= 1'b0;
+        end else begin
+            // align feed/pass with the 2-stage dequant pipeline
+            deq_fv_d1    <= deq_feeding;   deq_pass_d1 <= deq_pass;
+            deq_fv_d2    <= deq_fv_d1;     deq_pass_d2 <= deq_pass_d1;
+            dequant_done <= 1'b0;          // default: pulse low
+
+            if (deq_trigger && !deq_busy) begin
+                deq_feeding <= 1'b1;
+                deq_pass    <= '0;
+            end else if (deq_feeding) begin
+                if (deq_pass == LOG2_T'(SIZE-1)) deq_feeding <= 1'b0;
+                else                             deq_pass    <= deq_pass + 1'b1;
+            end
+
+            // last row's outputs land when deq_fv_d2 & pass_d2==SIZE-1; pulse the
+            // cycle after so every dequant_out entry is settled before softmax reads
+            if (deq_fv_d2 && (deq_pass_d2 == LOG2_T'(SIZE-1)))
+                dequant_done <= 1'b1;
+        end
+    end
+
+    // ── 16 time-multiplexed dequant units (module body unchanged) ────────────
+    logic signed [15:0] deq_unit_out [SIZE-1:0];
+    logic [SIZE-1:0]    deq_unit_vld;
+    for (genvar j = 0; j < SIZE; j++) begin : gen_dequant
         dequantizer #(.OUT_WIDTH(16), .FRAC_BITS(8)) u_deq (
             .clk(clk), .rst_n(rst_n),
-            .valid_in(array_done && !is_pv_phase && is_last_qk_chunk),
-            .data_in(array_acc[gi]),
-            .scale_q(scale_q), .scale_k(scale_k),
-            .valid_out(dequant_valid[gi]),
-            .data_out(dequant_out[gi])
+            .valid_in (deq_feeding),
+            .data_in  (array_acc[deq_pass*SIZE + j]),  // row=deq_pass, col=j
+            .scale_q  (scale_q_bcast), .scale_k(scale_k_bcast),
+            .valid_out(deq_unit_vld[j]),
+            .data_out (deq_unit_out[j])
         );
+    end
+
+    // ── Write the 16 unit outputs back into dequant_out[row*SIZE + col] ──────
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            for (int i = 0; i < FLAT; i++) dequant_out[i] <= '0;
+        end else if (deq_fv_d2) begin
+            for (int j = 0; j < SIZE; j++)
+                dequant_out[deq_pass_d2*SIZE + j] <= deq_unit_out[j];
+        end
     end
 
     // =========================================================
@@ -354,13 +435,13 @@ module flash_attn_core #(
     /* verilator lint_on UNUSEDSIGNAL */
 
     logic sfx_triggered;
+    logic tile_valid_pulse;
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)                    sfx_triggered <= 1'b0;
         else if (sfx_exp_valid[0])     sfx_triggered <= 1'b0;
-        else if (softmax_tile_valid)   sfx_triggered <= 1'b1;
+        else if (tile_valid_pulse)     sfx_triggered <= 1'b1;
     end
-    logic tile_valid_pulse;
-    assign tile_valid_pulse = softmax_tile_valid && !sfx_triggered;
+    assign tile_valid_pulse = softmax_tile_valid && dequant_done && !sfx_triggered;
 
     for (genvar r = 0; r < SIZE; r++) begin : gen_softmax
         logic [SIZE*16-1:0] row_scores;
@@ -370,7 +451,7 @@ module flash_attn_core #(
                                           ((tile_col == tile_row) && (c > r)));
             assign row_scores[c*16 +: 16] =
                 mask_elem ? 16'sh8000 : (dequant_out[r*SIZE + c] >>> SCALE_SHIFT);
-            assign p_matrix_int8[r*SIZE + c] = signed'(sfx_exp_flat[r][c*16 +: 8]);
+            assign p_matrix_int8[r*SIZE + c] = $signed(sfx_exp_flat[r][c*16 +: 8]);
         end
 
         online_softmax #(.DIM(SIZE)) u_softmax (
@@ -399,7 +480,7 @@ module flash_attn_core #(
     logic signed [47:0] pv_scaled_wide;
     /* verilator lint_on UNUSEDSIGNAL */
     logic signed [31:0] accum_data_in;
-    assign pv_scaled_wide = 48'(signed'(array_acc[sram_addr])) * 48'(signed'(scale_v));
+    assign pv_scaled_wide = $signed({{16{array_acc[sram_addr][31]}}, array_acc[sram_addr]}) * $signed({{32{scale_v[15]}}, scale_v});
     assign accum_data_in  = $signed(pv_scaled_wide[39:8]);
 
     logic done_latch;
@@ -447,7 +528,7 @@ module flash_attn_core #(
     assign _unused = &{
         fsm_q_we, fsm_kv_we, array_busy,
         dummy_v_off,
-        dequant_valid, softmax_valid_arr[SIZE-1:1],
+        deq_unit_vld, softmax_valid_arr[SIZE-1:1],
         sfx_exp_valid[SIZE-1:1],
         1'b0
     };

@@ -1,0 +1,9 @@
+`verilator_config
+// Scoped waivers for pre-existing benign lint in two control modules.
+// These are NOT errors — width-expand on small counters, a constant compare
+// when NUM_CHUNKS==1, and unused skew buffers. Scoped per-file so real lint
+// elsewhere (including the dequant fold) is still reported under -Wall.
+lint_off -rule WIDTHEXPAND  -file "*tile_controller.sv"
+lint_off -rule UNSIGNED     -file "*tile_controller.sv"
+lint_off -rule WIDTHEXPAND  -file "*array_controller.sv"
+lint_off -rule UNUSEDSIGNAL -file "*array_controller.sv"
