@@ -28,15 +28,15 @@ AXI4-Stream IN  (Q: N×d, K/V: N×d' — d'=d for MHA, d'=d/GQA_RATIO for GQA)
 │                                          │
 │  ┌───────────────────────────────────┐   │
 │  │        axi4_stream_slave          │   │
-│  │  routes Q/K/V bytes → per-head   │   │
-│  │  SRAMs; GQA: K/V broadcast to    │   │
+│  │  routes Q/K/V bytes → per-head    │   │
+│  │  SRAMs; GQA: K/V broadcast to     │   │
 │  │  grouped Q-head pairs             │   │
 │  └──────────────┬────────────────────┘   │
 │                 ↓  (4 cores, parallel)   │
 │  ┌────────────────────────────────────┐  │
 │  │       flash_attn_core × 4          │  │
 │  │                                    │  │
-│  │  Q/K/V SRAM  →  tile_controller   │  │
+│  │  Q/K/V SRAM  →  tile_controller    │  │ 
 │  │                      ↓             │  │
 │  │         ┌────────────────────┐     │  │
 │  │         │  16×16 systolic    │     │  │

@@ -321,6 +321,7 @@ module flash_attn_top #(
         .clk(clk), .rst_n(rst_n),
         .a_flat(array_a_in), .b_flat(array_b_in),
         .start(array_start), .no_clear(array_no_clear),
+        .a_unsigned(is_pv_phase),   // PV phase: a = softmax weight P, unsigned [0,255]
         .busy(array_busy), .done(array_done),
         .acc(array_acc)
     );

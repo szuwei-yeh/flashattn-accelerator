@@ -12,6 +12,7 @@ module systolic_array #(
     input  logic        rst_n,
     input  logic        en,
     input  logic        clear,
+    input  logic        a_unsigned, // 1 = a operands are unsigned [0,255] (PV phase)
     input  logic signed [7:0] a_in [SIZE-1:0],
     input  logic signed [7:0] b_in [SIZE-1:0],
     output logic signed [31:0] acc [SIZE*SIZE-1:0]
@@ -37,10 +38,11 @@ module systolic_array #(
         for (r = 0; r < SIZE; r++) begin : row
             for (c = 0; c < SIZE; c++) begin : col
                 pe u_pe (
-                    .clk   (clk),
-                    .rst_n (rst_n),
-                    .en    (en),
-                    .clear (clear),
+                    .clk        (clk),
+                    .rst_n      (rst_n),
+                    .en         (en),
+                    .clear      (clear),
+                    .a_unsigned (a_unsigned),
                     .a_in  (a_wire[r][c]),
                     .b_in  (b_wire[r][c]),
                     .a_out (a_wire[r][c+1]),

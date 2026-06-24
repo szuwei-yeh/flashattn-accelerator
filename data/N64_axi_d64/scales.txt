@@ -4,3 +4,5 @@ scale_v_q88 = 0x000A
 N           = 64
 d           = 64
 seed        = 42
+gqa_ratio   = 1
+num_kv_heads = 4

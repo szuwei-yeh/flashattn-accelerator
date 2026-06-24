@@ -20,6 +20,7 @@ module array_controller #(
 
     input  logic        start,
     input  logic        no_clear,   // skip CLEAR state (accumulate across chunks)
+    input  logic        a_unsigned, // 1 = a operands (P) are unsigned [0,255] (PV phase)
     output logic        busy,
     output logic        done,
 
@@ -139,10 +140,11 @@ module array_controller #(
 
     // ── Systolic array ───────────────────────────────────────
     systolic_array #(.SIZE(SIZE)) u_array (
-        .clk   (clk),
-        .rst_n (rst_n),
-        .en    (en_sr),
-        .clear (clear_pe),
+        .clk        (clk),
+        .rst_n      (rst_n),
+        .en         (en_sr),
+        .clear      (clear_pe),
+        .a_unsigned (a_unsigned),
         .a_in  (a_skewed),
         .b_in  (b_skewed),
         .acc   (acc)

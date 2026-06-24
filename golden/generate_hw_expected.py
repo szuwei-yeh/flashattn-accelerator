@@ -192,16 +192,16 @@ def flash_attn_q_tile(Q_tile, K, V, sq_q88, sk_q88, sv_q88, lut, tile_size,
                 wide = int(output_accum[r][c]) * int(rq88)   # signed × unsigned
                 output_accum[r][c] = int32(wide >> 8)
 
-        # ── 6. P_int8 from exp_flat: cap at 0xFF, lower byte as signed INT8 ──
-        P_int8 = np.zeros((tile_size, tile_size), dtype=np.int8)
+        # ── 6. P_uint8 from exp_flat: cap at 0xFF, UNSIGNED [0,255] ──────────
+        #   P is a softmax weight (always positive). The PE zero-extends it
+        #   (a_unsigned=1 in PV phase), so it must NOT be sign-wrapped here.
+        P_uint8 = np.zeros((tile_size, tile_size), dtype=np.int32)
         for r in range(tile_size):
             for c in range(tile_size):
-                ev = min(int(exp_flat[r][c]), 0xFF)   # cap as hardware does
-                lb = ev & 0xFF
-                P_int8[r, c] = np.int8(lb - 256 if lb >= 128 else lb)
+                P_uint8[r, c] = min(int(exp_flat[r][c]), 0xFF)   # cap as hardware does
 
         # ── 7-8. PV matmul + sv_q88 scale ────────────────────────────────────
-        PV        = P_int8.astype(np.int32) @ V_tile.astype(np.int32)     # [TS,d]
+        PV        = P_uint8.astype(np.int32) @ V_tile.astype(np.int32)     # [TS,d]
         PV_scaled = (PV.astype(np.int64) * sv_q88) >> 8
 
         # ── 9. Accumulate into output buffer ─────────────────────────────────
