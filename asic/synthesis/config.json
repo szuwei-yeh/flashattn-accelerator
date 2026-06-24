@@ -1,0 +1,31 @@
+{
+    "DESIGN_NAME": "flash_attn_core",
+    "VERILOG_FILES": [
+        "dir::../rtl/top/flash_attn_core.sv",
+        "dir::../rtl/ctrl/tile_controller.sv",
+        "dir::../rtl/ctrl/addr_gen.sv",
+        "dir::../rtl/systolic/pe.sv",
+        "dir::../rtl/systolic/systolic_array.sv",
+        "dir::../rtl/systolic/array_controller.sv",
+        "dir::../rtl/memory/sram_1r1w.sv",
+        "dir::../rtl/memory/q_tile_buffer.sv",
+        "dir::../rtl/memory/kv_tile_buffer.sv",
+        "dir::../rtl/memory/kv_cache.sv",
+        "dir::../rtl/softmax/exp_lut.sv",
+        "dir::../rtl/softmax/online_softmax.sv",
+        "dir::../rtl/quantization/quantizer.sv"
+    ],
+    "VERILOG_FILES_BLACKBOX": [
+        "dir::dequantizer_bb.v",
+        "dir::output_buffer_bb.v"
+    ],
+    "CLOCK_PORT": "clk",
+    "CLOCK_PERIOD": 20.0,
+    "PDK": "sky130A",
+    "STD_CELL_LIBRARY": "sky130_fd_sc_hd",
+    "SYNTH_DEFINES": "SYNTHESIS",
+    "RUN_LINTER": 0,
+    "DESIGN_IS_CORE": 1,
+    "FP_CORE_UTIL": 45,
+    "PL_TARGET_DENSITY": 0.4
+}
