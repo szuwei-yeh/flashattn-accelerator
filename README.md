@@ -94,7 +94,7 @@ without a transpose unit or extra cycles.
 While the systolic array processes the current KV tile, the next tile's K/V
 data is prefetched from SRAM into shadow registers (`K_reg_nxt/V_reg_nxt`).
 On tile completion, a single swap copies shadow → active in one cycle.
-This overlaps SRAM reads with compute, reducing idle cycles by ~20%.
+This overlaps SRAM reads with compute, reducing total cycles by up to 25% at large N (verified at N=256).
 
 **Dynamic SRAM Sizing**
 `SRAM_DEPTH = SEQ_LEN × HEAD_DIM` is computed from parameters, so the
@@ -152,8 +152,8 @@ Causal mode skips above-diagonal tiles (~50% fewer KV tiles at large N).
   backward-compatible with HEAD_DIM=16
 - **Causal masking** — decoder self-attention; above-diagonal tiles skipped
   entirely (no wasted cycles)
-- **KV prefetch pipeline** — double-buffer hides SRAM latency, ~20% cycle
-  reduction vs naive serial load
+- **KV prefetch pipeline** — double-buffer hides SRAM latency, up to 25% cycle
+  reduction vs naive serial load (at large N)
 - **Dynamic SRAM depth** — `SEQ_LEN × HEAD_DIM`; tested N=16–256, d=16/64
 - **4-head parallel attention** — four `flash_attn_core` instances share one
   AXI4-Stream interface
