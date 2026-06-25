@@ -15,12 +15,3 @@ __pycache__/
 
 # macOS
 .DS_Store
-
-# Claude Code local memory
-.claude/
-
-# Internal progress log
-PROGRESS.md
-progress2.0.md
-synthesisprogress.md
-INTERVIEW_QA.md
