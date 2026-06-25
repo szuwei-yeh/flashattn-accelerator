@@ -94,7 +94,15 @@ without a transpose unit or extra cycles.
 While the systolic array processes the current KV tile, the next tile's K/V
 data is prefetched from SRAM into shadow registers (`K_reg_nxt/V_reg_nxt`).
 On tile completion, a single swap copies shadow → active in one cycle.
-This overlaps SRAM reads with compute, reducing total cycles by up to 25% at large N (verified at N=256).
+This overlaps SRAM reads with compute. Measured cycle reduction vs. a
+serial-load baseline (both bit-exact, d=16) **grows with N** as load latency
+amortizes:
+
+| N | Prefetch | Serial | Reduction |
+|-----|----------|--------|-----------|
+| 64  | 13,585   | 16,669 | 18.5% |
+| 128 | 48,161   | 62,553 | 23.0% |
+| 256 | 180,289  | 241,969| **25.5%** |
 
 **Dynamic SRAM Sizing**
 `SRAM_DEPTH = SEQ_LEN × HEAD_DIM` is computed from parameters, so the
@@ -152,8 +160,8 @@ Causal mode skips above-diagonal tiles (~50% fewer KV tiles at large N).
   backward-compatible with HEAD_DIM=16
 - **Causal masking** — decoder self-attention; above-diagonal tiles skipped
   entirely (no wasted cycles)
-- **KV prefetch pipeline** — double-buffer hides SRAM latency, up to 25% cycle
-  reduction vs naive serial load (at large N)
+- **KV prefetch pipeline** — double-buffer hides SRAM latency; measured cycle
+  reduction scales 18→25% across N=64→256 (d=16) vs serial load
 - **Dynamic SRAM depth** — `SEQ_LEN × HEAD_DIM`; tested N=16–256, d=16/64
 - **4-head parallel attention** — four `flash_attn_core` instances share one
   AXI4-Stream interface
@@ -225,21 +233,24 @@ KV-decode, and d=64 inner-dimension tiling.
 
 | Metric | Value |
 |--------|-------|
-| Tool | Yosys 0.38 + ABC + OpenSTA 2.5.0 |
+| Tool | Yosys 0.38 + ABC + OpenSTA |
 | Clock target | 20 ns (50 MHz) |
-| f_max (post-synth) | ~77 MHz |
-| Critical path | 12.945 ns (softmax index path) |
-| Setup slack (worst) | +6.94 ns (MET) |
-| Hold slack (worst) | +0.11 ns (MET) |
-| Standard cells | ~1,036,561 |
-| Core area (logic only) | ~11.25 mm² |
+| f_max (post-synth, est.) | ~78 MHz |
+| Critical path | 12.73 ns (softmax index path) |
+| Setup slack (worst) | +7.16 ns (MET) |
+| Hold slack (worst) | +0.35 ns (MET) |
+| TNS / WNS | 0.00 / 0.00 |
+| Standard cells | ~343,900 |
+| Logic core area | ~3.65 mm² |
 
-`dequantizer` (×256) and `output_buffer` are blackboxed; their area is not
-included. Post-P&R was not attempted: `dequantizer` and `output_buffer`
-require LEF macros from a memory compiler (e.g. OpenRAM) for
-floorplan/placement.
+SRAM (`sram_1r1w`), `dequantizer` (×16, time-multiplexed) and `output_buffer`
+are modeled as memory macros (blackboxed); their area is **not** included in
+the figure above. These are the numbers a real flow would replace with
+hard macros from a memory compiler (e.g. OpenRAM).
 
-See [`synthesisprogress.md`](synthesisprogress.md) for the full flow log.
+This is **post-synthesis STA with an ideal clock (pre-P&R)**. Floorplan / P&R
+were not run because the blackboxed macros lack LEF — `~78 MHz` is an estimate
+from the critical path, not a routed/signed-off frequency.
 
 ---
 
