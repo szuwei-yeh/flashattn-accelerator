@@ -131,10 +131,15 @@ static Res run_once(int N, int D, int latency,
 
 int main(int argc, char** argv) {
     int N = 64, D = 16; std::string data = "../../data/N64";
+    // Non-prefetch banked top's core_busy for this shape — the reference the KV
+    // double buffer must beat. Default 11930 = dma_banked_top_N64 (N=64,d=16);
+    // pass --core_busy_ref for other shapes (e.g. 45590 for N=64,d=64).
+    uint32_t core_busy_ref = 11930;
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--N") && i + 1 < argc) N = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--D") && i + 1 < argc) D = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--data") && i + 1 < argc) data = argv[++i];
+        else if (!strcmp(argv[i], "--core_busy_ref") && i + 1 < argc) core_busy_ref = (uint32_t)strtoul(argv[++i], nullptr, 10);
     }
     const int MAT = N * D;
 
@@ -159,10 +164,11 @@ int main(int argc, char** argv) {
     printf("  rd_lat  result  tb_cyc  perf_total  dma_busy  core_busy  first_wait  dma_bytes  kv_tiles\n");
     printf("  ------  ------  ------  ----------  --------  ---------  ----------  ---------  --------\n");
 
-    // Non-prefetch banked top (dma_banked_top_N64) reference: core_busy = 11930 at
-    // every latency.  The double buffer must beat that; and it degrades gracefully
-    // (core_busy grows only slightly with latency — see note below).
-    const uint32_t CORE_BUSY_NOPREFETCH = 11930;
+    // Non-prefetch banked top reference core_busy (constant across latency).  The
+    // double buffer must beat that; and it degrades gracefully (core_busy grows
+    // only slightly with latency — see note below).  Shape-dependent, so it comes
+    // from --core_busy_ref (default 11930 = dma_banked_top_N64, N=64 d=16).
+    const uint32_t CORE_BUSY_NOPREFETCH = core_busy_ref;
 
     bool all_pass = true;
     bool invariants_ok = true;

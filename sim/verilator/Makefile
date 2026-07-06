@@ -458,6 +458,21 @@ dma_banked_top_N64: ../../data/N64/expected.hex
 	    tb_dma_banked.cpp -o sim_dma_banked_top_N64
 	./obj_dma_banked_top_N64/sim_dma_banked_top_N64 --N 64 --D 16 --data ../../data/N64
 
+# HEAD_DIM=64 variant: reuses the same harness / RTL / tb_dma_banked.cpp; only
+# -GHEAD_DIM and the run args change. Golden = data/N64_d64 (reused).
+dma_banked_top_N64_d64: ../../data/N64_d64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_banked_harness \
+	    --Mdir obj_dma_banked_top_N64_d64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    $(RTL_CORE_BANKED_SRCS) \
+	    ../../rtl/top/flash_attn_top_dma_banked.sv \
+	    tb_dma_banked_harness.sv \
+	    tb_dma_banked.cpp -o sim_dma_banked_top_N64_d64
+	./obj_dma_banked_top_N64_d64/sim_dma_banked_top_N64_d64 --N 64 --D 64 --data ../../data/N64_d64
+
 # ── Prefetch variant: vector DMA → banked core WITH KV double-buffering ──────
 dma_banked_prefetch_top_N64: ../../data/N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
@@ -471,6 +486,22 @@ dma_banked_prefetch_top_N64: ../../data/N64/expected.hex
 	    tb_dma_banked_prefetch_harness.sv \
 	    tb_dma_banked_prefetch.cpp -o sim_dma_banked_prefetch_top_N64
 	./obj_dma_banked_prefetch_top_N64/sim_dma_banked_prefetch_top_N64 --N 64 --D 16 --data ../../data/N64
+
+# HEAD_DIM=64 prefetch variant: reuses the same harness / RTL / tb; only
+# -GHEAD_DIM, run args, and --core_busy_ref change. The reference (45590) is the
+# non-prefetch dma_banked_top_N64_d64 core_busy the double buffer must beat.
+dma_banked_prefetch_top_N64_d64: ../../data/N64_d64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_banked_prefetch_harness \
+	    --Mdir obj_dma_banked_prefetch_top_N64_d64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
+	    ../../rtl/top/flash_attn_top_dma_banked_prefetch.sv \
+	    tb_dma_banked_prefetch_harness.sv \
+	    tb_dma_banked_prefetch.cpp -o sim_dma_banked_prefetch_top_N64_d64
+	./obj_dma_banked_prefetch_top_N64_d64/sim_dma_banked_prefetch_top_N64_d64 --N 64 --D 64 --data ../../data/N64_d64 --core_busy_ref 45590
 
 # ── Stage 3B-1: banked tile loader unit test (d=16 and d=64) ─────────────────
 tb_banked_tile_loader:
@@ -624,9 +655,10 @@ regression: tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
             tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
             axi_all week6_all tb_dma_unit dma_top_N64 \
             tb_banked_scratchpad dma_bench dma_vec_bench tb_banked_tile_loader \
-            core_banked_N64 core_banked_N64_d64 dma_banked_top_N64 \
+            core_banked_N64 core_banked_N64_d64 \
+            dma_banked_top_N64 dma_banked_top_N64_d64 \
             core_banked_prefetch_N64 core_banked_prefetch_N64_d64 \
-            dma_banked_prefetch_top_N64
+            dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64
 	@echo ""
 	@echo "=== Full regression PASS ==="
 
@@ -707,4 +739,6 @@ clean:
 	        obj_kv_cache obj_kv_decode \
 	        obj_dma_unit obj_dma_top_N64 obj_banked_scratchpad \
 	        obj_dma_bench obj_dma_vec_bench obj_btl_d16 obj_btl_d64 \
-	        obj_core_banked_N64 obj_core_banked_N64_d64 obj_dma_banked_top_N64
+	        obj_core_banked_N64 obj_core_banked_N64_d64 \
+	        obj_dma_banked_top_N64 obj_dma_banked_top_N64_d64 \
+	        obj_dma_banked_prefetch_top_N64_d64

@@ -13,11 +13,9 @@ __pycache__/
 *.pyo
 .pytest_cache/
 
-# Internal progress log
-PROGRESS.md
-progress2.0.md
-synthesisprogress.md
-MEMORY_HIERARCHY_ENGINEERING_NOTES.local.md
+# Local Markdown notes (only the root README is public)
+*.md
+!/README.md
 
 # Synopsys Design Compiler generated artifacts (keep scaffold, drop DC output)
 syn/output/*

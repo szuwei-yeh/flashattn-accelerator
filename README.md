@@ -121,7 +121,10 @@ regressions are byte-for-byte unchanged.
 | `make tb_banked_tile_loader`  | 3B-1  | stripe→tile-register layout (d=16 and d=64) |
 | `make core_banked_N64`        | 3B-2  | banked core end-to-end (TB preload), d=16 |
 | `make core_banked_N64_d64`    | 3B-2  | banked core end-to-end (TB preload), d=64 |
-| `make dma_banked_top_N64`     | 3B-3  | vector DMA + banked core, end-to-end |
+| `make dma_banked_top_N64`     | 3B-3  | vector DMA + banked core, end-to-end, d=16 |
+| `make dma_banked_top_N64_d64` | 3B-3  | vector DMA + banked core, end-to-end, d=64 |
+| `make dma_banked_prefetch_top_N64`     | 3B-3  | + KV double-buffer prefetch, d=16 |
+| `make dma_banked_prefetch_top_N64_d64` | 3B-3  | + KV double-buffer prefetch, d=64 |
 | `make regression`             | all   | every target above + the original suite |
 
 ### Results
@@ -251,19 +254,22 @@ prefetched and takes the normal residency-stalled `S_LOAD_KV` path.
 | `core_banked_N64` (d=16, TB preload)     | 11929 | 11701 | −228 |
 | `core_banked_N64_d64` (d=64, TB preload) | 45589 | 44785 | −804 |
 
-DMA-fed top, `rd_latency` sweep (all rows bit-exact):
+DMA-fed top, `rd_latency` sweep (all rows bit-exact), `tb_cyc` end-to-end:
 
-| rd_lat | `dma_banked_top_N64` | `dma_banked_prefetch_top_N64` |
-|---|---|---|
-| 0   | 12140 | 11912 |
-| 20  | 12380 | 12171 |
-| 100 | 13340 | 13150 |
+| rd_lat | `dma_banked_top_N64` | `dma_banked_prefetch_top_N64` | `dma_banked_top_N64_d64` | `dma_banked_prefetch_top_N64_d64` |
+|---|---|---|---|---|
+| 0   | 12140 | 11912 | 46412 | 45608 |
+| 20  | 12380 | 12171 | 47372 | 46635 |
+| 100 | 13340 | 13150 | 51212 | 50609 |
 
-The prefetch variant is faster at every latency. **The speedup is modest (~2% at
-d=16)** for the same Amdahl reason as everywhere else on this path: the KV load is
-only ~3% of an inner iteration; the `output_buffer` rescale/accumulate walks
-(256 cycles each, per tile) dominate and are unchanged. d=64 saves more in absolute
-terms (−804) because each d=64 KV load is 64 stripes instead of 16.
+The prefetch variant is faster at every latency and shape. **The speedup is modest
+(~2% at d=16, ~1.7% at d=64)** for the same Amdahl reason as everywhere else on this
+path: the KV load is only a few percent of an inner iteration; the `output_buffer`
+rescale/accumulate walks (256 cycles each, per tile) dominate and are unchanged. At
+d=64 the non-prefetch top's `perf_core_busy` is a flat 45590 and the prefetch
+variant brings it to 44786 (rd_lat 0) — the same −804 core-busy saving seen with TB
+preload, now confirmed on the DMA path, because each d=64 KV load is 64 stripes
+instead of 16.
 
 **`core_busy` is not strictly latency-constant here (and that's expected).** The
 non-prefetch top's `perf_core_busy_cycles` is a flat 11930 across latencies; the
@@ -277,8 +283,12 @@ every latency. New targets: `core_banked_prefetch_N64`,
 `core_banked_prefetch_N64_d64`, `dma_banked_prefetch_top_N64` (all in `regression`).
 
 ### Limitations (honest)
-- The banked **DMA top is verified for N=64, d=16 only**. `core_banked_N64_d64`
-  passes, but `dma_banked_top_N64_d64` is **not implemented yet**.
+- The banked **DMA top is verified for N=64 at d=16 and d=64** — both the
+  non-prefetch (`dma_banked_top_N64`, `dma_banked_top_N64_d64`) and the prefetch
+  variant (`dma_banked_prefetch_top_N64`, `dma_banked_prefetch_top_N64_d64`), each
+  bit-exact vs golden across the `rd_latency ∈ {0,20,100}` sweep. Only these two
+  shapes are proven; other N (128/256) and other d are **not** claimed for the
+  banked DMA path.
 - `axi_mem_model.sv` is **simulation-only** — a behavioral AXI slave with a single
   programmable latency, not a real DDR/HBM controller.
 - **No output write-back DMA** — results are still drained through a read port,
