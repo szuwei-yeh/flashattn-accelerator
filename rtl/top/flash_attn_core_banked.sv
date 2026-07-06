@@ -1,69 +1,64 @@
 // ============================================================
-//  flash_attn_core.sv — FlashAttention Single-Head Core (v5)
+//  flash_attn_core_banked.sv — FlashAttention single-head core, BANKED variant
 //
-//  v5 changes (HEAD_DIM=64 inner-dimension tiling):
-//  Same structural changes as flash_attn_top.sv v5:
-//  - KV_FLAT = TILE_SIZE * HEAD_DIM; NUM_CHUNKS inner-dim passes.
-//  - K stored row-major; K^T extracted at read time via data-slicing mux.
-//  - array_no_clear, short_cnt_mode, k_chunk, pv_done from tile_controller.
-//  - is_pv_phase cleared via pv_done (all PV chunks done).
-//  - Prefetch counter widened to KV_FLAT elements.
-//  - Backward compatible: HEAD_DIM=16 (NUM_CHUNKS=1) identical to v4.
+//  Stage 3B-2. Identical compute datapath to flash_attn_core.sv, but the tile
+//  load path is replaced:
+//    - Q/K/V live in three banked_scratchpads (preloaded via the scalar write
+//      ports, e.g. by the testbench; later by a vector DMA).
+//    - A banked_tile_loader fills Q_reg / K_reg+V_reg at NUM_BANKS bytes/cycle
+//      (one 16-byte stripe per cycle) instead of byte-serial SRAM reads.
+//    - tile_controller_banked drives the loader (ld_start/ld_mode/ld_done) in
+//      S_LOAD_Q / S_LOAD_KV; no byte-serial prefetch double-buffer here.
+//  Everything from the data-slice mux onward (systolic array, dequant, online
+//  softmax, output_buffer) is copied verbatim from flash_attn_core.sv.
+//
+//  Prefill-only (no kv_cache). K stays row-major in K_reg; K^T is still produced
+//  by the slicing mux, unchanged.
 // ============================================================
 `timescale 1ns/1ps
 
-module flash_attn_core #(
+module flash_attn_core_banked #(
     parameter int TILE_SIZE  = 16,
     parameter int HEAD_DIM   = 16,
     parameter int SEQ_LEN    = 16,
-    parameter int SRAM_DEPTH = 4096   // must be >= SEQ_LEN * HEAD_DIM
+    parameter int SRAM_DEPTH = 4096
 )(
     input  logic        clk,
     input  logic        rst_n,
     input  logic        start,
     output logic        done,
 
-    input  logic        mode,       // 0 = prefill, 1 = decode
-    input  logic [15:0] kv_len,     // runtime KV length for decode mode
+    input  logic        mode,       // 0 = prefill (only mode supported here)
+    input  logic [15:0] kv_len,
 
     input  logic signed [15:0] scale_q,
     input  logic signed [15:0] scale_k,
     input  logic signed [15:0] scale_v,
 
-    // Q SRAM write port
+    // Scalar scratchpad write ports (preload path; e.g. testbench)
     input  logic        q_we,
     input  logic [11:0] q_waddr,
     input  logic [7:0]  q_wdata,
-
-    // K SRAM write port
     input  logic        k_we,
     input  logic [11:0] k_waddr,
     input  logic [7:0]  k_wdata,
-
-    // V SRAM write port
     input  logic        v_we,
     input  logic [11:0] v_waddr,
     input  logic [7:0]  v_wdata,
 
-    // Output buffer external read port (driven by AXI master after done)
+    // Vector (16-byte stripe) scratchpad write port (DMA fill path).
+    // dma_v_dst selects Q/K/V (0/1/2). Tie dma_v_we=0 to use only the scalar
+    // preload path (then behaviour is identical to the scalar-only build).
+    input  logic                       dma_v_we,
+    input  logic [1:0]                 dma_v_dst,
+    input  logic [11:0]                dma_v_addr,
+    input  logic [16*8-1:0]            dma_v_data,
+
     input  logic [11:0]          out_raddr,
     output logic signed [31:0]   out_rdata,
 
-    input  logic        causal,       // 1 = causal (decoder) masking enabled
-
-    // DMA streaming interlock — count of KV tiles resident in the scratchpad.
-    // Tie to 16'hFFFF when K/V is fully preloaded (no DMA streaming).
-    input  logic [15:0] kv_tiles_ready,
-
-    // KV cache interface
-    input  logic                    kc_write_en,
-    input  logic [7:0]              kc_write_ptr,
-    input  logic [HEAD_DIM*8-1:0]   kc_k_flat,
-    input  logic [HEAD_DIM*8-1:0]   kc_v_flat,
-    input  logic [7:0]              kc_read_addr,
-    output logic [HEAD_DIM*8-1:0]   kc_k_out,
-    output logic [HEAD_DIM*8-1:0]   kc_v_out,
-    output logic [8:0]              kc_cache_len
+    input  logic        causal,
+    input  logic [15:0] kv_tiles_ready
 );
 
     localparam int SIZE       = TILE_SIZE;
@@ -73,15 +68,17 @@ module flash_attn_core #(
     localparam int SRAM_ADDR_W = $clog2(SRAM_DEPTH);
     localparam int LOG2_T     = $clog2(TILE_SIZE);
     localparam int CHUNK_W    = (NUM_CHUNKS > 1) ? $clog2(NUM_CHUNKS) : 1;
-    localparam int PF_CNT_W   = $clog2(KV_FLAT);   // exact for power-of-2 KV_FLAT
-    localparam int SCALE_SHIFT = $clog2(HEAD_DIM) / 2; // 1/√d as right-shift
+    localparam int SCALE_SHIFT = $clog2(HEAD_DIM) / 2;
+    localparam int NUM_BANKS  = 16;
+    localparam int VEC_W      = NUM_BANKS * 8;
+    localparam int IDX_W      = $clog2(KV_FLAT);
 
     // =========================================================
-    // 1. Tile Controller + Addr Gen
+    // 1. Tile Controller (banked variant) + Addr Gen
     // =========================================================
     logic [15:0] tile_row, tile_col;
     logic        cnt_en, cnt_clr, cnt_done;
-    logic        kv_swap_banks, fsm_q_we, fsm_kv_we;
+    logic        ld_start, ld_mode, ld_done;
     logic        array_start, array_done, array_busy;
     logic        array_no_clear;
     logic        softmax_tile_start, softmax_tile_valid, softmax_tile_last;
@@ -92,27 +89,22 @@ module flash_attn_core #(
     logic        pv_done;
     logic [11:0] sram_addr_w12;
     /* verilator lint_off UNUSEDSIGNAL */
-    logic [SRAM_ADDR_W-1:0] sram_addr_wide;  // kept for documentation; upper bits unused for small d
+    logic [SRAM_ADDR_W-1:0] sram_addr_wide;
     /* verilator lint_on UNUSEDSIGNAL */
     logic [7:0]  sram_addr;
-
-    // KV prefetch interface
-    logic        kv_prefetch_en;
-    logic [15:0] kv_prefetch_col;
-    logic        kv_prefetch_rdy;
 
     /* verilator lint_off UNUSEDSIGNAL */
     logic [3:0] _dbg_state;
     /* verilator lint_on UNUSEDSIGNAL */
 
-    tile_controller #(
+    tile_controller_banked #(
         .TILE_SIZE(TILE_SIZE), .HEAD_DIM(HEAD_DIM), .SEQ_LEN(SEQ_LEN)
     ) u_fsm (
         .clk(clk), .rst_n(rst_n), .start(start), .done(done),
         .mode(mode), .kv_len(kv_len),
         .tile_row(tile_row), .tile_col(tile_col),
         .cnt_en(cnt_en), .cnt_clr(cnt_clr), .cnt_done(cnt_done),
-        .kv_swap_banks(kv_swap_banks), .q_we(fsm_q_we), .kv_we(fsm_kv_we),
+        .ld_start(ld_start), .ld_mode(ld_mode), .ld_done(ld_done),
         .array_start(array_start), .array_no_clear(array_no_clear),
         .array_done(array_done),
         .softmax_tile_start(softmax_tile_start),
@@ -126,9 +118,6 @@ module flash_attn_core #(
         .pv_done(pv_done),
         .causal(causal),
         .kv_tiles_ready(kv_tiles_ready),
-        .kv_prefetch_en(kv_prefetch_en),
-        .kv_prefetch_col(kv_prefetch_col),
-        .kv_prefetch_rdy(kv_prefetch_rdy),
         .dbg_state(_dbg_state)
     );
 
@@ -151,145 +140,97 @@ module flash_attn_core #(
     assign sram_addr_wide = SRAM_ADDR_W'(sram_addr_w12);
     assign sram_addr      = sram_addr_w12[7:0];
 
-    // Global SRAM read addresses
-    logic [SRAM_ADDR_W-1:0] q_global_rd_addr;
-    logic [SRAM_ADDR_W-1:0] kv_global_rd_addr;
-
-    // Output address: includes k_chunk offset for HEAD_DIM>TILE_SIZE
+    // Output address (output_buffer), identical to flash_attn_core
     logic [SRAM_ADDR_W-1:0] out_global_addr;
-    assign q_global_rd_addr = q_global_offset[SRAM_ADDR_W-1:0] + SRAM_ADDR_W'(sram_addr_w12);
     assign out_global_addr  = q_global_offset[SRAM_ADDR_W-1:0]
                             + SRAM_ADDR_W'(sram_addr[2*LOG2_T-1:LOG2_T]) * SRAM_ADDR_W'(HEAD_DIM)
                             + SRAM_ADDR_W'(k_chunk) * SRAM_ADDR_W'(TILE_SIZE)
                             + SRAM_ADDR_W'(sram_addr[LOG2_T-1:0]);
 
-    // ── Prefetch address ──────────────────────────────────────────────
-    logic [15:0]       pf_tile_col;
-    logic [PF_CNT_W-1:0] pf_cnt;
-    logic              pf_running;
-    logic              pf_we_d;
-    logic [PF_CNT_W-1:0] pf_cnt_d;
-    logic              kv_prefetch_done;
-    logic              kv_prefetched;
+    // =========================================================
+    // 2. Banked scratchpads (Q, K, V) + tile loader
+    // =========================================================
+    localparam logic MODE_Q = 1'b0;
 
+    logic                 q_r_en, k_r_en, v_r_en;
+    logic [11:0]          q_r_addr, k_r_addr, v_r_addr;
+    logic [VEC_W-1:0]     q_r_vdata, k_r_vdata, v_r_vdata;
+
+    logic [11:0]          ld_base_addr;
+    assign ld_base_addr = (ld_mode == MODE_Q) ? q_global_offset[11:0]
+                                              : k_global_offset[11:0];
+
+    logic             ld_wr_en;
+    logic [IDX_W-1:0] ld_wr_index;
+    logic [VEC_W-1:0] q_stripe, k_stripe, v_stripe;
     /* verilator lint_off UNUSEDSIGNAL */
-    logic [31:0] pf_k_global_offset;
+    logic             ld_busy;
     /* verilator lint_on UNUSEDSIGNAL */
-    assign pf_k_global_offset = 32'(pf_tile_col) * 32'(HEAD_DIM);
 
-    logic [SRAM_ADDR_W-1:0] pf_kv_global_rd_addr;
-    assign pf_kv_global_rd_addr = pf_k_global_offset[SRAM_ADDR_W-1:0]
-                                 + SRAM_ADDR_W'(pf_cnt);
-
-    logic [SRAM_ADDR_W-1:0] kv_global_rd_addr_base;
-    assign kv_global_rd_addr_base = k_global_offset[SRAM_ADDR_W-1:0] + SRAM_ADDR_W'(sram_addr_w12);
-    assign kv_global_rd_addr = pf_running ? pf_kv_global_rd_addr : kv_global_rd_addr_base;
-
-    // =========================================================
-    // 2. Byte-addressable flat SRAMs
-    // =========================================================
-    logic [7:0] q_rdata, k_rdata, v_rdata;
-
-    sram_1r1w #(.DATA_WIDTH(8), .DEPTH(SRAM_DEPTH)) u_q_buf (
-        .clk(clk),
-        .we(q_we),  .waddr(q_waddr), .wdata(q_wdata),
-        .re(1'b1),  .raddr(q_global_rd_addr[11:0]), .rdata(q_rdata)
+    banked_tile_loader #(
+        .TILE_SIZE(TILE_SIZE), .HEAD_DIM(HEAD_DIM),
+        .NUM_BANKS(NUM_BANKS), .SP_ADDR_W(12)
+    ) u_loader (
+        .clk(clk), .rst_n(rst_n),
+        .start(ld_start), .mode(ld_mode), .base_addr(ld_base_addr),
+        .q_r_en(q_r_en), .q_r_addr(q_r_addr), .q_r_vdata(q_r_vdata),
+        .k_r_en(k_r_en), .k_r_addr(k_r_addr), .k_r_vdata(k_r_vdata),
+        .v_r_en(v_r_en), .v_r_addr(v_r_addr), .v_r_vdata(v_r_vdata),
+        .wr_en(ld_wr_en), .wr_index(ld_wr_index),
+        .q_stripe(q_stripe), .k_stripe(k_stripe), .v_stripe(v_stripe),
+        .busy(ld_busy), .done(ld_done)
     );
 
-    sram_1r1w #(.DATA_WIDTH(8), .DEPTH(SRAM_DEPTH)) u_k_buf (
-        .clk(clk),
-        .we(k_we),  .waddr(k_waddr), .wdata(k_wdata),
-        .re(1'b1),  .raddr(kv_global_rd_addr[11:0]), .rdata(k_rdata)
-    );
+    // Per-scratchpad vector write enable (DMA fill, dst-routed)
+    logic q_v_we, k_v_we, v_v_we;
+    assign q_v_we = dma_v_we & (dma_v_dst == 2'd0);
+    assign k_v_we = dma_v_we & (dma_v_dst == 2'd1);
+    assign v_v_we = dma_v_we & (dma_v_dst == 2'd2);
 
-    sram_1r1w #(.DATA_WIDTH(8), .DEPTH(SRAM_DEPTH)) u_v_buf (
+    /* verilator lint_off PINCONNECTEMPTY */
+    banked_scratchpad #(.NUM_BANKS(NUM_BANKS), .DATA_WIDTH(8), .DEPTH(SRAM_DEPTH)) u_q_sp (
         .clk(clk),
-        .we(v_we),  .waddr(v_waddr), .wdata(v_wdata),
-        .re(1'b1),  .raddr(kv_global_rd_addr[11:0]), .rdata(v_rdata)
+        .w_en(q_we | q_v_we), .w_vec(q_v_we),
+        .w_addr(q_v_we ? dma_v_addr : q_waddr), .w_sdata(q_wdata), .w_vdata(dma_v_data),
+        .r_en(q_r_en), .r_vec(1'b1), .r_addr(q_r_addr), .r_sdata(), .r_vdata(q_r_vdata)
     );
+    banked_scratchpad #(.NUM_BANKS(NUM_BANKS), .DATA_WIDTH(8), .DEPTH(SRAM_DEPTH)) u_k_sp (
+        .clk(clk),
+        .w_en(k_we | k_v_we), .w_vec(k_v_we),
+        .w_addr(k_v_we ? dma_v_addr : k_waddr), .w_sdata(k_wdata), .w_vdata(dma_v_data),
+        .r_en(k_r_en), .r_vec(1'b1), .r_addr(k_r_addr), .r_sdata(), .r_vdata(k_r_vdata)
+    );
+    banked_scratchpad #(.NUM_BANKS(NUM_BANKS), .DATA_WIDTH(8), .DEPTH(SRAM_DEPTH)) u_v_sp (
+        .clk(clk),
+        .w_en(v_we | v_v_we), .w_vec(v_v_we),
+        .w_addr(v_v_we ? dma_v_addr : v_waddr), .w_sdata(v_wdata), .w_vdata(dma_v_data),
+        .r_en(v_r_en), .r_vec(1'b1), .r_addr(v_r_addr), .r_sdata(), .r_vdata(v_r_vdata)
+    );
+    /* verilator lint_on PINCONNECTEMPTY */
 
     // =========================================================
-    // 3. Tile Registers (KV_FLAT elements; K stored row-major)
+    // 3. Tile Registers (filled by the stripe loader, 16 elems/cycle)
     // =========================================================
-    logic signed [7:0] Q_reg     [KV_FLAT-1:0];
-    logic signed [7:0] K_reg     [KV_FLAT-1:0];
-    logic signed [7:0] V_reg     [KV_FLAT-1:0];
-    logic signed [7:0] K_reg_nxt [KV_FLAT-1:0];
-    logic signed [7:0] V_reg_nxt [KV_FLAT-1:0];
-
-    logic                q_we_d, kv_we_d;
-    logic [PF_CNT_W-1:0] reg_wr_addr;   // delayed sram address, KV_FLAT-range
-
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            reg_wr_addr <= '0;
-            q_we_d      <= 1'b0;
-            kv_we_d     <= 1'b0;
-        end else begin
-            reg_wr_addr <= PF_CNT_W'(sram_addr_w12);
-            q_we_d      <= fsm_q_we;
-            kv_we_d     <= fsm_kv_we;
-        end
-    end
+    logic signed [7:0] Q_reg [KV_FLAT-1:0];
+    logic signed [7:0] K_reg [KV_FLAT-1:0];
+    logic signed [7:0] V_reg [KV_FLAT-1:0];
 
     always_ff @(posedge clk) begin
-        if (q_we_d)  Q_reg[reg_wr_addr] <= signed'(q_rdata);
-        if (kv_we_d) begin
-            K_reg[reg_wr_addr] <= signed'(k_rdata);
-            V_reg[reg_wr_addr] <= signed'(v_rdata);
-        end
-        if (pf_we_d) begin
-            K_reg_nxt[pf_cnt_d] <= signed'(k_rdata);
-            V_reg_nxt[pf_cnt_d] <= signed'(v_rdata);
-        end
-        if (kv_swap_banks && kv_prefetched) begin
-            for (int pi = 0; pi < KV_FLAT; pi++) begin
-                K_reg[pi] <= K_reg_nxt[pi];
-                V_reg[pi] <= V_reg_nxt[pi];
+        if (ld_wr_en) begin
+            if (ld_mode == MODE_Q) begin
+                for (int i = 0; i < NUM_BANKS; i++)
+                    Q_reg[int'(ld_wr_index) + i] <= signed'(q_stripe[i*8 +: 8]);
+            end else begin
+                for (int i = 0; i < NUM_BANKS; i++) begin
+                    K_reg[int'(ld_wr_index) + i] <= signed'(k_stripe[i*8 +: 8]);
+                    V_reg[int'(ld_wr_index) + i] <= signed'(v_stripe[i*8 +: 8]);
+                end
             end
         end
     end
 
-    // ── Prefetch counter ──────────────────────────────────────────
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            pf_tile_col <= '0;
-            pf_running  <= 1'b0;
-            pf_cnt      <= '0;
-        end else begin
-            if (kv_prefetch_en) begin
-                pf_tile_col <= kv_prefetch_col;
-                pf_running  <= 1'b1;
-                pf_cnt      <= '0;
-            end else if (pf_running) begin
-                if (pf_cnt < PF_CNT_W'(KV_FLAT - 1))
-                    pf_cnt <= pf_cnt + 1'b1;
-                else
-                    pf_running <= 1'b0;
-            end
-        end
-    end
-
-    always_ff @(posedge clk) begin
-        pf_we_d  <= pf_running;
-        pf_cnt_d <= pf_cnt;
-    end
-
-    assign kv_prefetch_done = pf_we_d && (pf_cnt_d == PF_CNT_W'(KV_FLAT - 1));
-
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n)
-            kv_prefetched <= 1'b0;
-        else begin
-            if      (kv_swap_banks)    kv_prefetched <= 1'b0;
-            else if (kv_prefetch_done) kv_prefetched <= 1'b1;
-        end
-    end
-
-    assign kv_prefetch_rdy = kv_prefetched;
-
     // =========================================================
-    // 4. Systolic Array + Data Slicing Mux
+    // 4. Systolic Array + Data Slicing Mux  (verbatim from flash_attn_core)
     // =========================================================
     logic is_pv_phase;
     always_ff @(posedge clk or negedge rst_n) begin
@@ -319,13 +260,13 @@ module flash_attn_core #(
         .clk(clk), .rst_n(rst_n),
         .a_flat(array_a_in), .b_flat(array_b_in),
         .start(array_start), .no_clear(array_no_clear),
-        .a_unsigned(is_pv_phase),   // PV phase: a = softmax weight P, unsigned [0,255]
+        .a_unsigned(is_pv_phase),
         .busy(array_busy), .done(array_done),
         .acc(array_acc)
     );
 
     // =========================================================
-    // 5. Dequantizers (last QK chunk only)
+    // 5. Dequantizers (last QK chunk only)  (verbatim)
     // =========================================================
     logic signed [15:0] dequant_out   [FLAT-1:0];
     logic [FLAT-1:0]    dequant_valid;
@@ -345,7 +286,7 @@ module flash_attn_core #(
     end
 
     // =========================================================
-    // 6. Online Softmax (SIZE rows parallel) — true cross-tile
+    // 6. Online Softmax (SIZE rows parallel)  (verbatim)
     // =========================================================
     logic [SIZE-1:0]     sfx_exp_valid;
     logic [15:0]         sfx_rescale_q88  [SIZE-1:0];
@@ -399,7 +340,7 @@ module flash_attn_core #(
     assign softmax_out_valid = softmax_valid_arr[0];
 
     // =========================================================
-    // 7. Output Buffer
+    // 7. Output Buffer  (verbatim)
     // =========================================================
     /* verilator lint_off UNUSEDSIGNAL */
     logic signed [47:0] pv_scaled_wide;
@@ -431,28 +372,11 @@ module flash_attn_core #(
         .rdata_ext(out_rdata)
     );
 
-    // =========================================================
-    // 8. KV Cache
-    // =========================================================
-    kv_cache #(.MAX_SEQ_LEN(256), .HEAD_DIM(HEAD_DIM)) u_kv_cache (
-        .clk       (clk),
-        .rst_n     (rst_n),
-        .write_en  (kc_write_en),
-        .write_ptr (kc_write_ptr),
-        .k_new_flat(kc_k_flat),
-        .v_new_flat(kc_v_flat),
-        .read_addr (kc_read_addr),
-        .k_out_flat(kc_k_out),
-        .v_out_flat(kc_v_out),
-        .cache_len (kc_cache_len)
-    );
-
     // ── Suppress unused warnings ──────────────────────────────
     /* verilator lint_off UNUSEDSIGNAL */
     logic _unused;
     assign _unused = &{
-        fsm_q_we, fsm_kv_we, array_busy,
-        dummy_v_off,
+        array_busy, ld_busy, dummy_v_off,
         dequant_valid, softmax_valid_arr[SIZE-1:1],
         sfx_exp_valid[SIZE-1:1],
         1'b0

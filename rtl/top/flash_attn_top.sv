@@ -111,6 +111,7 @@ module flash_attn_top #(
         .k_chunk(k_chunk),
         .pv_done(pv_done),
         .causal(causal),
+        .kv_tiles_ready(16'hFFFF),   // all K/V preloaded — no DMA streaming gate
         .kv_prefetch_en(kv_prefetch_en),
         .kv_prefetch_col(kv_prefetch_col),
         .kv_prefetch_rdy(kv_prefetch_rdy),

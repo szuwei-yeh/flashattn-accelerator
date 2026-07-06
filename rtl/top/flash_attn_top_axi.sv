@@ -145,6 +145,7 @@ module flash_attn_top_axi #(
                 .mode(1'b0),
                 .kv_len(16'b0),
                 .causal(1'b0),
+                .kv_tiles_ready(16'hFFFF),   // all K/V preloaded — no DMA gate
                 // KV cache ports — not used in AXI top (tied off)
                 .kc_write_en(1'b0),
                 .kc_write_ptr(8'b0),

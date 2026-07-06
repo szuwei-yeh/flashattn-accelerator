@@ -350,6 +350,209 @@ axi_all: tb_axi_slave axi_top_N64 axi_top_N64_d64 axi_top_N64_gqa
 	@echo ""
 	@echo "=== All Week 5 AXI tests passed ==="
 
+# ── Banked scratchpad: unit test ─────────────────────────────────────────────
+tb_banked_scratchpad:
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module banked_scratchpad \
+	    --Mdir obj_banked_scratchpad \
+	    ../../rtl/memory/sram_1r1w.sv \
+	    ../../rtl/memory/banked_scratchpad.sv \
+	    tb_banked_scratchpad.cpp \
+	    -o sim_banked_scratchpad
+	./obj_banked_scratchpad/sim_banked_scratchpad
+
+# ── Stage 2: DMA → banked_scratchpad microbenchmark (no core changes) ────────
+dma_bench:
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_bench \
+	    --Mdir obj_dma_bench \
+	    ../../rtl/interface/dma_engine.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    ../../rtl/memory/sram_1r1w.sv \
+	    ../../rtl/memory/banked_scratchpad.sv \
+	    ../../rtl/memory/stripe_reader.sv \
+	    ../../rtl/top/dma_bench_top.sv \
+	    tb_dma_bench.sv \
+	    tb_dma_bench.cpp \
+	    -o sim_dma_bench
+	./obj_dma_bench/sim_dma_bench
+
+# ── Stage 3B-2: banked-scratchpad core, end-to-end (TB-preloaded, no DMA) ────
+RTL_CORE_BANKED_SRCS := \
+	    ../../rtl/systolic/pe.sv \
+	    ../../rtl/systolic/systolic_array.sv \
+	    ../../rtl/systolic/array_controller.sv \
+	    ../../rtl/quantization/quantizer.sv \
+	    ../../rtl/quantization/dequantizer.sv \
+	    ../../rtl/softmax/exp_lut.sv \
+	    ../../rtl/softmax/online_softmax.sv \
+	    ../../rtl/memory/sram_1r1w.sv \
+	    ../../rtl/memory/banked_scratchpad.sv \
+	    ../../rtl/memory/banked_tile_loader.sv \
+	    ../../rtl/memory/output_buffer.sv \
+	    ../../rtl/ctrl/addr_gen.sv \
+	    ../../rtl/ctrl/tile_controller_banked.sv \
+	    ../../rtl/top/flash_attn_core_banked.sv
+
+core_banked_N64: ../../data/N64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module flash_attn_core_banked \
+	    --Mdir obj_core_banked_N64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(RTL_CORE_BANKED_SRCS) tb_core_banked.cpp -o sim_core_banked_N64
+	./obj_core_banked_N64/sim_core_banked_N64 --N 64 --D 16 --data ../../data/N64
+
+core_banked_N64_d64: ../../data/N64_d64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module flash_attn_core_banked \
+	    --Mdir obj_core_banked_N64_d64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(RTL_CORE_BANKED_SRCS) tb_core_banked.cpp -o sim_core_banked_N64_d64
+	./obj_core_banked_N64_d64/sim_core_banked_N64_d64 --N 64 --D 64 --data ../../data/N64_d64
+
+# ── Prefetch variant: banked core WITH KV double-buffering ───────────────────
+# New-variant sources (does NOT touch the green banked core / controller / top).
+RTL_CORE_BANKED_PREFETCH_SRCS := \
+	    ../../rtl/systolic/pe.sv \
+	    ../../rtl/systolic/systolic_array.sv \
+	    ../../rtl/systolic/array_controller.sv \
+	    ../../rtl/quantization/quantizer.sv \
+	    ../../rtl/quantization/dequantizer.sv \
+	    ../../rtl/softmax/exp_lut.sv \
+	    ../../rtl/softmax/online_softmax.sv \
+	    ../../rtl/memory/sram_1r1w.sv \
+	    ../../rtl/memory/banked_scratchpad.sv \
+	    ../../rtl/memory/banked_tile_loader.sv \
+	    ../../rtl/memory/output_buffer.sv \
+	    ../../rtl/ctrl/addr_gen.sv \
+	    ../../rtl/ctrl/tile_controller_banked_prefetch.sv \
+	    ../../rtl/top/flash_attn_core_banked_prefetch.sv
+
+core_banked_prefetch_N64: ../../data/N64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module flash_attn_core_banked_prefetch \
+	    --Mdir obj_core_banked_prefetch_N64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp -o sim_core_banked_prefetch_N64
+	./obj_core_banked_prefetch_N64/sim_core_banked_prefetch_N64 --N 64 --D 16 --data ../../data/N64
+
+core_banked_prefetch_N64_d64: ../../data/N64_d64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module flash_attn_core_banked_prefetch \
+	    --Mdir obj_core_banked_prefetch_N64_d64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp -o sim_core_banked_prefetch_N64_d64
+	./obj_core_banked_prefetch_N64_d64/sim_core_banked_prefetch_N64_d64 --N 64 --D 64 --data ../../data/N64_d64
+
+# ── Stage 3B-3: vector DMA → banked core, end-to-end ─────────────────────────
+dma_banked_top_N64: ../../data/N64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_banked_harness \
+	    --Mdir obj_dma_banked_top_N64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    $(RTL_CORE_BANKED_SRCS) \
+	    ../../rtl/top/flash_attn_top_dma_banked.sv \
+	    tb_dma_banked_harness.sv \
+	    tb_dma_banked.cpp -o sim_dma_banked_top_N64
+	./obj_dma_banked_top_N64/sim_dma_banked_top_N64 --N 64 --D 16 --data ../../data/N64
+
+# ── Prefetch variant: vector DMA → banked core WITH KV double-buffering ──────
+dma_banked_prefetch_top_N64: ../../data/N64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_banked_prefetch_harness \
+	    --Mdir obj_dma_banked_prefetch_top_N64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
+	    ../../rtl/top/flash_attn_top_dma_banked_prefetch.sv \
+	    tb_dma_banked_prefetch_harness.sv \
+	    tb_dma_banked_prefetch.cpp -o sim_dma_banked_prefetch_top_N64
+	./obj_dma_banked_prefetch_top_N64/sim_dma_banked_prefetch_top_N64 --N 64 --D 16 --data ../../data/N64
+
+# ── Stage 3B-1: banked tile loader unit test (d=16 and d=64) ─────────────────
+tb_banked_tile_loader:
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_banked_tile_loader \
+	    --Mdir obj_btl_d16 -GHEAD_DIM=16 \
+	    ../../rtl/memory/sram_1r1w.sv \
+	    ../../rtl/memory/banked_scratchpad.sv \
+	    ../../rtl/memory/banked_tile_loader.sv \
+	    tb_banked_tile_loader.sv \
+	    tb_banked_tile_loader.cpp \
+	    -o sim_btl_d16
+	./obj_btl_d16/sim_btl_d16 --D 16
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_banked_tile_loader \
+	    --Mdir obj_btl_d64 -GHEAD_DIM=64 \
+	    ../../rtl/memory/sram_1r1w.sv \
+	    ../../rtl/memory/banked_scratchpad.sv \
+	    ../../rtl/memory/banked_tile_loader.sv \
+	    tb_banked_tile_loader.sv \
+	    tb_banked_tile_loader.cpp \
+	    -o sim_btl_d64
+	./obj_btl_d64/sim_btl_d64 --D 64
+
+# ── Stage 3A: vector DMA fill vs byte-serial fill comparison ─────────────────
+dma_vec_bench:
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_vec_bench \
+	    --Mdir obj_dma_vec_bench \
+	    ../../rtl/interface/dma_engine.sv \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    ../../rtl/memory/sram_1r1w.sv \
+	    ../../rtl/memory/banked_scratchpad.sv \
+	    ../../rtl/top/dma_vec_bench_top.sv \
+	    tb_dma_vec_bench.sv \
+	    tb_dma_vec_bench.cpp \
+	    -o sim_dma_vec_bench
+	./obj_dma_vec_bench/sim_dma_vec_bench
+
+# ── DMA memory-hierarchy: unit test (dma_engine + axi_mem_model) ─────────────
+tb_dma_unit:
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_unit \
+	    --Mdir obj_dma_unit \
+	    ../../rtl/interface/dma_engine.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    tb_dma_unit.sv \
+	    tb_dma_unit.cpp \
+	    -o sim_dma_unit
+	./obj_dma_unit/sim_dma_unit
+
+# ── DMA memory-hierarchy: end-to-end top (DRAM model + DMA + core) ───────────
+RTL_DMA_SRCS := \
+	    ../../rtl/systolic/pe.sv \
+	    ../../rtl/systolic/systolic_array.sv \
+	    ../../rtl/systolic/array_controller.sv \
+	    ../../rtl/quantization/quantizer.sv \
+	    ../../rtl/quantization/dequantizer.sv \
+	    ../../rtl/softmax/exp_lut.sv \
+	    ../../rtl/softmax/online_softmax.sv \
+	    ../../rtl/memory/sram_1r1w.sv \
+	    ../../rtl/memory/kv_cache.sv \
+	    ../../rtl/memory/q_tile_buffer.sv \
+	    ../../rtl/memory/kv_tile_buffer.sv \
+	    ../../rtl/memory/output_buffer.sv \
+	    ../../rtl/ctrl/addr_gen.sv \
+	    ../../rtl/ctrl/tile_controller.sv \
+	    ../../rtl/top/flash_attn_core.sv \
+	    ../../rtl/interface/dma_engine.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    ../../rtl/top/flash_attn_top_dma.sv
+
+dma_top_N64: ../../data/N64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_harness \
+	    --Mdir obj_dma_top_N64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(RTL_DMA_SRCS) tb_dma_harness.sv \
+	    tb_flash_attn_top_dma.cpp -o sim_dma_top_N64
+	./obj_dma_top_N64/sim_dma_top_N64 --N 64 --D 16 --data ../../data/N64
+
 # ── Week 6 RTL source list (flash_attn_core + kv_cache) ──────────────────────
 RTL_DECODE_SRCS := \
 	    ../../rtl/systolic/pe.sv \
@@ -419,7 +622,11 @@ week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 regression: tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
             tb_top_causal_N64 tb_top_causal_N256 \
             tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
-            axi_all week6_all
+            axi_all week6_all tb_dma_unit dma_top_N64 \
+            tb_banked_scratchpad dma_bench dma_vec_bench tb_banked_tile_loader \
+            core_banked_N64 core_banked_N64_d64 dma_banked_top_N64 \
+            core_banked_prefetch_N64 core_banked_prefetch_N64_d64 \
+            dma_banked_prefetch_top_N64
 	@echo ""
 	@echo "=== Full regression PASS ==="
 
@@ -497,4 +704,7 @@ clean:
 	        obj_top obj_top_N16 obj_top_N64 obj_top_N128 obj_top_N256 \
 	        obj_top_causal_N64 \
 	        obj_axi_slave obj_axi_top_N64 \
-	        obj_kv_cache obj_kv_decode
+	        obj_kv_cache obj_kv_decode \
+	        obj_dma_unit obj_dma_top_N64 obj_banked_scratchpad \
+	        obj_dma_bench obj_dma_vec_bench obj_btl_d16 obj_btl_d64 \
+	        obj_core_banked_N64 obj_core_banked_N64_d64 obj_dma_banked_top_N64

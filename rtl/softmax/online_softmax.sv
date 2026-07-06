@@ -63,6 +63,12 @@ module online_softmax #(
         .exp_val(lut_out)
     );
 
+    // ── State registers referenced by normalisation below ─────
+    //    (declared here so DC R-2020 sees them before first use)
+    logic signed [15:0]  running_max;
+    logic        [31:0]  running_sum;
+    logic        [15:0]  exp_vals [DIM];
+
     // ── Normalisation (last tile only) ────────────────────────
     logic [31:0] norm_numer [DIM];
     logic [31:0] norm_denom;
@@ -87,11 +93,7 @@ module online_softmax #(
     logic                tile_last_r;
     logic                is_first_r;     // 1 = first KV tile of Q-tile (reset running state)
 
-    logic signed [15:0]  running_max;
-    logic        [31:0]  running_sum;
-
     logic signed [15:0]  tile_max;
-    logic        [15:0]  exp_vals [DIM];
     logic        [31:0]  accum_sum;
 
     logic signed [15:0]  next_max;

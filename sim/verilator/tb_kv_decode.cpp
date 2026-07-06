@@ -67,6 +67,7 @@ static void do_reset(Vflash_attn_core *dut) {
     dut->kc_write_en  = 0;
     dut->kc_write_ptr = 0;
     dut->kc_read_addr = 0;
+    dut->kv_tiles_ready = 0xFFFF;   // K/V preloaded directly — disable DMA gate
     for (int w = 0; w < N_WORDS; w++) {
         dut->kc_k_flat[w] = 0;
         dut->kc_v_flat[w] = 0;
