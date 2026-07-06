@@ -13,3 +13,16 @@ __pycache__/
 *.pyo
 .pytest_cache/
 
+# Internal progress log
+PROGRESS.md
+progress2.0.md
+synthesisprogress.md
+MEMORY_HIERARCHY_ENGINEERING_NOTES.local.md
+
+# Synopsys Design Compiler generated artifacts (keep scaffold, drop DC output)
+syn/output/*
+syn/reports/*
+syn/logs/*
+!syn/output/.gitkeep
+!syn/reports/.gitkeep
+!syn/logs/.gitkeep

@@ -65,6 +65,243 @@ AXI4-Stream OUT (attention output, INT32)
 
 ---
 
+## Memory Hierarchy (DDR/HBM → DMA → Banked Scratchpad)
+
+A DMA-managed banked scratchpad hierarchy was added in front of the systolic
+core, built up in stages so each layer is independently verified. There are
+three coexisting data paths (all produce bit-exact output vs the golden model):
+
+**1. Baseline (original)** — data is resident before compute:
+```
+AXI-stream / scalar preload → flat Q/K/V SRAM → byte-serial tile load
+                            → tile registers → 16×16 systolic array
+```
+
+**2. DMA path** — off-chip memory pulled into the flat SRAMs:
+```
+axi_mem_model → dma_engine → flat core SRAMs → existing core (flash_attn_core)
+```
+`flash_attn_top_dma` bulk-loads Q then streams KV tiles; the DMA writes one byte
+per cycle into the existing per-head SRAMs. The compute core is unchanged.
+
+**3. Banked path (current full demo: `flash_attn_top_dma_banked.sv`)** — vector
+DMA into a true banked scratchpad feeding the array at row width:
+```
+axi_mem_model → dma_engine_vec → banked_scratchpad → banked_tile_loader
+             → flash_attn_core_banked → 16×16 systolic array
+```
+- `banked_scratchpad` = 16 byte-wide banks, `bank = addr[3:0]`, so 16 contiguous
+  bytes (a tile row) are a conflict-free stripe.
+- `dma_engine_vec` collects two 64-bit AXI beats into one 128-bit stripe and
+  writes it with `w_vec=1` (16 bytes/write).
+- `banked_tile_loader` fills `Q_reg`/`K_reg`/`V_reg` at one 16-byte stripe per
+  cycle instead of byte-serial.
+
+**Shared mechanism.** An open-loop scheduler fetches each KV tile from DRAM once
+(K/V is reused across every outer Q-tile) and bumps a monotonic `kv_tiles_ready`
+count; a single residency gate stalls `S_LOAD_KV` until the needed tile is
+resident. The gate is tied to `16'hFFFF` in the non-DMA tops, so the original 18
+regressions are byte-for-byte unchanged.
+
+### Synthesizable vs simulation-only
+- **Synthesizable:** `dma_engine`, `dma_engine_vec`, `banked_scratchpad`,
+  `banked_tile_loader`, `stripe_reader`, `tile_controller_banked`,
+  `flash_attn_core_banked`, `flash_attn_top_dma`, `flash_attn_top_dma_banked`.
+- **Simulation-only:** `axi_mem_model` (behavioral AXI4 slave DRAM with
+  programmable `rd_latency`); the `tb_*` harnesses and benchmarks.
+
+### Verification targets
+| Target | Stage | Checks |
+|---|---|---|
+| `make tb_dma_unit`            | DMA   | AXI4 read-master delivers a tile correctly (latency sweep) |
+| `make dma_top_N64`            | DMA   | byte DMA + flat core, end-to-end vs golden |
+| `make tb_banked_scratchpad`   | 3B-1  | bank routing, stripe R/W, conflict-free invariant |
+| `make dma_bench`              | 3B    | scalar vs stripe scratchpad **drain** |
+| `make dma_vec_bench`          | 3A    | scalar vs vector DMA **fill** |
+| `make tb_banked_tile_loader`  | 3B-1  | stripe→tile-register layout (d=16 and d=64) |
+| `make core_banked_N64`        | 3B-2  | banked core end-to-end (TB preload), d=16 |
+| `make core_banked_N64_d64`    | 3B-2  | banked core end-to-end (TB preload), d=64 |
+| `make dma_banked_top_N64`     | 3B-3  | vector DMA + banked core, end-to-end |
+| `make regression`             | all   | every target above + the original suite |
+
+### Results
+| Target | Meaning | Cycles / Result |
+|---|---|---|
+| `dma_top_N64`        | byte DMA + flat core            | 15332 cycles |
+| `core_banked_N64`    | banked core, TB preload         | 11929 cycles |
+| `dma_banked_top_N64` | vector DMA + banked core        | 12140 cycles |
+| `dma_vec_bench`      | scalar vs vector DMA fill (256 B) | 312 vs 56 cycles |
+| `dma_bench`          | scalar vs stripe scratchpad drain (256 B) | 256 vs 17 cycles |
+| `make regression`    | all tests                       | PASS |
+
+The banked path is **1.26×** faster end-to-end than the byte-DMA + flat-core path
+(15332 → 12140), all bit-exact.
+
+### Runtime-configurable DMA scheduler + performance counters
+`flash_attn_top_dma_banked` exposes a small set of **runtime** scheduler inputs
+(sampled when `start` is accepted) — `HEAD_DIM`/`TILE_SIZE` stay compile-time:
+- `cfg_seq_len[15:0]` — number of KV tiles streamed = `cfg_seq_len / TILE_SIZE`.
+  Must be `> 0`, `<= SEQ_LEN`, and a multiple of `TILE_SIZE`.
+- `cfg_q_base` / `cfg_k_base` / `cfg_v_base[31:0]` — DRAM source byte bases for
+  Q / K / V (scratchpad destinations are unchanged: Q@0, KV tile @ `tile_off`).
+- `cfg_error` — asserted (combinational) for an invalid `cfg_seq_len`; the
+  scheduler then refuses to start.
+
+With `cfg_seq_len = SEQ_LEN` and the default bases the scheduler issues
+byte-for-byte the same descriptors as before (identical 12140-cycle result).
+This is **runtime-configurable DMA scheduling only** — the compute core's
+sequence extent is still the compile-time `SEQ_LEN` (no runtime-length core), so
+the valid use today is `cfg_seq_len == SEQ_LEN`.
+
+It also exposes RTL-visible performance counters (reset at run start, held after
+`done`). Measured N=64, d=16 (`make dma_banked_top_N64`):
+
+| Counter | Meaning | Value |
+|---|---|---|
+| `perf_total_cycles`           | accepted `start` → `done`                | 12141 |
+| `perf_dma_busy_cycles`        | scheduler active / DMA transferring      | 426 |
+| `perf_core_busy_cycles`       | `core_start` → core `done`               | 11930 |
+| `perf_dma_bytes`              | +16 per vector scratchpad write          | 3072 |
+| `perf_kv_tiles_loaded`        | completed (K,V) tile pairs               | 4 |
+| `perf_first_tile_wait_cycles` | `start` → `core_start` (fill before compute) | 211 |
+
+These cross-check: `211 + 11930 = 12141` (core runs continuously after
+`core_start`); `perf_dma_bytes = 3 × 64×16 = 3072` (Q+K+V each streamed once);
+`perf_kv_tiles_loaded = 64/16 = 4`; and `perf_first_tile_wait_cycles = 211`
+matches the gap between this path (12140) and the TB-preloaded `core_banked_N64`
+(11929).
+
+**Why `perf_total_cycles` = 12141 but the C++ loop reports 12140:** the RTL
+counter starts one cycle earlier — it begins on the cycle `start` is *accepted*
+inside the FSM, whereas the C++ testbench begins its tick-count loop the cycle
+*after* it de-asserts `start`. The one-cycle offset is just where each side
+places `t=0`; both describe the same run.
+
+### DRAM latency sweep (banked path, N=64 d=16)
+`make dma_banked_top_N64` runs the same config across `rd_latency ∈ {0,20,100}`,
+comparing every run against the same golden `expected.hex`:
+
+| rd_lat | result | tb_cyc | perf_total | dma_busy | core_busy | first_wait | dma_bytes | kv_tiles |
+|---|---|---|---|---|---|---|---|---|
+| 0   | PASS | 12140 | 12141 | 426  | 11930 | 211  | 3072 | 4 |
+| 20  | PASS | 12380 | 12381 | 906  | 11930 | 451  | 3072 | 4 |
+| 100 | PASS | 13340 | 13341 | 2826 | 11930 | 1411 | 3072 | 4 |
+
+- **All latencies are bit-exact** against the same `expected.hex` (correctness is
+  latency-independent — the residency gate prevents any read-before-load).
+- **`perf_core_busy_cycles` stays constant at 11930**: once the core starts, its
+  runtime does not depend on DRAM latency — subsequent tiles are already resident.
+- **`perf_first_tile_wait_cycles` absorbs the DRAM latency** (211 → 451 → 1411):
+  the exposed latency lives entirely in the fill-before-compute window.
+- **`perf_total = first_wait + core_busy`** for every row (e.g. 1411 + 11930 =
+  13341), so the whole end-to-end increase (+1200 at rd_lat=100) is exactly the
+  growth of the first-tile wait.
+- **`perf_dma_bytes = 3072` and `perf_kv_tiles_loaded = 4` are invariant** across
+  latency — they count work done (Q+K+V streamed once; 4 KV tile pairs), not time.
+- **`perf_total = tb_cycles + 1`** every row, for the `t=0`-placement reason above.
+
+This concretely demonstrates **latency hiding for the N=64 d=16 banked DMA path**.
+It is not a claim of arbitrary-shape runtime support or real HBM timing — the DRAM
+is a behavioral model with a single programmable `rd_latency`.
+
+### KV double-buffer prefetch (banked path, new variant)
+
+The banked core above (`flash_attn_core_banked`) dropped the baseline's KV
+prefetch double-buffer, so each inner iteration's KV tile load serializes before
+compute. A **new variant** restores baseline-style KV double-buffering on the
+banked path *without touching the green banked files* — it is a parallel variant,
+not a replacement:
+
+- `rtl/ctrl/tile_controller_banked_prefetch.sv`
+- `rtl/top/flash_attn_core_banked_prefetch.sv`
+- `rtl/top/flash_attn_top_dma_banked_prefetch.sv`
+
+**Active / shadow registers + copy-style swap.** The core keeps active
+`K_reg`/`V_reg` (read by the systolic-array slicing mux during compute) plus a
+shadow `K_shadow`/`V_shadow`. While the current KV tile is being computed, the
+loader streams the *next* KV tile into the shadow registers. On the inner-tile
+boundary the FSM pulses `kv_swap_banks` and the core copies shadow → active in one
+cycle — a **copy-style swap**, matching the proven baseline
+`flash_attn_core`/`flash_attn_top`. (A lower-area ping-pong SELECT swap that
+re-points the slicing mux instead of copying is left as future PPA work.) `Q_reg`
+stays a single buffer — Q reloads only once per outer tile, so double-buffering it
+buys almost nothing.
+
+**Shared-loader interlock — why `S_PF_WAIT` is required.** The banked path has a
+*single* `banked_tile_loader`, shared between the foreground load (`ld_start`:
+Q load, first KV load, non-prefetched reloads) and the prefetch load (`pf_start`).
+They are mutually exclusive by construction (different FSM states), so one loader
+suffices; a `pf_load_active` flag de-multiplexes the loader's `done` into the
+foreground `ld_done` vs the prefetch `pf_done`, and routes its stripe writes to
+active vs shadow. The consequence: **`S_CHECK_INNER` must not fall back to
+`S_LOAD_KV` while a prefetch is in flight.** Doing so would re-start the one loader
+on top of the running prefetch, and the FSM would then latch the prefetch's `done`
+as a foreground completion and compute on stale active registers. So when a
+prefetch was launched (`pf_pending`), the FSM enters a new `S_PF_WAIT` state and
+stalls for `pf_rdy` before swapping — it never double-starts the loader. (Baseline
+`tile_controller.sv` *can* fall back to `S_LOAD_KV` only because its flat-SRAM path
+has two independent load counters.) Prefetch start is still gated by the
+`kv_tiles_ready` residency count: a not-yet-resident next tile is simply not
+prefetched and takes the normal residency-stalled `S_LOAD_KV` path.
+
+**Results (bit-exact vs the same golden `expected.hex`):**
+
+| Target | No prefetch | Prefetch | Δ cycles |
+|---|---|---|---|
+| `core_banked_N64` (d=16, TB preload)     | 11929 | 11701 | −228 |
+| `core_banked_N64_d64` (d=64, TB preload) | 45589 | 44785 | −804 |
+
+DMA-fed top, `rd_latency` sweep (all rows bit-exact):
+
+| rd_lat | `dma_banked_top_N64` | `dma_banked_prefetch_top_N64` |
+|---|---|---|
+| 0   | 12140 | 11912 |
+| 20  | 12380 | 12171 |
+| 100 | 13340 | 13150 |
+
+The prefetch variant is faster at every latency. **The speedup is modest (~2% at
+d=16)** for the same Amdahl reason as everywhere else on this path: the KV load is
+only ~3% of an inner iteration; the `output_buffer` rescale/accumulate walks
+(256 cycles each, per tile) dominate and are unchanged. d=64 saves more in absolute
+terms (−804) because each d=64 KV load is 64 stripes instead of 16.
+
+**`core_busy` is not strictly latency-constant here (and that's expected).** The
+non-prefetch top's `perf_core_busy_cycles` is a flat 11930 across latencies; the
+prefetch variant's is 11702 / 11721 / 11740 for rd_lat 0 / 20 / 100. The prefetch
+fires early (in `S_UPDATE_SOFTMAX`), so at high DRAM latency a few next tiles have
+not streamed in yet — those prefetches gate off and become small in-core residency
+waits instead of being hidden (graceful degradation toward the non-prefetch path).
+Every run stays bit-exact, `perf_first_tile_wait_cycles` still absorbs the bulk of
+the latency, and the prefetch variant is still faster than the non-prefetch top at
+every latency. New targets: `core_banked_prefetch_N64`,
+`core_banked_prefetch_N64_d64`, `dma_banked_prefetch_top_N64` (all in `regression`).
+
+### Limitations (honest)
+- The banked **DMA top is verified for N=64, d=16 only**. `core_banked_N64_d64`
+  passes, but `dma_banked_top_N64_d64` is **not implemented yet**.
+- `axi_mem_model.sv` is **simulation-only** — a behavioral AXI slave with a single
+  programmable latency, not a real DDR/HBM controller.
+- **No output write-back DMA** — results are still drained through a read port,
+  not streamed back to DRAM via an AXI write master.
+- The **green** banked core removed the old byte-serial KV prefetch, so its
+  end-to-end speedup is modest (the load phase is a fraction of total cycles, and
+  the output-buffer rescale/accumulate walks dominate). KV double-buffering is
+  restored in the separate prefetch variant above (`*_banked_prefetch`), but it
+  only recovers ~2% because of that same Amdahl split — it does not change the
+  conclusion that the output-buffer walks dominate.
+- **Single-head only**; 4-head / GQA banked integration is future work.
+
+New RTL: `rtl/interface/dma_engine.sv`, `rtl/interface/dma_engine_vec.sv`,
+`rtl/interface/axi_mem_model.sv` (sim), `rtl/memory/banked_scratchpad.sv`,
+`rtl/memory/stripe_reader.sv`, `rtl/memory/banked_tile_loader.sv`,
+`rtl/ctrl/tile_controller_banked.sv`, `rtl/top/flash_attn_core_banked.sv`,
+`rtl/top/flash_attn_top_dma.sv`, `rtl/top/flash_attn_top_dma_banked.sv`.
+Prefetch variant (new, additive): `rtl/ctrl/tile_controller_banked_prefetch.sv`,
+`rtl/top/flash_attn_core_banked_prefetch.sv`,
+`rtl/top/flash_attn_top_dma_banked_prefetch.sv`.
+
+---
+
 ## Key Design Decisions
 
 **16×16 INT8 Systolic Array — reused for QK^T and PV**
@@ -226,31 +463,50 @@ All tests run automatically via `make regression`.
 
 ---
 
-## Synthesis (OpenLane v1.1.1, sky130A PDK)
+## Synthesis
 
-Target: `flash_attn_core` — single-head core including GQA, causal masking,
-KV-decode, and d=64 inner-dimension tiling.
+First-pass DC runs (R-2020.09-SP4, FreePDK45 `gscl45nm.db`, 10 ns / 100 MHz
+target). **This is a first-pass, non-signoff DC flow.** SRAM/ROM are *logical
+blackboxes*, so `Macro/Black Box Area` is reported as 0 in every run — real
+memory-macro area and timing are **not** included. Areas are in FreePDK45
+library area units.
+
+**Pure-logic blocks — met the 10 ns target:**
+
+| Design | Setup slack | Total cell area (lib units) |
+|--------|-------------|-----------------------------|
+| `systolic_array`     | +5.15 ns (MET) | 442,795.819439 |
+| `dma_engine_vec`     | +6.62 ns (MET) | 4,181.462976   |
+| `banked_tile_loader` | +8.00 ns (MET) | 970.043098     |
+
+**Full core — `flash_attn_core_banked_prefetch` (macro-blackbox compile):**
+
+The macro-blackbox compile completed mapping and produced a full DC output set —
+`.ddc`, mapped netlist (`*_mapped.v`), SDC, and timing / area / power / QoR
+reports. It did **not** meet the 10 ns target:
 
 | Metric | Value |
 |--------|-------|
-| Tool | Yosys 0.38 + ABC + OpenSTA |
-| Clock target | 20 ns (50 MHz) |
-| f_max (post-synth, est.) | ~78 MHz |
-| Critical path | 12.73 ns (softmax index path) |
-| Setup slack (worst) | +7.16 ns (MET) |
-| Hold slack (worst) | +0.35 ns (MET) |
-| TNS / WNS | 0.00 / 0.00 |
-| Standard cells | ~343,900 |
-| Logic core area | ~3.65 mm² |
+| WNS (setup slack) | −35.45 ns |
+| TNS | −75,662.33 |
+| Violating paths | 4,096 |
+| Critical path length | 45.42 ns |
+| Leaf cell count | 1,815,578 |
+| Sequential cell count | 43,592 |
+| Total cell area | 7,709,924.248970 (FreePDK45 lib units) |
 
-SRAM (`sram_1r1w`), `dequantizer` (×16, time-multiplexed) and `output_buffer`
-are modeled as memory macros (blackboxed); their area is **not** included in
-the figure above. These are the numbers a real flow would replace with
-hard macros from a memory compiler (e.g. OpenRAM).
+The critical path is inside the softmax:
+`gen_softmax[*].u_softmax/running_sum_reg[...]` → `…/softmax_flat_reg[...]`.
+This is a first-pass timing failure on the softmax / dequant / reduction
+combinational paths. Note: **the memory macros are blackboxed here**, so unlike
+an earlier direct full-core compile, this is *not* a flop-inference blowup — it
+is real combinational-logic timing plus the fact that the run still lacks memory
+macro `.db` area and timing. Both the failing paths and the missing macro models
+must be addressed before these numbers mean anything.
 
-This is **post-synthesis STA with an ideal clock (pre-P&R)**. Floorplan / P&R
-were not run because the blackboxed macros lack LEF — `~78 MHz` is an estimate
-from the critical path, not a routed/signed-off frequency.
+See [`syn/README.md`](syn/README.md) for the DC scaffold, filelists, blackboxes,
+and how to re-run. Local Synopsys bring-up notes are kept in
+`synthesisprogress.md` (gitignored).
 
 ---
 
