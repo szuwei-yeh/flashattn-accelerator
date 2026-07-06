@@ -69,7 +69,7 @@ AXI4-Stream OUT (attention output, INT32)
 
 A DMA-managed banked scratchpad hierarchy was added in front of the systolic
 core, built up in stages so each layer is independently verified. There are
-three coexisting data paths (all produce bit-exact output vs the golden model):
+four coexisting data paths (all produce bit-exact output vs the golden model):
 
 **1. Baseline (original)** — data is resident before compute:
 ```
@@ -97,18 +97,55 @@ axi_mem_model → dma_engine_vec → banked_scratchpad → banked_tile_loader
 - `banked_tile_loader` fills `Q_reg`/`K_reg`/`V_reg` at one 16-byte stripe per
   cycle instead of byte-serial.
 
+**4. Write-back path (`flash_attn_top_dma_banked_wb.sv`)** — extends path 3 with
+an AXI write master so results return to DRAM, closing the full round-trip:
+```
+DRAM → dma_engine_vec → banked_scratchpad → flash_attn_core_banked
+     → output_buffer → output_writeback_packer → dma_write_engine → DRAM
+```
+The read side is identical to path 3 (same scheduler, residency gate, and
+read-side performance counters). After the core finishes, the output buffer is
+drained and streamed back to DRAM; top-level `done` asserts only after the write
+DMA's final `B` response. This path is **additive** — it wraps path 3 and does
+not replace or alter the green read-only DMA tops.
+
 **Shared mechanism.** An open-loop scheduler fetches each KV tile from DRAM once
 (K/V is reused across every outer Q-tile) and bumps a monotonic `kv_tiles_ready`
 count; a single residency gate stalls `S_LOAD_KV` until the needed tile is
 resident. The gate is tied to `16'hFFFF` in the non-DMA tops, so the original 18
 regressions are byte-for-byte unchanged.
 
+### AXI write-back DMA
+The output half of the round-trip was built as three additive modules (they do
+not touch the read-only DMA path, `flash_attn_core_banked`, or `output_buffer`):
+- **`dma_write_engine.sv`** — synthesizable AXI4 **write master** (AW/W/B). Takes
+  a descriptor `{dest byte base, length}` and a 64-bit source stream, splits it
+  into ≤16-beat INCR bursts (full-beat writes, `WSTRB` all ones), and pulses
+  `done` after the final `B`. It is the mirror of `dma_engine_vec`; kept separate
+  so the read engine is untouched and the two can run on independent channels.
+- **`output_writeback_packer.sv`** — drains the output buffer through its 1-cycle
+  read port and packs two consecutive 32-bit result words into one 64-bit AXI
+  beat (`word[2k]`→`[31:0]`, `word[2k+1]`→`[63:32]`), presenting a valid/ready
+  source stream. It holds a beat when the engine back-pressures (between bursts /
+  under write latency), so no data is lost.
+- **`axi_mem_model_rw.sv`** — behavioral read/write DRAM model: the AR/R side is
+  byte-identical to `axi_mem_model`, plus an AW/W/B write slave and a programmable
+  `wr_latency` (sim-only).
+- **`flash_attn_top_dma_banked_wb.sv`** — the integration top that proves the full
+  `DRAM → compute → DRAM` round-trip end to end, adding `cfg_o_base` and the
+  `perf_wb_bytes` / `perf_wb_cycles` / `perf_wb_beats` counters alongside the
+  preserved read-side counters. Read and write phases are temporally disjoint
+  (write starts on core done), so one shared RW model serves AR/R then AW/W/B
+  with no contention.
+
 ### Synthesizable vs simulation-only
-- **Synthesizable:** `dma_engine`, `dma_engine_vec`, `banked_scratchpad`,
-  `banked_tile_loader`, `stripe_reader`, `tile_controller_banked`,
-  `flash_attn_core_banked`, `flash_attn_top_dma`, `flash_attn_top_dma_banked`.
+- **Synthesizable:** `dma_engine`, `dma_engine_vec`, `dma_write_engine`,
+  `output_writeback_packer`, `banked_scratchpad`, `banked_tile_loader`,
+  `stripe_reader`, `tile_controller_banked`, `flash_attn_core_banked`,
+  `flash_attn_top_dma`, `flash_attn_top_dma_banked`, `flash_attn_top_dma_banked_wb`.
 - **Simulation-only:** `axi_mem_model` (behavioral AXI4 slave DRAM with
-  programmable `rd_latency`); the `tb_*` harnesses and benchmarks.
+  programmable `rd_latency`), `axi_mem_model_rw` (read/write variant, adds AW/W/B
+  and `wr_latency`); the `tb_*` harnesses and benchmarks.
 
 ### Verification targets
 | Target | Stage | Checks |
@@ -125,6 +162,10 @@ regressions are byte-for-byte unchanged.
 | `make dma_banked_top_N64_d64` | 3B-3  | vector DMA + banked core, end-to-end, d=64 |
 | `make dma_banked_prefetch_top_N64`     | 3B-3  | + KV double-buffer prefetch, d=16 |
 | `make dma_banked_prefetch_top_N64_d64` | 3B-3  | + KV double-buffer prefetch, d=64 |
+| `make tb_dma_write_unit`      | WB-1  | AXI4 write master (AW/W/B) + RW DRAM model, multi-burst / WLAST / byte-exact |
+| `make wb_drain_bench`         | WB-2  | output-buffer drain → packer → write master, byte-exact + back-pressure |
+| `make dma_banked_wb_top_N64`     | WB-3  | full DRAM→compute→DRAM round-trip, d=16 |
+| `make dma_banked_wb_top_N64_d64` | WB-3  | full DRAM→compute→DRAM round-trip, d=64 |
 | `make regression`             | all   | every target above + the original suite |
 
 ### Results
@@ -139,6 +180,22 @@ regressions are byte-for-byte unchanged.
 
 The banked path is **1.26×** faster end-to-end than the byte-DMA + flat-core path
 (15332 → 12140), all bit-exact.
+
+### Write-back DMA verification results
+The full write path is verified bottom-up, then end-to-end, all green:
+
+| Target | Result | Notes |
+|---|---|---|
+| `tb_dma_write_unit` (WB-1) | PASS | AW/W/B, multi-burst, WLAST, byte-exact placement, `wr_latency` sweep |
+| `wb_drain_bench` (WB-2)    | PASS | packer byte-exact + holds under back-pressure, `bytes = words*4` |
+| `dma_banked_wb_top_N64` (WB-3, d=16)     | PASS | `rd_bytes=3072`, `wb_bytes=4096`, `wb_beats=512`, `kv_tiles=4`, `max_rel=0` |
+| `dma_banked_wb_top_N64_d64` (WB-3, d=64) | PASS | `rd_bytes=12288`, `wb_bytes=16384`, `wb_beats=2048`, `kv_tiles=4`, `max_rel=0` |
+| `make regression` | PASS | full suite incl. all read + write-back targets |
+
+`rd_bytes = 3·N·D` (Q+K+V streamed once), `wb_bytes = N·D·4` (int32 output words),
+`wb_beats = wb_bytes/8` (two words per 64-bit beat); the O region read back from
+DRAM matches the golden `expected.hex` word-for-word (`max_rel = 0`) at every
+`{rd,wr}_latency ∈ {0,20,100}`.
 
 ### Runtime-configurable DMA scheduler + performance counters
 `flash_attn_top_dma_banked` exposes a small set of **runtime** scheduler inputs
@@ -289,10 +346,16 @@ every latency. New targets: `core_banked_prefetch_N64`,
   bit-exact vs golden across the `rd_latency ∈ {0,20,100}` sweep. Only these two
   shapes are proven; other N (128/256) and other d are **not** claimed for the
   banked DMA path.
-- `axi_mem_model.sv` is **simulation-only** — a behavioral AXI slave with a single
-  programmable latency, not a real DDR/HBM controller.
-- **No output write-back DMA** — results are still drained through a read port,
-  not streamed back to DRAM via an AXI write master.
+- `axi_mem_model.sv` / `axi_mem_model_rw.sv` are **simulation-only** — behavioral
+  AXI slaves with programmable latency, not a real DDR/HBM controller.
+- **Output write-back DMA is implemented and verified** on the banked path for
+  N=64 at d=16 and d=64 (`dma_banked_wb_top_N64` / `_d64`): the output buffer is
+  drained through `output_writeback_packer` and streamed back to DRAM over the
+  `dma_write_engine` AXI4 write master, proving the full `DRAM → compute → DRAM`
+  round-trip bit-exact vs golden. Honest caveats: it writes into the behavioral
+  `axi_mem_model_rw` (not a real controller); the write-back path has **not** been
+  run through Synopsys DC yet, so it has no memory-macro timing/area numbers; and
+  it is **single-head** — 4-head / GQA banked write-back integration is future work.
 - The **green** banked core removed the old byte-serial KV prefetch, so its
   end-to-end speedup is modest (the load phase is a fraction of total cycles, and
   the output-buffer rescale/accumulate walks dominate). KV double-buffering is
@@ -309,6 +372,9 @@ New RTL: `rtl/interface/dma_engine.sv`, `rtl/interface/dma_engine_vec.sv`,
 Prefetch variant (new, additive): `rtl/ctrl/tile_controller_banked_prefetch.sv`,
 `rtl/top/flash_attn_core_banked_prefetch.sv`,
 `rtl/top/flash_attn_top_dma_banked_prefetch.sv`.
+Write-back path (new, additive): `rtl/interface/dma_write_engine.sv`,
+`rtl/interface/output_writeback_packer.sv`, `rtl/interface/axi_mem_model_rw.sv`
+(sim), `rtl/top/flash_attn_top_dma_banked_wb.sv`.
 
 ---
 
