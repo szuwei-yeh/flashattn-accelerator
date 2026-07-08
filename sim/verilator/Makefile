@@ -649,6 +649,18 @@ dma_top_N64: ../../data/N64/expected.hex
 	    tb_flash_attn_top_dma.cpp -o sim_dma_top_N64
 	./obj_dma_top_N64/sim_dma_top_N64 --N 64 --D 16 --data ../../data/N64
 
+# HEAD_DIM=64 flat byte-DMA baseline: same harness / RTL / cpp as dma_top_N64,
+# only -GHEAD_DIM and the run args change. Golden = data/N64_d64 (reused).
+# This is the byte-DMA flat-SRAM baseline the banked d=64 path is compared against.
+dma_top_N64_d64: ../../data/N64_d64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_harness \
+	    --Mdir obj_dma_top_N64_d64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(RTL_DMA_SRCS) tb_dma_harness.sv \
+	    tb_flash_attn_top_dma.cpp -o sim_dma_top_N64_d64
+	./obj_dma_top_N64_d64/sim_dma_top_N64_d64 --N 64 --D 64 --data ../../data/N64_d64
+
 # ── Week 6 RTL source list (flash_attn_core + kv_cache) ──────────────────────
 RTL_DECODE_SRCS := \
 	    ../../rtl/systolic/pe.sv \
@@ -718,7 +730,7 @@ week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 regression: tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
             tb_top_causal_N64 tb_top_causal_N256 \
             tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
-            axi_all week6_all tb_dma_unit tb_dma_write_unit wb_drain_bench dma_top_N64 \
+            axi_all week6_all tb_dma_unit tb_dma_write_unit wb_drain_bench dma_top_N64 dma_top_N64_d64 \
             tb_banked_scratchpad dma_bench dma_vec_bench tb_banked_tile_loader \
             core_banked_N64 core_banked_N64_d64 \
             dma_banked_top_N64 dma_banked_top_N64_d64 \
@@ -803,7 +815,7 @@ clean:
 	        obj_top_causal_N64 \
 	        obj_axi_slave obj_axi_top_N64 \
 	        obj_kv_cache obj_kv_decode \
-	        obj_dma_unit obj_dma_write_unit obj_wb_drain_bench obj_dma_top_N64 obj_banked_scratchpad \
+	        obj_dma_unit obj_dma_write_unit obj_wb_drain_bench obj_dma_top_N64 obj_dma_top_N64_d64 obj_banked_scratchpad \
 	        obj_dma_bench obj_dma_vec_bench obj_btl_d16 obj_btl_d64 \
 	        obj_core_banked_N64 obj_core_banked_N64_d64 \
 	        obj_dma_banked_top_N64 obj_dma_banked_top_N64_d64 \

@@ -171,15 +171,25 @@ not touch the read-only DMA path, `flash_attn_core_banked`, or `output_buffer`):
 ### Results
 | Target | Meaning | Cycles / Result |
 |---|---|---|
-| `dma_top_N64`        | byte DMA + flat core            | 15332 cycles |
+| `dma_top_N64`        | byte DMA + flat core, d=16      | 15332 cycles |
+| `dma_top_N64_d64`    | byte DMA + flat core, d=64      | 60421 cycles |
 | `core_banked_N64`    | banked core, TB preload         | 11929 cycles |
-| `dma_banked_top_N64` | vector DMA + banked core        | 12140 cycles |
+| `dma_banked_top_N64` | vector DMA + banked core, d=16  | 12140 cycles |
+| `dma_banked_top_N64_d64` | vector DMA + banked core, d=64 | 46412 cycles |
 | `dma_vec_bench`      | scalar vs vector DMA fill (256 B) | 312 vs 56 cycles |
 | `dma_bench`          | scalar vs stripe scratchpad drain (256 B) | 256 vs 17 cycles |
 | `make regression`    | all tests                       | PASS |
 
-The banked path is **1.26×** faster end-to-end than the byte-DMA + flat-core path
-(15332 → 12140), all bit-exact.
+The banked path is faster end-to-end than the byte-DMA + flat-core baseline at
+both head dims, all bit-exact:
+
+| d  | byte-DMA flat | vector-DMA banked | speedup |
+|----|---------------|-------------------|---------|
+| 16 | 15332         | 12140             | **1.26×** |
+| 64 | 60421         | 46412             | **1.30×** |
+
+The speedup grows with `d` because each KV tile is `d`/16× more bytes, so the
+byte-serial flat load is penalized more heavily than the 16-bank stripe load.
 
 ### Write-back DMA verification results
 The full write path is verified bottom-up, then end-to-end, all green:
