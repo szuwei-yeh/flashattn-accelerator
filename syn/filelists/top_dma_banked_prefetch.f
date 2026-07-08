@@ -32,6 +32,6 @@ rtl/memory/banked_tile_loader.sv
 rtl/memory/output_buffer.sv
 rtl/ctrl/addr_gen.sv
 rtl/ctrl/tile_controller_banked_prefetch.sv
-rtl/top/flash_attn_core_banked_prefetch.sv
+rtl/core/flash_attn_core_banked_prefetch.sv
 rtl/interface/dma_engine_vec.sv
 rtl/top/flash_attn_top_dma_banked_prefetch.sv

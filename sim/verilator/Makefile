@@ -279,7 +279,7 @@ RTL_AXI_SRCS := \
 	    ../../rtl/memory/output_buffer.sv \
 	    ../../rtl/ctrl/addr_gen.sv \
 	    ../../rtl/ctrl/tile_controller.sv \
-	    ../../rtl/top/flash_attn_core.sv \
+	    ../../rtl/core/flash_attn_core.sv \
 	    ../../rtl/interface/axi4_stream_slave.sv \
 	    ../../rtl/interface/axi4_stream_master.sv \
 	    ../../rtl/top/flash_attn_top_axi.sv
@@ -371,7 +371,7 @@ dma_bench:
 	    ../../rtl/memory/sram_1r1w.sv \
 	    ../../rtl/memory/banked_scratchpad.sv \
 	    ../../rtl/memory/stripe_reader.sv \
-	    ../../rtl/top/dma_bench_top.sv \
+	    ../../rtl/bench/dma_bench_top.sv \
 	    tb_dma_bench.sv \
 	    tb_dma_bench.cpp \
 	    -o sim_dma_bench
@@ -392,7 +392,7 @@ RTL_CORE_BANKED_SRCS := \
 	    ../../rtl/memory/output_buffer.sv \
 	    ../../rtl/ctrl/addr_gen.sv \
 	    ../../rtl/ctrl/tile_controller_banked.sv \
-	    ../../rtl/top/flash_attn_core_banked.sv
+	    ../../rtl/core/flash_attn_core_banked.sv
 
 core_banked_N64: ../../data/N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
@@ -426,7 +426,7 @@ RTL_CORE_BANKED_PREFETCH_SRCS := \
 	    ../../rtl/memory/output_buffer.sv \
 	    ../../rtl/ctrl/addr_gen.sv \
 	    ../../rtl/ctrl/tile_controller_banked_prefetch.sv \
-	    ../../rtl/top/flash_attn_core_banked_prefetch.sv
+	    ../../rtl/core/flash_attn_core_banked_prefetch.sv
 
 core_banked_prefetch_N64: ../../data/N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
@@ -536,7 +536,7 @@ dma_vec_bench:
 	    ../../rtl/interface/axi_mem_model.sv \
 	    ../../rtl/memory/sram_1r1w.sv \
 	    ../../rtl/memory/banked_scratchpad.sv \
-	    ../../rtl/top/dma_vec_bench_top.sv \
+	    ../../rtl/bench/dma_vec_bench_top.sv \
 	    tb_dma_vec_bench.sv \
 	    tb_dma_vec_bench.cpp \
 	    -o sim_dma_vec_bench
@@ -635,7 +635,7 @@ RTL_DMA_SRCS := \
 	    ../../rtl/memory/output_buffer.sv \
 	    ../../rtl/ctrl/addr_gen.sv \
 	    ../../rtl/ctrl/tile_controller.sv \
-	    ../../rtl/top/flash_attn_core.sv \
+	    ../../rtl/core/flash_attn_core.sv \
 	    ../../rtl/interface/dma_engine.sv \
 	    ../../rtl/interface/axi_mem_model.sv \
 	    ../../rtl/top/flash_attn_top_dma.sv
@@ -677,7 +677,7 @@ RTL_DECODE_SRCS := \
 	    ../../rtl/memory/output_buffer.sv \
 	    ../../rtl/ctrl/addr_gen.sv \
 	    ../../rtl/ctrl/tile_controller.sv \
-	    ../../rtl/top/flash_attn_core.sv
+	    ../../rtl/core/flash_attn_core.sv
 
 # ── Week 6: kv_cache unit test ───────────────────────────────────────────────
 tb_kv_cache:

@@ -21,7 +21,7 @@ analyze -format sverilog [list \
   rtl/quantization/dequantizer.sv \
   rtl/ctrl/addr_gen.sv \
   rtl/ctrl/tile_controller_banked_prefetch.sv \
-  rtl/top/flash_attn_core_banked_prefetch.sv \
+  rtl/core/flash_attn_core_banked_prefetch.sv \
 ]
 
 elaborate $TOP_MODULE

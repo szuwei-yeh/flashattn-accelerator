@@ -283,7 +283,7 @@ banked path *without touching the green banked files* — it is a parallel varia
 not a replacement:
 
 - `rtl/ctrl/tile_controller_banked_prefetch.sv`
-- `rtl/top/flash_attn_core_banked_prefetch.sv`
+- `rtl/core/flash_attn_core_banked_prefetch.sv`
 - `rtl/top/flash_attn_top_dma_banked_prefetch.sv`
 
 **Active / shadow registers + copy-style swap.** The core keeps active
@@ -377,10 +377,10 @@ every latency. New targets: `core_banked_prefetch_N64`,
 New RTL: `rtl/interface/dma_engine.sv`, `rtl/interface/dma_engine_vec.sv`,
 `rtl/interface/axi_mem_model.sv` (sim), `rtl/memory/banked_scratchpad.sv`,
 `rtl/memory/stripe_reader.sv`, `rtl/memory/banked_tile_loader.sv`,
-`rtl/ctrl/tile_controller_banked.sv`, `rtl/top/flash_attn_core_banked.sv`,
+`rtl/ctrl/tile_controller_banked.sv`, `rtl/core/flash_attn_core_banked.sv`,
 `rtl/top/flash_attn_top_dma.sv`, `rtl/top/flash_attn_top_dma_banked.sv`.
 Prefetch variant (new, additive): `rtl/ctrl/tile_controller_banked_prefetch.sv`,
-`rtl/top/flash_attn_core_banked_prefetch.sv`,
+`rtl/core/flash_attn_core_banked_prefetch.sv`,
 `rtl/top/flash_attn_top_dma_banked_prefetch.sv`.
 Write-back path (new, additive): `rtl/interface/dma_write_engine.sv`,
 `rtl/interface/output_writeback_packer.sv`, `rtl/interface/axi_mem_model_rw.sv`
@@ -516,7 +516,7 @@ Causal mode skips above-diagonal tiles (~50% fewer KV tiles at large N).
 | `axi4_stream_slave` | `rtl/interface/axi4_stream_slave.sv` | Q/K/V byte stream → per-head SRAM, GQA-aware |
 | `axi4_stream_master` | `rtl/interface/axi4_stream_master.sv` | INT32 output → AXI4-Stream |
 | `flash_attn_top` | `rtl/top/flash_attn_top.sv` | Single-head top (no AXI) |
-| `flash_attn_core` | `rtl/top/flash_attn_core.sv` | Single-head core + KV cache |
+| `flash_attn_core` | `rtl/core/flash_attn_core.sv` | Single-head core + KV cache |
 | `flash_attn_top_axi` | `rtl/top/flash_attn_top_axi.sv` | 4-head top with AXI4-Stream + GQA |
 
 ---
