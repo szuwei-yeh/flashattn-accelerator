@@ -13,7 +13,6 @@ __pycache__/
 *.pyo
 .pytest_cache/
 
-# Local Markdown notes (only the root README is public)
 *.md
 !/README.md
 

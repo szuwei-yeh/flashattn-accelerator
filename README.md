@@ -591,8 +591,7 @@ macro `.db` area and timing. Both the failing paths and the missing macro models
 must be addressed before these numbers mean anything.
 
 See [`syn/README.md`](syn/README.md) for the DC scaffold, filelists, blackboxes,
-and how to re-run. Local Synopsys bring-up notes are kept in
-`synthesisprogress.md` (gitignored).
+and how to re-run.
 
 ---
 
