@@ -13,13 +13,12 @@ __pycache__/
 *.pyo
 .pytest_cache/
 
+# Local Markdown notes stay private; root and synthesis-flow READMEs are public.
 *.md
 !/README.md
+!/syn/README.md
 
-# Synopsys Design Compiler generated artifacts (keep scaffold, drop DC output)
-syn/output/*
-syn/reports/*
-syn/logs/*
-!syn/output/.gitkeep
-!syn/reports/.gitkeep
-!syn/logs/.gitkeep
+# Synopsys Design Compiler generated runs. Each server run is isolated under
+# syn/runs/<run-tag>/<profile>/ and synced separately from source control.
+syn/runs/*
+!syn/runs/.gitkeep

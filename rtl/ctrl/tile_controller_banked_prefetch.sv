@@ -25,9 +25,10 @@
 //  resident, no prefetch fires and S_CHECK_INNER takes the normal S_LOAD_KV path
 //  (which stalls on the same residency gate) — correctness is latency-independent.
 //
-//  Compute/softmax/output states (S_MATMUL_QK, S_UPDATE_SOFTMAX handshake,
-//  S_RESCALE_OUTPUT, S_MATMUL_PV, S_ACCUMULATE, S_NORMALIZE, S_CHECK_OUTER) are
-//  byte-for-byte identical to tile_controller_banked.sv.
+//  This variant also fuses output rescale and PV accumulation into one SRAM
+//  traversal.  Its compute flow is QK → softmax → PV → fused update; the fused
+//  enable tells output_buffer to preserve the original rescale truncation before
+//  adding the scaled PV value.
 // ============================================================
 `timescale 1ns/1ps
 
@@ -81,8 +82,7 @@ module tile_controller_banked_prefetch #(
     input  logic        softmax_out_valid,
     /* verilator lint_on UNUSEDSIGNAL */
 
-    output logic        accum_en,
-    output logic        rescale_en,
+    output logic        fused_update_en,
     output logic        norm_en,
     output logic        short_cnt_mode,
     output logic [$clog2(NUM_CHUNKS > 1 ? NUM_CHUNKS : 2)-1:0] k_chunk,
@@ -106,9 +106,8 @@ module tile_controller_banked_prefetch #(
         S_LOAD_KV          = 4'd2,
         S_MATMUL_QK        = 4'd3,
         S_UPDATE_SOFTMAX   = 4'd4,
-        S_RESCALE_OUTPUT   = 4'd5,
         S_MATMUL_PV        = 4'd6,
-        S_ACCUMULATE       = 4'd7,
+        S_FUSED_UPDATE     = 4'd7,
         S_CHECK_INNER      = 4'd8,
         S_NORMALIZE        = 4'd9,
         S_CHECK_OUTER      = 4'd10,
@@ -166,8 +165,7 @@ module tile_controller_banked_prefetch #(
             softmax_tile_start <= 1'b0;
             softmax_tile_valid <= 1'b0;
             softmax_tile_last  <= 1'b0;
-            accum_en           <= 1'b0;
-            rescale_en         <= 1'b0;
+            fused_update_en    <= 1'b0;
             norm_en            <= 1'b0;
             short_cnt_mode     <= 1'b0;
             k_chunk            <= '0;
@@ -186,8 +184,7 @@ module tile_controller_banked_prefetch #(
             softmax_tile_start <= 1'b0;
             softmax_tile_valid <= 1'b0;
             softmax_tile_last  <= 1'b0;
-            accum_en           <= 1'b0;
-            rescale_en         <= 1'b0;
+            fused_update_en    <= 1'b0;
             norm_en            <= 1'b0;
             pv_done            <= 1'b0;
             // short_cnt_mode, k_chunk, ld_mode, pf_pending are level signals — hold
@@ -280,29 +277,7 @@ module tile_controller_banked_prefetch #(
                             pf_start   <= 1'b1;
                             pf_pending <= 1'b1;
                         end
-                        state              <= S_RESCALE_OUTPUT;
-                    end
-                end
-
-                S_RESCALE_OUTPUT: begin
-                    short_cnt_mode <= 1'b1;
-                    cnt_en         <= 1'b1;
-                    rescale_en     <= 1'b1;
-                    if (cnt_done) begin
-                        cnt_en     <= 1'b0;
-                        rescale_en <= 1'b0;
-                        cnt_clr    <= 1'b1;
-                        if (int'(chunk_cnt) < NUM_CHUNKS - 1) begin
-                            chunk_cnt <= chunk_cnt + 1'b1;
-                            k_chunk   <= chunk_cnt + 1'b1;
-                            state     <= S_RESCALE_OUTPUT;
-                        end else begin
-                            short_cnt_mode <= 1'b0;
-                            array_started  <= 1'b0;
-                            chunk_cnt      <= '0;
-                            k_chunk        <= '0;
-                            state          <= S_MATMUL_PV;
-                        end
+                        state              <= S_MATMUL_PV;
                     end
                 end
 
@@ -315,18 +290,18 @@ module tile_controller_banked_prefetch #(
                         array_started  <= 1'b0;
                         short_cnt_mode <= 1'b1;
                         cnt_clr        <= 1'b1;
-                        state          <= S_ACCUMULATE;
+                        state          <= S_FUSED_UPDATE;
                     end
                 end
 
-                S_ACCUMULATE: begin
+                S_FUSED_UPDATE: begin
                     short_cnt_mode <= 1'b1;
                     cnt_en         <= 1'b1;
-                    accum_en       <= 1'b1;
+                    fused_update_en <= 1'b1;
                     if (cnt_done) begin
-                        cnt_en   <= 1'b0;
-                        accum_en <= 1'b0;
-                        cnt_clr  <= 1'b1;
+                        cnt_en          <= 1'b0;
+                        fused_update_en <= 1'b0;
+                        cnt_clr         <= 1'b1;
                         if (int'(chunk_cnt) < NUM_CHUNKS - 1) begin
                             chunk_cnt <= chunk_cnt + 1'b1;
                             k_chunk   <= chunk_cnt + 1'b1;

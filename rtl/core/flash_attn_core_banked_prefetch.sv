@@ -106,7 +106,7 @@ module flash_attn_core_banked_prefetch #(
     logic        array_no_clear;
     logic        softmax_tile_start, softmax_tile_valid, softmax_tile_last;
     logic        softmax_out_valid;
-    logic        accum_en, rescale_en, norm_en;
+    logic        fused_update_en, norm_en;
     logic        short_cnt_mode;
     logic [CHUNK_W-1:0] k_chunk;
     logic        pv_done;
@@ -144,7 +144,7 @@ module flash_attn_core_banked_prefetch #(
         .softmax_tile_last(softmax_tile_last),
         .exp_out_valid(sfx_exp_valid[0]),
         .softmax_out_valid(softmax_out_valid),
-        .accum_en(accum_en), .rescale_en(rescale_en), .norm_en(norm_en),
+        .fused_update_en(fused_update_en), .norm_en(norm_en),
         .short_cnt_mode(short_cnt_mode),
         .k_chunk(k_chunk),
         .pv_done(pv_done),
@@ -432,7 +432,7 @@ module flash_attn_core_banked_prefetch #(
     assign softmax_out_valid = softmax_valid_arr[0];
 
     // =========================================================
-    // 7. Output Buffer  (verbatim)
+    // 7. Output Buffer — fused rescale + PV accumulation
     // =========================================================
     /* verilator lint_off UNUSEDSIGNAL */
     logic signed [47:0] pv_scaled_wide;
@@ -457,8 +457,9 @@ module flash_attn_core_banked_prefetch #(
 
     output_buffer #(.DATA_WIDTH(32), .DEPTH(SRAM_DEPTH)) u_out_buf (
         .clk(clk), .rst_n(rst_n),
-        .accum_en(accum_en),     .addr(out_global_addr[11:0]),         .data_in(accum_data_in),
-        .rescale_en(rescale_en), .rescale_addr(out_global_addr[11:0]), .rescale_q88(rescale_q88_sel),
+        // Assert both legacy update enables to select output_buffer's fused mode.
+        .accum_en(fused_update_en),     .addr(out_global_addr[11:0]),         .data_in(accum_data_in),
+        .rescale_en(fused_update_en),   .rescale_addr(out_global_addr[11:0]), .rescale_q88(rescale_q88_sel),
         .norm_en(norm_en),       .norm_addr(out_global_addr[11:0]),    .norm_divisor(norm_divisor_sel),
         .re_ext(done_latch), .raddr_ext(out_raddr),
         .rdata_ext(out_rdata)

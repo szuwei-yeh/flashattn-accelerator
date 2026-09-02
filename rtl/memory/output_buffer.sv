@@ -1,10 +1,16 @@
 // ============================================================
 //  output_buffer.sv — Accumulation / Rescale / Normalise Buffer
 //
-//  Three operating modes (mutually exclusive):
-//    accum_en  : new = old + data_in
-//    rescale_en: new = (old * rescale_q88) >> 8   [Q8.8 multiply]
-//    norm_en   : new = (old << 8) / norm_divisor  [integer divide]
+//  Operating modes:
+//    accum_en                    : new = old + data_in
+//    rescale_en                  : new = (old * rescale_q88) >> 8
+//    accum_en && rescale_en      : new = ((old * rescale_q88) >> 8) + data_in
+//    norm_en                     : new = (old << 8) / norm_divisor
+//
+//  The fused mode deliberately truncates the rescale result to the same 32-bit
+//  intermediate value that the standalone rescale pass writes to SRAM before
+//  performing the existing 32-bit accumulation.  This preserves the original
+//  two-pass numerical semantics exactly.
 //
 //  All modes share the 1-cycle SRAM read-latency pipeline.
 //  External read (re_ext) takes priority on the read port.
@@ -98,10 +104,15 @@ module output_buffer #(
     logic signed [39:0] norm_numer;
     assign norm_numer = {old_data, 8'b0};   // 40-bit = old_data << 8
 
+    logic signed [31:0] rescaled_val;
     logic signed [31:0] new_val;
+    assign rescaled_val = $signed(rescale_wide[39:8]);
+
     always_comb begin
-        if (rescale_en_d)
-            new_val = $signed(rescale_wide[39:8]);           // >>8
+        if (rescale_en_d && accum_en_d)
+            new_val = rescaled_val + data_in_d;              // fused, 32-bit wrap
+        else if (rescale_en_d)
+            new_val = rescaled_val;                          // >>8, truncate to 32b
         else if (norm_en_d)
             new_val = (norm_divisor_d != 32'd0)
                       ? 32'($signed(norm_numer) / $signed({8'b0, norm_divisor_d}))
@@ -138,8 +149,10 @@ module output_buffer #(
     always_ff @(posedge clk) begin
         if (accum_en && re_ext)
             $error("output_buffer: accum_en and re_ext conflict!");
-        if ((int'(accum_en) + int'(rescale_en) + int'(norm_en)) > 1)
-            $error("output_buffer: multiple write modes active!");
+        if (norm_en && (accum_en || rescale_en))
+            $error("output_buffer: norm_en conflicts with update mode!");
+        if (accum_en && rescale_en && (addr != rescale_addr))
+            $error("output_buffer: fused update addresses must match!");
     end
     // synthesis translate_on
 
