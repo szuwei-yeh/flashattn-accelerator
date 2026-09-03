@@ -412,7 +412,13 @@ module flash_attn_core_banked_prefetch #(
             assign p_matrix_int8[r*SIZE + c] = signed'(sfx_exp_flat[r][c*16 +: 8]);
         end
 
-        online_softmax #(.DIM(SIZE)) u_softmax (
+        // This core normalizes its accumulated O matrix in output_buffer using
+        // running_sum_out. The per-tile compatibility softmax_flat output is not
+        // consumed, so do not elaborate its 16 parallel dividers per row.
+        online_softmax #(
+            .DIM(SIZE),
+            .EMIT_NORMALIZED_OUTPUT(0)
+        ) u_softmax (
             .clk(clk), .rst_n(rst_n),
             .tile_start(softmax_tile_start),
             .tile_valid(tile_valid_pulse),

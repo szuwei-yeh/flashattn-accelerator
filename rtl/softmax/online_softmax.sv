@@ -15,7 +15,12 @@
 `timescale 1ns/1ps
 
 module online_softmax #(
-    parameter int DIM = 16
+    parameter int DIM = 16,
+    // The attention cores consume exp_flat and running_sum_out, then normalize
+    // the accumulated O matrix in output_buffer. Keep this compatibility output
+    // enabled by default for the standalone softmax interface/test, but allow
+    // cores that do not consume it to elaborate without DIM parallel dividers.
+    parameter int EMIT_NORMALIZED_OUTPUT = 1
 )(
     input  logic               clk,
     input  logic               rst_n,
@@ -70,15 +75,25 @@ module online_softmax #(
     logic        [15:0]  exp_vals [DIM];
 
     // ── Normalisation (last tile only) ────────────────────────
-    logic [31:0] norm_numer [DIM];
-    logic [31:0] norm_denom;
     logic [31:0] norm_result [DIM];
 
-    assign norm_denom = (running_sum != 0) ? running_sum : 32'd1;
-    for (genvar gn = 0; gn < DIM; gn++) begin : gen_norm
-        assign norm_numer[gn]  = {16'b0, exp_vals[gn]} << 8;
-        assign norm_result[gn] = (norm_numer[gn] + (norm_denom >> 1)) / norm_denom;
-    end
+    generate
+        if (EMIT_NORMALIZED_OUTPUT != 0) begin : gen_normalized_output
+            logic [31:0] norm_numer [DIM];
+            logic [31:0] norm_denom;
+
+            assign norm_denom = (running_sum != 0) ? running_sum : 32'd1;
+            for (genvar gn = 0; gn < DIM; gn++) begin : gen_norm
+                assign norm_numer[gn]  = {16'b0, exp_vals[gn]} << 8;
+                assign norm_result[gn] =
+                    (norm_numer[gn] + (norm_denom >> 1)) / norm_denom;
+            end
+        end else begin : gen_no_normalized_output
+            for (genvar gn = 0; gn < DIM; gn++) begin : gen_norm
+                assign norm_result[gn] = '0;
+            end
+        end
+    endgenerate
 
     // ── State machine ─────────────────────────────────────────
     typedef enum logic [2:0] {
@@ -245,7 +260,7 @@ module online_softmax #(
                     exp_out_valid <= 1'b1;
 
                     // Normalised output: only on last tile
-                    if (tile_last_r) begin
+                    if (tile_last_r && (EMIT_NORMALIZED_OUTPUT != 0)) begin
                         for (int i = 0; i < DIM; i++) begin
                             softmax_flat[i*16 +: 16] <=
                                 (norm_result[i] > 32'h0000_FFFF) ? 16'hFFFF
