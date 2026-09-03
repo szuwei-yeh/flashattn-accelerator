@@ -99,9 +99,13 @@ repo_root=$(cd -- "$script_dir/../.." && pwd)
 run_dir="$repo_root/syn/runs/$run_tag/$profile"
 dc_shell_bin=${DC_SHELL_BIN:-dc_shell}
 
-if ! command -v "$dc_shell_bin" >/dev/null 2>&1; then
+if ! dc_shell_path=$(command -v "$dc_shell_bin"); then
     echo "ERROR: cannot find '$dc_shell_bin' in PATH." >&2
     exit 127
+fi
+if [[ $dc_shell_path == */* && $dc_shell_path != /* ]]; then
+    dc_shell_dir=$(cd -- "$(dirname -- "$dc_shell_path")" && pwd -P)
+    dc_shell_path="$dc_shell_dir/$(basename -- "$dc_shell_path")"
 fi
 if [[ ! -f $DC_TARGET_LIBRARY ]]; then
     echo "ERROR: target library does not exist: $DC_TARGET_LIBRARY" >&2
@@ -139,7 +143,10 @@ echo "Starting $profile ($run_mode), run tag $run_tag"
 echo "Log: $log_file"
 
 set +e
-"$dc_shell_bin" -f "$script_dir/dc_run.tcl" 2>&1 | tee "$log_file"
+(
+    cd -- "$run_dir" || exit 1
+    "$dc_shell_path" -f "$script_dir/dc_run.tcl"
+) 2>&1 | tee "$log_file"
 dc_status=${PIPESTATUS[0]}
 set -e
 

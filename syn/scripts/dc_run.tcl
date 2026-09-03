@@ -168,6 +168,10 @@ if {$RUN_MODE eq "elab"} {
     report_resources -hierarchy > [file join $REPORT_DIR resources.rpt]
     report_clock > [file join $REPORT_DIR clocks.rpt]
 
+    # Normalize identifiers before emitting Verilog. Without this step DC may
+    # invent SYNOPSYS_UNCONNECTED_* nets and report VO-11 warnings, which makes
+    # the mapped netlist unnecessarily noisy for downstream tools.
+    change_names -rules verilog -hierarchy
     write -format verilog -hierarchy -output [file join $ARTIFACT_DIR mapped.v]
     write -format ddc -hierarchy -output [file join $ARTIFACT_DIR mapped.ddc]
     write_sdc [file join $ARTIFACT_DIR constraints.sdc]
