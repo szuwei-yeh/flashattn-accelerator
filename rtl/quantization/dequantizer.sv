@@ -2,13 +2,13 @@
 //  dequantizer.sv — INT32 accumulation → fixed-point rescale
 //
 //  Rescales the INT32 result from the systolic array back to
-//  fixed-point using the two quantisation scales from Q and K:
+//  fixed-point using the precombined Q/K quantisation scale:
 //
-//    data_out = round( (data_in * scale_q * scale_k) >> (2*FRAC_BITS) )
+//    data_out = round( (data_in * combined_scale) >> FRAC_BITS )
 //
-//  where scale_q, scale_k are Q8.8 values (Q-format with FRAC_BITS
-//  fractional bits), so the two-step right-shift removes both scale
-//  factors' fractional parts, leaving a result in OUT_WIDTH bits.
+//  where combined_scale is the exact signed 32-bit Q16.16 product of
+//  the shared Q8.8 scale_q and scale_k values.  Shifting by FRAC_BITS
+//  converts the full-precision product to a Q8.8 output.
 //
 //  Latency: 1 clock cycle (registered output).
 // ============================================================
@@ -22,22 +22,18 @@ module dequantizer #(
     input  logic                            rst_n,
     input  logic                            valid_in,
     input  logic signed [31:0]              data_in,   // INT32 from systolic array
-    input  logic signed [15:0]              scale_q,   // Q scale  (Q8.8)
-    input  logic signed [15:0]              scale_k,   // K scale  (Q8.8)
+    input  logic signed [31:0]              combined_scale, // scale_q * scale_k (Q16.16)
     output logic                            valid_out,
     output logic signed [OUT_WIDTH-1:0]     data_out
 );
 
     // ── Combinational multiply-shift ───────────────────────────────────────
-    // data_in (32b) × scale_q (16b) → 48b
-    // × scale_k (16b)               → 64b
-    // Round then >> (2*FRAC_BITS)   → 64 - 2*8 = 48b effective
-    // Output is Q8.8: shift removes one Q8.8 scale factor.
-    // data_in * sq_q88 * sk_q88 >> FRAC_BITS = score_float * 256 (Q8.8)
+    // data_in (32b) × combined_scale (32b) → full-precision 64b.
+    // Output is Q8.8: combined_scale is Q16.16, so shifting by
+    // FRAC_BITS retains eight fractional bits in the output.
     localparam int SHIFT = FRAC_BITS;
 
-    logic signed [47:0] mid;        // data_in * scale_q
-    logic signed [63:0] wide;       // mid * scale_k
+    logic signed [63:0] product;
     logic signed [63:0] rounded;
     logic signed [63:0] shifted;
 
@@ -45,11 +41,10 @@ module dequantizer #(
     localparam logic signed [63:0] ROUND_HALF = 64'(1) << (SHIFT - 1);
 
     always_comb begin
-        mid     = signed'(data_in) * signed'(scale_q);
-        wide    = mid * signed'(scale_k);
+        product = signed'(data_in) * signed'(combined_scale);
         // Round-to-nearest: add 0.5 ULP in the discarded bits
         // (valid for positive products; sign-correct because we truncate)
-        rounded = wide + ROUND_HALF;
+        rounded = product + ROUND_HALF;
         shifted = rounded >>> SHIFT;
     end
 

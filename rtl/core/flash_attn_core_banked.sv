@@ -274,12 +274,16 @@ module flash_attn_core_banked #(
     logic is_last_qk_chunk;
     assign is_last_qk_chunk = (k_chunk == CHUNK_W'(NUM_CHUNKS - 1));
 
+    // Exact shared Q8.8 × Q8.8 product for all dequantizer lanes.
+    logic signed [31:0] combined_scale;
+    assign combined_scale = signed'(scale_q) * signed'(scale_k);
+
     for (genvar gi = 0; gi < FLAT; gi++) begin : gen_dequant
         dequantizer #(.OUT_WIDTH(16), .FRAC_BITS(8)) u_deq (
             .clk(clk), .rst_n(rst_n),
             .valid_in(array_done && !is_pv_phase && is_last_qk_chunk),
             .data_in(array_acc[gi]),
-            .scale_q(scale_q), .scale_k(scale_k),
+            .combined_scale(combined_scale),
             .valid_out(dequant_valid[gi]),
             .data_out(dequant_out[gi])
         );

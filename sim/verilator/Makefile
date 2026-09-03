@@ -50,6 +50,17 @@ tb_quantizer:
 	    -o sim_quantizer
 	./obj_quantizer/sim_quantizer
 
+tb_dequantizer_combined:
+	$(VERILATOR) --cc --exe --build -Wall \
+	    --sv \
+	    --Mdir obj_dequantizer_combined \
+	    --top-module tb_dequantizer_combined \
+	    ../../rtl/quantization/dequantizer.sv \
+	    tb_dequantizer_combined.sv \
+	    tb_dequantizer_combined.cpp \
+	    -o sim_dequantizer_combined
+	./obj_dequantizer_combined/sim_dequantizer_combined
+
 tb_exp_lut:
 	$(VERILATOR) --cc --exe --build -Wall \
 	    --sv \
@@ -727,7 +738,7 @@ week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 	@echo "=== All Week 6 tests passed ==="
 
 # ── Full regression (Week 1–7: all configs including GQA) ────────────────────
-regression: tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
+regression: tb_dequantizer_combined tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
             tb_top_causal_N64 tb_top_causal_N256 \
             tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
             axi_all week6_all tb_dma_unit tb_dma_write_unit wb_drain_bench dma_top_N64 dma_top_N64_d64 \
@@ -809,7 +820,7 @@ _cov_kv_decode:
 	@./obj_kv_decode/sim_kv_decode --data ../../data/kv_decode 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
 
 clean:
-	rm -rf $(SIM_DIR) obj_array_ctrl obj_quantizer obj_exp_lut \
+	rm -rf $(SIM_DIR) obj_array_ctrl obj_quantizer obj_dequantizer_combined obj_exp_lut \
 	        obj_softmax obj_addr_gen obj_sram obj_kv_buf \
 	        obj_top obj_top_N16 obj_top_N64 obj_top_N128 obj_top_N256 \
 	        obj_top_causal_N64 \
