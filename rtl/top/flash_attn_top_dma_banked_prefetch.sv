@@ -34,6 +34,8 @@ module flash_attn_top_dma_banked_prefetch #(
     output logic done,
 
     input  logic        causal,
+    // Q/K scales must remain valid through core_start; the core samples their
+    // product when its controller accepts that transaction.
     input  logic signed [15:0] scale_q,
     input  logic signed [15:0] scale_k,
     input  logic signed [15:0] scale_v,

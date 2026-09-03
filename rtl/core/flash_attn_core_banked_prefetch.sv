@@ -35,7 +35,10 @@
 //  Everything from the data-slice mux onward (systolic array, dequant, online
 //  softmax, output_buffer) is copied verbatim from flash_attn_core_banked.sv.
 //
-//  Port list is IDENTICAL to flash_attn_core_banked.sv (drop-in replacement).
+//  scale_q/scale_k are transaction-level configuration: they must be valid
+//  before the controller accepts start in S_IDLE and are sampled on that edge.
+//  Later input changes, including a start pulse while busy, do not change the
+//  active transaction's registered combined scale.
 // ============================================================
 `timescale 1ns/1ps
 
@@ -53,8 +56,8 @@ module flash_attn_core_banked_prefetch #(
     input  logic        mode,       // 0 = prefill (only mode supported here)
     input  logic [15:0] kv_len,
 
-    input  logic signed [15:0] scale_q,
-    input  logic signed [15:0] scale_k,
+    input  logic signed [15:0] scale_q, // sampled when start is accepted
+    input  logic signed [15:0] scale_k, // sampled when start is accepted
     input  logic signed [15:0] scale_v,
 
     // Scalar scratchpad write ports (preload path; e.g. testbench)
@@ -102,6 +105,7 @@ module flash_attn_core_banked_prefetch #(
     logic        ld_start, ld_mode, fsm_ld_done;
     logic        pf_start, kv_swap_banks;
     logic [15:0] pf_tile_col;
+    logic        start_accepted;
     logic        array_start, array_done, array_busy;
     logic        array_no_clear;
     logic        softmax_tile_start, softmax_tile_valid, softmax_tile_last;
@@ -131,6 +135,7 @@ module flash_attn_core_banked_prefetch #(
         .TILE_SIZE(TILE_SIZE), .HEAD_DIM(HEAD_DIM), .SEQ_LEN(SEQ_LEN)
     ) u_fsm (
         .clk(clk), .rst_n(rst_n), .start(start), .done(done),
+        .start_accepted(start_accepted),
         .mode(mode), .kv_len(kv_len),
         .tile_row(tile_row), .tile_col(tile_col),
         .cnt_en(cnt_en), .cnt_clr(cnt_clr), .cnt_done(cnt_done),
@@ -367,17 +372,26 @@ module flash_attn_core_banked_prefetch #(
     logic is_last_qk_chunk;
     assign is_last_qk_chunk = (k_chunk == CHUNK_W'(NUM_CHUNKS - 1));
 
-    // Exact shared Q8.8 × Q8.8 product.  Keep all 32 signed result bits so
-    // every lane can perform one full-precision signed 32×32 multiplication.
-    logic signed [31:0] combined_scale;
-    assign combined_scale = signed'(scale_q) * signed'(scale_k);
+    // Exact shared Q8.8 × Q8.8 product, captured only when the controller
+    // accepts a new transaction.  Keep all 32 signed result bits so every lane
+    // can perform one full-precision signed 32×32 multiplication.
+    logic signed [31:0] combined_scale_product;
+    logic signed [31:0] combined_scale_reg;
+    assign combined_scale_product = signed'(scale_q) * signed'(scale_k);
+
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            combined_scale_reg <= '0;
+        else if (start_accepted)
+            combined_scale_reg <= combined_scale_product;
+    end
 
     for (genvar gi = 0; gi < FLAT; gi++) begin : gen_dequant
         dequantizer #(.OUT_WIDTH(16), .FRAC_BITS(8)) u_deq (
             .clk(clk), .rst_n(rst_n),
             .valid_in(array_done && !is_pv_phase && is_last_qk_chunk),
             .data_in(array_acc[gi]),
-            .combined_scale(combined_scale),
+            .combined_scale(combined_scale_reg),
             .valid_out(dequant_valid[gi]),
             .data_out(dequant_out[gi])
         );

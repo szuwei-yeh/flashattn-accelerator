@@ -455,6 +455,15 @@ core_banked_prefetch_N64_d64: ../../data/N64_d64/expected.hex
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp -o sim_core_banked_prefetch_N64_d64
 	./obj_core_banked_prefetch_N64_d64/sim_core_banked_prefetch_N64_d64 --N 64 --D 64 --data ../../data/N64_d64
 
+tb_transaction_scale:
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_transaction_scale \
+	    --Mdir obj_transaction_scale \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
+	    tb_transaction_scale.sv tb_transaction_scale.cpp \
+	    -o sim_transaction_scale
+	./obj_transaction_scale/sim_transaction_scale
+
 # ── Stage 3B-3: vector DMA → banked core, end-to-end ─────────────────────────
 dma_banked_top_N64: ../../data/N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
@@ -738,7 +747,7 @@ week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 	@echo "=== All Week 6 tests passed ==="
 
 # ── Full regression (Week 1–7: all configs including GQA) ────────────────────
-regression: tb_dequantizer_combined tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
+regression: tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
             tb_top_causal_N64 tb_top_causal_N256 \
             tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
             axi_all week6_all tb_dma_unit tb_dma_write_unit wb_drain_bench dma_top_N64 dma_top_N64_d64 \
@@ -820,7 +829,7 @@ _cov_kv_decode:
 	@./obj_kv_decode/sim_kv_decode --data ../../data/kv_decode 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
 
 clean:
-	rm -rf $(SIM_DIR) obj_array_ctrl obj_quantizer obj_dequantizer_combined obj_exp_lut \
+	rm -rf $(SIM_DIR) obj_array_ctrl obj_quantizer obj_dequantizer_combined obj_transaction_scale obj_exp_lut \
 	        obj_softmax obj_addr_gen obj_sram obj_kv_buf \
 	        obj_top obj_top_N16 obj_top_N64 obj_top_N128 obj_top_N256 \
 	        obj_top_causal_N64 \

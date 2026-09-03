@@ -382,6 +382,13 @@ New RTL: `rtl/interface/dma_engine.sv`, `rtl/interface/dma_engine_vec.sv`,
 Prefetch variant (new, additive): `rtl/ctrl/tile_controller_banked_prefetch.sv`,
 `rtl/core/flash_attn_core_banked_prefetch.sv`,
 `rtl/top/flash_attn_top_dma_banked_prefetch.sv`.
+
+For the banked-prefetch core, `scale_q` and `scale_k` are transaction-level
+configuration. They must be valid before `start` is accepted in the controller's
+idle state; their exact signed product is captured on that edge and remains in
+effect for the full transaction. Later scale changes or a `start` pulse while
+the controller is busy do not update the active transaction's scale.
+
 Write-back path (new, additive): `rtl/interface/dma_write_engine.sv`,
 `rtl/interface/output_writeback_packer.sv`, `rtl/interface/axi_mem_model_rw.sv`
 (sim), `rtl/top/flash_attn_top_dma_banked_wb.sv`.

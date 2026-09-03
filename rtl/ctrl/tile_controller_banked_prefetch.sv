@@ -44,6 +44,7 @@ module tile_controller_banked_prefetch #(
     input  logic rst_n,
     input  logic start,
     output logic done,
+    output logic start_accepted,  // high only while S_IDLE accepts start
 
     input  logic        mode,       // 0 = prefill, 1 = decode
     input  logic [15:0] kv_len,     // runtime KV length (decode mode)
@@ -122,6 +123,7 @@ module tile_controller_banked_prefetch #(
     logic [$clog2(NUM_CHUNKS > 1 ? NUM_CHUNKS : 2)-1:0] chunk_cnt;
 
     assign dbg_state = 4'(state);
+    assign start_accepted = (state == S_IDLE) && start;
 
     logic is_first_kv;
     logic is_last_kv;
@@ -194,7 +196,7 @@ module tile_controller_banked_prefetch #(
                 S_IDLE: begin
                     short_cnt_mode <= 1'b0;
                     pf_pending     <= 1'b0;    // no prefetch outstanding at start
-                    if (start) begin
+                    if (start_accepted) begin
                         tile_row      <= '0;
                         tile_col      <= '0;
                         array_started <= 1'b0;
