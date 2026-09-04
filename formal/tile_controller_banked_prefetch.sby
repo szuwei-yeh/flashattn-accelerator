@@ -1,0 +1,22 @@
+[tasks]
+bmc
+cover
+
+[options]
+bmc: mode bmc
+bmc: depth 48
+cover: mode cover
+cover: depth 48
+multiclock on
+
+[engines]
+smtbmc z3
+
+[script]
+read -formal -sv tile_controller_banked_prefetch.sv
+read -formal -sv tile_controller_banked_prefetch_formal.sv
+prep -top tile_controller_banked_prefetch_formal
+
+[files]
+../rtl/ctrl/tile_controller_banked_prefetch.sv
+tile_controller_banked_prefetch_formal.sv

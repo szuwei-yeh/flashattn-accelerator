@@ -574,6 +574,17 @@ tb_dma_unit:
 	    -o sim_dma_unit
 	./obj_dma_unit/sim_dma_unit
 
+# Directed characterization of dma_engine_vec RLAST/RRESP behavior.  The C++
+# test drives the AXI read channel directly so protocol fields can be perturbed.
+tb_dma_vec_axi_protocol:
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module dma_engine_vec \
+	    --Mdir obj_dma_vec_axi_protocol \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    tb_dma_vec_axi_protocol.cpp \
+	    -o sim_dma_vec_axi_protocol
+	./obj_dma_vec_axi_protocol/sim_dma_vec_axi_protocol
+
 # ── Write-back DMA (Stage WB-1): AXI4 write master + RW DRAM model unit test ──
 # Standalone: proves AW/W/B, multi-burst chunking, WLAST, byte-exact placement,
 # and wr_latency-independence BEFORE any core integration.
@@ -750,7 +761,7 @@ week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 regression: tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
             tb_top_causal_N64 tb_top_causal_N256 \
             tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
-            axi_all week6_all tb_dma_unit tb_dma_write_unit wb_drain_bench dma_top_N64 dma_top_N64_d64 \
+            axi_all week6_all tb_dma_unit tb_dma_vec_axi_protocol tb_dma_write_unit wb_drain_bench dma_top_N64 dma_top_N64_d64 \
             tb_banked_scratchpad dma_bench dma_vec_bench tb_banked_tile_loader \
             core_banked_N64 core_banked_N64_d64 \
             dma_banked_top_N64 dma_banked_top_N64_d64 \
@@ -835,7 +846,7 @@ clean:
 	        obj_top_causal_N64 \
 	        obj_axi_slave obj_axi_top_N64 \
 	        obj_kv_cache obj_kv_decode \
-	        obj_dma_unit obj_dma_write_unit obj_wb_drain_bench obj_dma_top_N64 obj_dma_top_N64_d64 obj_banked_scratchpad \
+	        obj_dma_unit obj_dma_vec_axi_protocol obj_dma_write_unit obj_wb_drain_bench obj_dma_top_N64 obj_dma_top_N64_d64 obj_banked_scratchpad \
 	        obj_dma_bench obj_dma_vec_bench obj_btl_d16 obj_btl_d64 \
 	        obj_core_banked_N64 obj_core_banked_N64_d64 \
 	        obj_dma_banked_top_N64 obj_dma_banked_top_N64_d64 \
