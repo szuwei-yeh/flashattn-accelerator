@@ -35,10 +35,9 @@
 //  Everything from the data-slice mux onward (systolic array, dequant, online
 //  softmax, output_buffer) is copied verbatim from flash_attn_core_banked.sv.
 //
-//  scale_q/scale_k are transaction-level configuration: they must be valid
-//  before the controller accepts start in S_IDLE and are sampled on that edge.
-//  Later input changes, including a start pulse while busy, do not change the
-//  active transaction's registered combined scale.
+//  All transaction-level configuration is sampled when the controller accepts
+//  start in S_IDLE.  Later input changes, including a start pulse while busy,
+//  cannot change the active transaction.
 // ============================================================
 `timescale 1ns/1ps
 
@@ -97,6 +96,26 @@ module flash_attn_core_banked_prefetch #(
     localparam int IDX_W      = $clog2(KV_FLAT);
     localparam int TILE_BYTES = TILE_SIZE * HEAD_DIM;  // stride to next KV tile
 
+    // This optimized implementation intentionally supports only the validated
+    // fixed geometry.  Fail at elaboration/simulation instead of silently
+    // building an address-truncated or numerically unsupported configuration.
+    initial begin : p_parameter_guard
+        if (TILE_SIZE != 16)
+            $fatal(1, "flash_attn_core_banked_prefetch: TILE_SIZE must be 16");
+        if ((HEAD_DIM % TILE_SIZE) != 0)
+            $fatal(1, "flash_attn_core_banked_prefetch: HEAD_DIM must be a TILE_SIZE multiple");
+        if (!((HEAD_DIM == 16) || (HEAD_DIM == 64)))
+            $fatal(1, "flash_attn_core_banked_prefetch: supported HEAD_DIM values are 16 and 64");
+        if ((SEQ_LEN == 0) || ((SEQ_LEN % TILE_SIZE) != 0))
+            $fatal(1, "flash_attn_core_banked_prefetch: SEQ_LEN must be a non-zero TILE_SIZE multiple");
+        if ((SEQ_LEN * HEAD_DIM) > SRAM_DEPTH)
+            $fatal(1, "flash_attn_core_banked_prefetch: SEQ_LEN*HEAD_DIM exceeds SRAM_DEPTH");
+        if ((SRAM_DEPTH % NUM_BANKS) != 0)
+            $fatal(1, "flash_attn_core_banked_prefetch: SRAM_DEPTH must be divisible by NUM_BANKS");
+        if ((SRAM_DEPTH == 0) || (SRAM_DEPTH > 4096))
+            $fatal(1, "flash_attn_core_banked_prefetch: fixed 12-bit ports support SRAM_DEPTH 1..4096");
+    end
+
     // =========================================================
     // 1. Tile Controller (banked prefetch variant) + Addr Gen
     // =========================================================
@@ -106,6 +125,12 @@ module flash_attn_core_banked_prefetch #(
     logic        pf_start, kv_swap_banks;
     logic [15:0] pf_tile_col;
     logic        start_accepted;
+    logic        transaction_consumed;
+    logic        start_allowed;
+    logic        mode_reg;
+    logic [15:0] kv_len_reg;
+    logic        causal_reg;
+    logic signed [15:0] scale_v_reg;
     logic        array_start, array_done, array_busy;
     logic        array_no_clear;
     logic        softmax_tile_start, softmax_tile_valid, softmax_tile_last;
@@ -134,9 +159,9 @@ module flash_attn_core_banked_prefetch #(
     tile_controller_banked_prefetch #(
         .TILE_SIZE(TILE_SIZE), .HEAD_DIM(HEAD_DIM), .SEQ_LEN(SEQ_LEN)
     ) u_fsm (
-        .clk(clk), .rst_n(rst_n), .start(start), .done(done),
+        .clk(clk), .rst_n(rst_n), .start(start_allowed), .done(done),
         .start_accepted(start_accepted),
-        .mode(mode), .kv_len(kv_len),
+        .mode(mode_reg), .kv_len(kv_len_reg),
         .tile_row(tile_row), .tile_col(tile_col),
         .cnt_en(cnt_en), .cnt_clr(cnt_clr), .cnt_done(cnt_done),
         .ld_start(ld_start), .ld_mode(ld_mode), .ld_done(fsm_ld_done),
@@ -153,10 +178,40 @@ module flash_attn_core_banked_prefetch #(
         .short_cnt_mode(short_cnt_mode),
         .k_chunk(k_chunk),
         .pv_done(pv_done),
-        .causal(causal),
+        .causal(causal_reg),
         .kv_tiles_ready(kv_tiles_ready),
         .dbg_state(_dbg_state)
     );
+
+    // The output SRAM is an accumulation state store and has no transaction
+    // clear traversal.  Until such a traversal (or an epoch scheme) exists,
+    // accepting a second transaction would add to stale output data.  Enforce
+    // the documented single-shot-until-reset contract instead of silently
+    // producing a wrong second result.
+    assign start_allowed = start && !transaction_consumed;
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            transaction_consumed <= 1'b0;
+        else if (start_accepted)
+            transaction_consumed <= 1'b1;
+    end
+
+    // Accepted-start is the single locking boundary for core-only and DMA-fed
+    // use.  Q/K are represented by combined_scale_reg below; the remaining
+    // transaction-level controls are captured explicitly here.
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            mode_reg    <= 1'b0;
+            kv_len_reg  <= '0;
+            causal_reg  <= 1'b0;
+            scale_v_reg <= '0;
+        end else if (start_accepted) begin
+            mode_reg    <= mode;
+            kv_len_reg  <= kv_len;
+            causal_reg  <= causal;
+            scale_v_reg <= scale_v;
+        end
+    end
 
     /* verilator lint_off UNUSEDSIGNAL */
     logic [31:0] q_global_offset, k_global_offset;
@@ -231,7 +286,7 @@ module flash_attn_core_banked_prefetch #(
     // cleared on swap / new prefetch / new run.
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)              pf_valid <= 1'b0;
-        else if (start)          pf_valid <= 1'b0;
+        else if (start_accepted) pf_valid <= 1'b0;
         else if (pf_start)       pf_valid <= 1'b0;   // shadow being refilled
         else if (kv_swap_banks)  pf_valid <= 1'b0;   // shadow consumed
         else if (pf_done)        pf_valid <= 1'b1;   // shadow ready
@@ -424,7 +479,7 @@ module flash_attn_core_banked_prefetch #(
         logic [SIZE*16-1:0] row_scores;
         for (genvar c = 0; c < SIZE; c++) begin : gen_pack
             logic mask_elem;
-            assign mask_elem = causal && ((tile_col > tile_row) ||
+            assign mask_elem = causal_reg && ((tile_col > tile_row) ||
                                           ((tile_col == tile_row) && (c > r)));
             assign row_scores[c*16 +: 16] =
                 mask_elem ? 16'sh8000 : (dequant_out[r*SIZE + c] >>> SCALE_SHIFT);
@@ -463,14 +518,14 @@ module flash_attn_core_banked_prefetch #(
     logic signed [47:0] pv_scaled_wide;
     /* verilator lint_on UNUSEDSIGNAL */
     logic signed [31:0] accum_data_in;
-    assign pv_scaled_wide = 48'(signed'(array_acc[sram_addr])) * 48'(signed'(scale_v));
+    assign pv_scaled_wide = 48'(signed'(array_acc[sram_addr])) * 48'(signed'(scale_v_reg));
     assign accum_data_in  = $signed(pv_scaled_wide[39:8]);
 
     logic done_latch;
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)     done_latch <= 1'b0;
         else if (done)  done_latch <= 1'b1;
-        else if (start) done_latch <= 1'b0;
+        else if (start_accepted) done_latch <= 1'b0;
     end
 
     logic [3:0]  qrow_sel;

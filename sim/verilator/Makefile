@@ -4,7 +4,7 @@ SIM_DIR     := obj_dir
 
 SIM_BIN     := $(SIM_DIR)/Vsystolic_array
 
-.PHONY: all run clean lint
+.PHONY: all run clean lint cleanup_directed
 
 all: $(SIM_BIN)
 
@@ -40,6 +40,11 @@ lint:
 	    $(RTL_DIR)/pe.sv \
 	    $(RTL_DIR)/systolic_array.sv \
 	    $(RTL_DIR)/array_controller.sv
+	$(VERILATOR) --lint-only --sv -Wall \
+	    --top-module flash_attn_top_dma_banked_prefetch \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
+	    ../../rtl/top/flash_attn_top_dma_banked_prefetch.sv
 
 tb_quantizer:
 	$(VERILATOR) --cc --exe --build -Wall \
@@ -455,6 +460,26 @@ core_banked_prefetch_N64_d64: ../../data/N64_d64/expected.hex
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp -o sim_core_banked_prefetch_N64_d64
 	./obj_core_banked_prefetch_N64_d64/sim_core_banked_prefetch_N64_d64 --N 64 --D 64 --data ../../data/N64_d64
 
+core_banked_prefetch_config_lock_N64: ../../data/N64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module flash_attn_core_banked_prefetch \
+	    --Mdir obj_core_banked_prefetch_config_lock_N64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp \
+	    -o sim_core_banked_prefetch_config_lock_N64
+	./obj_core_banked_prefetch_config_lock_N64/sim_core_banked_prefetch_config_lock_N64 \
+	    --N 64 --D 16 --data ../../data/N64 --stress-config-lock
+
+core_banked_prefetch_causal_N64: ../../data/causal_N64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module flash_attn_core_banked_prefetch \
+	    --Mdir obj_core_banked_prefetch_causal_N64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp \
+	    -o sim_core_banked_prefetch_causal_N64
+	./obj_core_banked_prefetch_causal_N64/sim_core_banked_prefetch_causal_N64 \
+	    --N 64 --D 16 --data ../../data/causal_N64 --causal
+
 tb_transaction_scale:
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module tb_transaction_scale \
@@ -522,6 +547,38 @@ dma_banked_prefetch_top_N64_d64: ../../data/N64_d64/expected.hex
 	    tb_dma_banked_prefetch_harness.sv \
 	    tb_dma_banked_prefetch.cpp -o sim_dma_banked_prefetch_top_N64_d64
 	./obj_dma_banked_prefetch_top_N64_d64/sim_dma_banked_prefetch_top_N64_d64 --N 64 --D 64 --data ../../data/N64_d64 --core_busy_ref 45590
+
+dma_banked_prefetch_causal_top_N64: ../../data/causal_N64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_banked_prefetch_harness \
+	    --Mdir obj_dma_banked_prefetch_causal_top_N64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
+	    ../../rtl/top/flash_attn_top_dma_banked_prefetch.sv \
+	    tb_dma_banked_prefetch_harness.sv \
+	    tb_dma_banked_prefetch.cpp -o sim_dma_banked_prefetch_causal_top_N64
+	./obj_dma_banked_prefetch_causal_top_N64/sim_dma_banked_prefetch_causal_top_N64 \
+	    --N 64 --D 16 --data ../../data/causal_N64 --causal
+
+tb_dma_banked_prefetch_contract: ../../data/N64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_banked_prefetch_harness \
+	    --Mdir obj_dma_banked_prefetch_contract \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
+	    ../../rtl/top/flash_attn_top_dma_banked_prefetch.sv \
+	    tb_dma_banked_prefetch_harness.sv \
+	    tb_dma_banked_prefetch_contract.cpp -o sim_dma_banked_prefetch_contract
+	./obj_dma_banked_prefetch_contract/sim_dma_banked_prefetch_contract
+
+cleanup_directed: tb_transaction_scale core_banked_prefetch_config_lock_N64 \
+		core_banked_prefetch_causal_N64 dma_banked_prefetch_causal_top_N64 \
+		tb_dma_banked_prefetch_contract
+	@echo "=== Final RTL cleanup directed tests PASS ==="
 
 # ── Stage 3B-1: banked tile loader unit test (d=16 and d=64) ─────────────────
 tb_banked_tile_loader:
@@ -767,6 +824,8 @@ regression: tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d
             dma_banked_top_N64 dma_banked_top_N64_d64 \
             core_banked_prefetch_N64 core_banked_prefetch_N64_d64 \
             dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64 \
+	    core_banked_prefetch_config_lock_N64 core_banked_prefetch_causal_N64 \
+	    dma_banked_prefetch_causal_top_N64 tb_dma_banked_prefetch_contract \
             dma_banked_wb_top_N64 dma_banked_wb_top_N64_d64
 	@echo ""
 	@echo "=== Full regression PASS ==="
@@ -849,6 +908,8 @@ clean:
 	        obj_dma_unit obj_dma_vec_axi_protocol obj_dma_write_unit obj_wb_drain_bench obj_dma_top_N64 obj_dma_top_N64_d64 obj_banked_scratchpad \
 	        obj_dma_bench obj_dma_vec_bench obj_btl_d16 obj_btl_d64 \
 	        obj_core_banked_N64 obj_core_banked_N64_d64 \
+	        obj_core_banked_prefetch_config_lock_N64 obj_core_banked_prefetch_causal_N64 \
 	        obj_dma_banked_top_N64 obj_dma_banked_top_N64_d64 \
-	        obj_dma_banked_prefetch_top_N64_d64 \
+	        obj_dma_banked_prefetch_top_N64 obj_dma_banked_prefetch_top_N64_d64 \
+	        obj_dma_banked_prefetch_causal_top_N64 obj_dma_banked_prefetch_contract \
 	        obj_dma_banked_wb_top_N64 obj_dma_banked_wb_top_N64_d64

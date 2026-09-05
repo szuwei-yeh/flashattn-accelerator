@@ -46,8 +46,9 @@ static void load_scales(const char* p, uint16_t& sq, uint16_t& sk, uint16_t& sv)
 
 struct Res {
     bool     pass;
-    int      fail;
-    double   max_rel;
+    int      exact_fail;
+    int      numerical_fail;
+    double   max_rel, max_abs;
     int      tb_cycles;
     uint32_t perf_total, perf_dma_busy, perf_core_busy, perf_first_wait, perf_dma_bytes;
     uint16_t perf_kv_tiles;
@@ -60,13 +61,13 @@ struct Res {
 static Res run_once(int N, int D, int latency,
                     const std::vector<int8_t>& q, const std::vector<int8_t>& k,
                     const std::vector<int8_t>& v, const std::vector<int32_t>& exp,
-                    uint16_t sq, uint16_t sk, uint16_t sv) {
+                    uint16_t sq, uint16_t sk, uint16_t sv, bool causal) {
     const int MAT = N * D;
     auto* dut = new Vtb_dma_banked_prefetch_harness;
     Res r{}; r.timeout = false;
 
     // Reset
-    dut->rst_n = 0; dut->start = 0; dut->causal = 0; dut->init_we = 0; dut->out_raddr = 0;
+    dut->rst_n = 0; dut->start = 0; dut->causal = causal; dut->init_we = 0; dut->out_raddr = 0;
     dut->rd_latency = (uint16_t)latency;
     dut->scale_q = sq; dut->scale_k = sk; dut->scale_v = sv;
     tick(dut); tick(dut);
@@ -108,15 +109,18 @@ static Res run_once(int N, int D, int latency,
         hw[i] = (int32_t)dut->out_rdata;
     }
 
-    r.fail = 0; r.max_rel = 0.0;
+    r.exact_fail = 0; r.numerical_fail = 0; r.max_rel = 0.0; r.max_abs = 0.0;
     for (int i = 0; i < MAT; i++) {
         double h = hw[i] / 256.0, e = exp[i] / 256.0;
         double ae = fabs(h - e), ref = fabs(e);
         double re = (ref > 1e-3) ? ae / ref : 0.0;
+        if (ae > r.max_abs) r.max_abs = ae;
         if (re > r.max_rel) r.max_rel = re;
-        if (re > 0.05 && ref > 1e-3) r.fail++;
+        if ((ref > 1e-3 && re > 0.05) || (ref <= 1e-3 && ae > 0.05))
+            r.numerical_fail++;
+        if (hw[i] != exp[i]) r.exact_fail++;
     }
-    r.pass = (r.fail == 0);
+    r.pass = (r.exact_fail == 0);
 
     r.perf_total     = (uint32_t)dut->perf_total_cycles;
     r.perf_dma_busy  = (uint32_t)dut->perf_dma_busy_cycles;
@@ -131,6 +135,7 @@ static Res run_once(int N, int D, int latency,
 
 int main(int argc, char** argv) {
     int N = 64, D = 16; std::string data = "../../data/N64";
+    bool causal = false;
     // Non-prefetch banked top's core_busy for this shape — the reference the KV
     // double buffer must beat. Default 11930 = dma_banked_top_N64 (N=64,d=16);
     // pass --core_busy_ref for other shapes (e.g. 45590 for N=64,d=64).
@@ -140,6 +145,7 @@ int main(int argc, char** argv) {
         else if (!strcmp(argv[i], "--D") && i + 1 < argc) D = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--data") && i + 1 < argc) data = argv[++i];
         else if (!strcmp(argv[i], "--core_busy_ref") && i + 1 < argc) core_busy_ref = (uint32_t)strtoul(argv[++i], nullptr, 10);
+        else if (!strcmp(argv[i], "--causal")) causal = true;
     }
     const int MAT = N * D;
 
@@ -172,9 +178,10 @@ int main(int argc, char** argv) {
 
     bool all_pass = true;
     bool invariants_ok = true;
+    int total_exact_mismatches = 0;
     uint32_t core_busy_rl0 = 0;
     for (int li = 0; li < 3; li++) {
-        Res r = run_once(N, D, lats[li], q, k, v, exp, sq, sk, sv);
+        Res r = run_once(N, D, lats[li], q, k, v, exp, sq, sk, sv, causal);
         if (r.cfg_err) { printf("  %5d   CFG_ERROR\n", lats[li]); all_pass = false; continue; }
         if (r.timeout) { printf("  %5d   TIMEOUT\n", lats[li]); all_pass = false; continue; }
 
@@ -184,6 +191,10 @@ int main(int argc, char** argv) {
                r.perf_first_wait, r.perf_dma_bytes, r.perf_kv_tiles);
 
         if (!r.pass) all_pass = false;
+        total_exact_mismatches += r.exact_fail;
+        if (!r.pass)
+            printf("           exact=%d max_abs=%.6f max_rel=%.4f%% entries>5%%=%d\n",
+                   r.exact_fail, r.max_abs, r.max_rel * 100.0, r.numerical_fail);
         // Work-done counters are latency-invariant (they count work, not time).
         if (r.perf_dma_bytes != exp_bytes || r.perf_kv_tiles != exp_tiles) invariants_ok = false;
         // Every run: RTL counter starts one cycle earlier than the C++ loop.
@@ -205,13 +216,17 @@ int main(int argc, char** argv) {
     printf("    prefetch fires early (S_UPDATE_SOFTMAX); when a tile has not streamed in yet it\n");
     printf("    gates off and falls back to the residency-stalled reload (graceful degradation).\n");
     printf("    first_wait still absorbs the bulk of the latency and every run stays bit-exact.\n");
+    printf("  - exact mismatches across all latency points: %d\n",
+           total_exact_mismatches);
 
     bool ok = all_pass && invariants_ok;
     printf("\n=== Coverage Summary ===\n");
     printf("Module           : flash_attn_top_dma_banked_prefetch\n");
-    printf("Scenarios covered: vector_dma_banked_prefetch_N%d_d%d_rdlat_sweep{0,20,100}\n", N, D);
+    printf("Scenarios covered: vector_dma_banked_prefetch_N%d_d%d%s_rdlat_sweep{0,20,100}\n",
+           N, D, causal ? "_causal" : "");
     printf("Test cases run   : 3\n");
-    printf("Mismatches       : %d\n", ok ? 0 : 1);
+    printf("Mismatches       : %d exact%s\n", total_exact_mismatches,
+           invariants_ok ? "" : " (performance invariant failure also present)");
     printf("Result           : %s\n", ok ? "PASS" : "FAIL");
     printf("\nRESULT: %s\n", ok ? "PASS" : "FAIL");
     return ok ? 0 : 1;

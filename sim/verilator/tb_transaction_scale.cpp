@@ -161,27 +161,29 @@ int main(int argc, char** argv) {
                      "Cases A/B/C active transaction");
     wait_for_done(dut, "transaction A");
 
-    // Case D: once the core is idle, the next transaction captures scale B.
-    // Let the one-cycle done pulse clear before asserting the next start.  This
-    // respects the core's existing done_latch priority without changing it.
+    // Case D: output SRAM has no transaction-clear traversal, so the core
+    // deliberately remains single-shot until reset.  A second start must not
+    // be accepted or overwrite the first transaction's locked scale.
     tick(dut);
     dut->scale_q = static_cast<uint16_t>(SCALE_B_Q);
     dut->scale_k = static_cast<uint16_t>(SCALE_B_K);
-    drive_accepted_start(dut);
+    dut->start = 1;
+    dut->clk = 0;
+    dut->eval();
+    check(dut->dbg_start_accepted == 0,
+          "Case D: post-done start must be rejected until reset");
+    dut->clk = 1;
+    dut->eval();
+    dut->start = 0;
     check(static_cast<int32_t>(dut->dbg_combined_scale) ==
-              combined(SCALE_B_Q, SCALE_B_K),
-          "Case D: next accepted transaction must capture scale B");
-
-    const int16_t expected_b = dequantize(
-        qk_acc, combined(SCALE_B_Q, SCALE_B_K));
-    wait_for_dequant(dut, expected_b, "Case D next transaction");
-    wait_for_done(dut, "transaction B");
+              combined(SCALE_A_Q, SCALE_A_K),
+          "Case D: rejected post-done start must not update locked scale");
 
     if (failures == 0) {
         std::printf("PASS Case A: normal accepted-start sampling\n");
         std::printf("PASS Case B: post-accept scale changes are isolated\n");
         std::printf("PASS Case C: busy-time start cannot overwrite scale\n");
-        std::printf("PASS Case D: next transaction captures new scale\n");
+        std::printf("PASS Case D: post-done start rejected until reset\n");
         std::printf("PASS Case E: first transaction after reset captures scale\n");
         std::printf("=== Transaction-scale semantic tests PASS ===\n");
     }

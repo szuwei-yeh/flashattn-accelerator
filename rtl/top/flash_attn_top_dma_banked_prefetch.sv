@@ -1,11 +1,10 @@
 // ============================================================
 //  flash_attn_top_dma_banked_prefetch.sv — DMA-fed banked top, prefetch variant.
 //
-//  New-variant top: identical to flash_attn_top_dma_banked.sv EXCEPT it
-//  instantiates flash_attn_core_banked_prefetch (banked core WITH KV
-//  double-buffering) instead of flash_attn_core_banked.  The vector DMA engine,
-//  the open-loop scheduler, the runtime config, and every performance counter
-//  are copied verbatim so the two tops are directly comparable.
+//  Instantiates flash_attn_core_banked_prefetch (banked core WITH KV
+//  double-buffering) behind the vector DMA/read-side scheduler. Transaction
+//  configuration is captured at accepted start and runtime-short sequences are
+//  rejected because compute extent is compile-time fixed.
 //
 //  Does not touch flash_attn_top_dma_banked.sv, flash_attn_core_banked.sv,
 //  tile_controller_banked.sv, or the dma_banked_top_N64 target.
@@ -34,8 +33,7 @@ module flash_attn_top_dma_banked_prefetch #(
     output logic done,
 
     input  logic        causal,
-    // Q/K scales must remain valid through core_start; the core samples their
-    // product when its controller accepts that transaction.
+    // All transaction-level configuration is sampled on accepted start.
     input  logic signed [15:0] scale_q,
     input  logic signed [15:0] scale_k,
     input  logic signed [15:0] scale_v,
@@ -75,9 +73,34 @@ module flash_attn_top_dma_banked_prefetch #(
 );
 
     // ── Config validation (combinational, from live inputs) ──────────
-    assign cfg_error = (cfg_seq_len == 16'd0)
-                    || (cfg_seq_len > 16'(SEQ_LEN))
-                    || ((cfg_seq_len & 16'(TILE_SIZE - 1)) != 16'd0);
+    // The core is compile-time sized; runtime-short sequences are rejected.
+    // Vector DMA descriptors operate on aligned 16-byte scratchpad stripes.
+    assign cfg_error = (cfg_seq_len != 16'(SEQ_LEN))
+                    || ((cfg_seq_len & 16'(TILE_SIZE - 1)) != 16'd0)
+                    || (cfg_q_base[3:0] != 4'b0)
+                    || (cfg_k_base[3:0] != 4'b0)
+                    || (cfg_v_base[3:0] != 4'b0);
+
+    initial begin : p_parameter_guard
+        if (TILE_SIZE != 16)
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: TILE_SIZE must be 16");
+        if ((HEAD_DIM % TILE_SIZE) != 0)
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: HEAD_DIM must be a TILE_SIZE multiple");
+        if (!((HEAD_DIM == 16) || (HEAD_DIM == 64)))
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: supported HEAD_DIM values are 16 and 64");
+        if ((SEQ_LEN == 0) || ((SEQ_LEN % TILE_SIZE) != 0))
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: SEQ_LEN must be a non-zero TILE_SIZE multiple");
+        if ((SEQ_LEN * HEAD_DIM) > SRAM_DEPTH)
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: SEQ_LEN*HEAD_DIM exceeds SRAM_DEPTH");
+        if ((SRAM_DEPTH % 16) != 0)
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: SRAM_DEPTH must be divisible by 16 banks");
+        if ((SRAM_DEPTH == 0) || (SRAM_DEPTH > 4096))
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: fixed 12-bit ports support SRAM_DEPTH 1..4096");
+        if (AXI_ADDR_W != 32)
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: AXI_ADDR_W must be 32");
+        if (AXI_DATA_W != 64)
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: AXI_DATA_W must be 64");
+    end
 
     // ── Vector DMA engine ─────────────────────────────────────────────
     logic                  desc_valid, desc_ready, dma_done;
@@ -123,6 +146,8 @@ module flash_attn_top_dma_banked_prefetch #(
     logic [31:0] r_q_base, r_k_base, r_v_base;
     logic [15:0] r_num_tiles;
     logic [31:0] r_q_len_bytes;
+    logic signed [15:0] r_scale_q, r_scale_k, r_scale_v;
+    logic               r_causal;
 
     logic start_accepted;
     assign start_accepted = (sch_state == SCH_IDLE) && start && !cfg_error;
@@ -167,6 +192,10 @@ module flash_attn_top_dma_banked_prefetch #(
             r_v_base       <= '0;
             r_num_tiles    <= '0;
             r_q_len_bytes  <= '0;
+            r_scale_q      <= '0;
+            r_scale_k      <= '0;
+            r_scale_v      <= '0;
+            r_causal       <= 1'b0;
         end else begin
             core_start <= 1'b0;
             case (sch_state)
@@ -179,6 +208,10 @@ module flash_attn_top_dma_banked_prefetch #(
                         r_v_base      <= cfg_v_base;
                         r_num_tiles   <= cfg_seq_len >> LOG2_TILE;
                         r_q_len_bytes <= 32'(cfg_seq_len >> LOG2_TILE) * 32'(TILE_BYTES);
+                        r_scale_q     <= scale_q;
+                        r_scale_k     <= scale_k;
+                        r_scale_v     <= scale_v;
+                        r_causal      <= causal;
                         sch_state     <= SCH_Q_ISSUE;
                     end
                 end
@@ -199,6 +232,9 @@ module flash_attn_top_dma_banked_prefetch #(
                         end
                     end
                 end
+                // Single-shot until reset.  The core output SRAM has no
+                // transaction-clear traversal, so re-arming here would make a
+                // second result accumulate on top of the first transaction.
                 SCH_DONE: ;
                 default: sch_state <= SCH_IDLE;
             endcase
@@ -259,7 +295,7 @@ module flash_attn_top_dma_banked_prefetch #(
         .clk(clk), .rst_n(rst_n),
         .start(core_start), .done(done),
         .mode(1'b0), .kv_len(16'b0),
-        .scale_q(scale_q), .scale_k(scale_k), .scale_v(scale_v),
+        .scale_q(r_scale_q), .scale_k(r_scale_k), .scale_v(r_scale_v),
         // scalar preload ports unused (DMA fills via vector port)
         .q_we(1'b0), .q_waddr(12'b0), .q_wdata(8'b0),
         .k_we(1'b0), .k_waddr(12'b0), .k_wdata(8'b0),
@@ -267,7 +303,7 @@ module flash_attn_top_dma_banked_prefetch #(
         // vector DMA fill port
         .dma_v_we(w_en), .dma_v_dst(w_dst), .dma_v_addr(w_addr), .dma_v_data(w_vdata),
         .out_raddr(out_raddr), .out_rdata(out_rdata),
-        .causal(causal),
+        .causal(r_causal),
         .kv_tiles_ready(kv_tiles_ready)
     );
 

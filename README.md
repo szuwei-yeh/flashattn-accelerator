@@ -3,16 +3,15 @@
 ## Overview
 
 This repository contains a cycle-accurate SystemVerilog implementation of tiled
-FlashAttention. The current optimized path combines INT8 matrix multiplication,
-online softmax, banked on-chip storage, an AXI read-side vector DMA, K/V
-double-buffered prefetch, and an optional output write-back path.
+INT8 FlashAttention. One shared `16 x 16` systolic array is reused for `QK^T`
+and `PV`; sixteen online-softmax lanes carry the running state across tiles.
+The optimized data path combines an AXI read-side vector DMA, 16-bank Q/K/V
+scratchpads, K/V prefetch, and a fused output update.
 
 The project follows an RTL/ASIC optimization workflow: profile an end-to-end
 design, isolate the memory and compute bottlenecks, change one architectural
-stage at a time, measure cycle and synthesis impact, and preserve bit-exact
-behavior with regression tests.
-
-## Why FlashAttention
+stage at a time, measure cycle and logical-synthesis impact, and preserve exact
+fixed-point behavior with regression and bounded formal checks.
 
 Standard attention materializes an `N x N` score matrix, which requires
 quadratic intermediate storage and memory traffic. This accelerator processes
@@ -20,17 +19,23 @@ quadratic intermediate storage and memory traffic. This accelerator processes
 across K/V tiles. The complete attention matrix is therefore never written to
 external memory.
 
-For the optimized single-head path, the main measured results at `N=64` are:
+## Key Results
 
-- Vector DMA and banked storage reduce the memory-path milestone from 15,332 to
-  12,140 cycles at `d=16`, and from 60,421 to 46,412 cycles at `d=64`.
-- K/V prefetch adds a further 1.73–1.88% reduction at that design stage.
-- A later fused output update reduces the current full-top result to 7,800
-  cycles at `d=16` and 29,160 cycles at `d=64`. This later gain is not
-  attributed to the DMA redesign alone.
-- The optimized compute core uses 5.061M standard-cell area units and has a
-  5.99 ns critical path. Adding the DMA and top-level system logic raises the
-  full-top result to 5.073M, a net increase of approximately 0.23%.
+Unless noted otherwise, cycle results use `N=64`; synthesis uses the d16 core
+with a 10 ns target and logical SRAM/ROM blackboxes.
+
+| Optimization / result | Before | After | Measured impact |
+|---|---:|---:|---:|
+| 256-byte DMA fill | 312 cycles | 56 cycles | **5.57x** |
+| 256-byte scratchpad drain | 256 cycles | 17 cycles | **15.06x** |
+| Memory-stage E2E, d16 | 15,332 cycles | 12,140 cycles | **1.263x** |
+| Memory-stage E2E, d64 | 60,421 cycles | 46,412 cycles | **1.302x** |
+| Fused output update, d16 | 11,912 cycles | 7,800 cycles | **-34.52%** |
+| Fused output update, d64 | 45,608 cycles | 29,160 cycles | **-36.06%** |
+| Remove unused divider path | 45.28 ns | 6.62 ns | **-29.25% area; 4,096 -> 0 setup violations** |
+| Final core | — | 5.96 ns, +3.96 ns WNS | **Meets 100 MHz** |
+| Final DMA-integrated top | — | 6.02 ns, +3.90 ns WNS | **Meets 100 MHz; 0.23743% standard-cell area overhead** |
+| Exact fixed-point regression | — | d16: 0 / 1,024; d64: 0 / 4,096 | **0 exact mismatches** |
 
 ## Accelerator Architecture
 
@@ -92,95 +97,98 @@ The repository also retains an earlier four-head AXI4-Stream integration with
 MHA/GQA routing and a prefill/decode path. The banked DMA, prefetch, synthesis,
 and memory-system results below refer to the newer single-head hierarchy.
 
-## Baseline Bottleneck
+## Optimization Journey
 
-The first DMA-fed implementation had an AXI read input, but movement inside the
-accelerator remained serialized. Incoming data was unpacked into byte-wide
-local writes, stored in a flat scratchpad, and staged into tile registers one
-element per cycle. The external interface was wider than the local data path,
-so AXI bandwidth could not translate directly into lower tile-loading latency.
+### Memory-System Bottleneck
+
+The first DMA-fed implementation had a wide AXI input but serialized movement
+inside the accelerator: byte-wide local writes fed a flat scratchpad, followed
+by one-element-per-cycle tile staging. Profiling separated DMA fill from local
+scratchpad drain and showed that external width was not reaching the compute
+array.
 
 ```text
-Baseline
-AXI read -> scalar DMA unpack -> flat scratchpad
-         -> byte-serial tile staging -> compute
+Baseline:  AXI read -> scalar DMA -> flat scratchpad -> byte-serial staging
 ```
 
-Profiling separated DMA fill time from local scratchpad drain time. That made it
-possible to optimize the storage and staging path without changing the compute
-schedule or numerical behavior.
-
-## Memory-System Optimization
+### Vector DMA and Banked Scratchpads
 
 The optimized path widens local movement end to end:
 
 ```text
-Optimized
-AXI read -> Vector DMA -> 128-bit stripe write
-         -> independent 16-bank Q/K/V scratchpads
-         -> shared 16 B/cycle tile loader -> compute
+Optimized: AXI read -> vector DMA -> 128-bit stripe write
+                    -> 16-bank Q/K/V scratchpads
+                    -> shared 16 B/cycle tile loader -> compute
 ```
 
-`dma_engine_vec` combines two 64-bit AXI read beats into one 128-bit local
-write. Each scratchpad interleaves contiguous bytes across 16 banks, allowing a
-complete 16-byte tile stripe to be accessed without a bank conflict. A single
-`banked_tile_loader` serves Q loading, foreground K/V loading, and K/V prefetch.
+`dma_engine_vec` combines two 64-bit AXI beats into one 128-bit local write.
+Contiguous bytes are interleaved across 16 banks, so the shared tile loader can
+move a complete stripe without a bank conflict. This changed a 256-byte DMA
+fill from 312 to 56 cycles and scratchpad drain from 256 to 17 cycles without
+changing compute scheduling or numerical behavior.
 
-For a 256-byte transfer, the measured DMA fill falls from 312 to 56 cycles and
-the local scratchpad drain falls from 256 to 17 cycles. The 17-cycle drain is 16
-data stripes plus the synchronous-read boundary cycle.
+### K/V Prefetch
 
-## K/V Prefetch and Double Buffering
+Active and shadow K/V registers let the shared loader stage tile `n+1` while
+tile `n` computes. A resident-tile count gates prefetch; if data has not arrived,
+the controller waits and falls back to foreground loading rather than consuming
+an incomplete tile. The tested memory-latency sweep remained exact.
 
-The compute core has active K/V registers and a shadow K/V register set. Once
-the next K/V tile is resident in its scratchpad, the shared loader may fill the
-shadow set while the current tile proceeds through QK, online softmax, PV, and
-output update.
+### Fused Output Update
+
+The original output phase traversed the output buffer once to rescale old state
+and again to accumulate the new `PV`. A fused read-modify-write performs:
 
 ```text
-DMA completes tile n+1
-        │
-        ▼
-tile n+1 becomes resident
-        │
-        ▼
-shared loader fills shadow K/V while tile n computes
-        │
-        ▼
-next compute-tile boundary
-        │
-        ▼
-one-cycle shadow-to-active promotion
+O_new = rescale_factor * O_old + PV_new
 ```
 
-Prefetch is gated by the resident-tile count. If the next tile has not arrived,
-the controller waits for residency and uses the foreground load path. This
-preserves correctness across the tested memory-latency sweep instead of
-allowing compute to consume incomplete K/V data.
+This eliminates intermediate output materialization and reduces output-buffer
+traffic and controller cycles. It is a later compute/output-path optimization,
+not part of the DMA-only speedup.
+
+### Synthesis Bottleneck
+
+The initial d16/N64 logical synthesis failed the 100 MHz target with a 45.28 ns
+critical path and 4,096 setup violations. Timing traces led into online-softmax
+normalization, where the active hierarchy still contained an output path that
+the optimized core did not consume.
+
+### Removing the Redundant Softmax Divider Path
+
+Tracing that output revealed 256 unused combinational dividers. Removing the
+redundant normalized-softmax output reduced critical-path delay to 6.62 ns,
+eliminated all setup violations, reduced total standard-cell area by 29.25%,
+and reduced the softmax hierarchy by 84.19%. Estimated power moved from 172.08
+to 153.67 mW.
+
+### Shared Q/K Scale
+
+Dequantization then became the main mapped area hotspot. Sharing
+`scale_q * scale_k` across the 256 dequantizer lanes reduced total area by a
+further 7.36% at that stage and dequantizer area by 9.94%. The combined scale is
+captured at accepted start, preserving the fixed-point policy and workload
+cycles. The final 5.96 ns core result is reported after the complete interface
+and configuration cleanup; it is not attributed to any single cleanup change.
 
 ## Performance Results
 
-All cycle counts are from cycle-accurate Verilator simulation with bit-exact
-comparison against the fixed-point reference outputs. The main end-to-end
-comparisons use `N=64`, `TILE_SIZE=16`, and zero modeled DRAM latency.
+All cycle counts come from cycle-accurate Verilator simulation against the
+hardware-aware fixed-point reference. End-to-end comparisons use `N=64`,
+`TILE_SIZE=16`, and zero modeled DRAM latency unless stated otherwise.
 
-### Memory microbenchmarks
+### Memory-path evolution
 
-| 256-byte benchmark | Baseline | Optimized | Speedup |
+| Result | Baseline | Optimized | Improvement |
 |---|---:|---:|---:|
-| DMA fill | 312 cycles | 56 cycles | **5.57x** |
-| Scratchpad drain / tile load | 256 cycles | 17 cycles | **15.06x** |
+| 256-byte DMA fill | 312 | 56 | **5.57x** |
+| 256-byte scratchpad drain / tile load | 256 | 17 | **15.06x** |
+| E2E, d16 | 15,332 | 12,140 | **1.263x** |
+| E2E, d64 | 60,421 | 46,412 | **1.302x** |
 
-### Memory-path milestone
-
-| Configuration | `d=16` | `d=64` |
-|---|---:|---:|
-| Byte DMA + flat core | 15,332 cycles | 60,421 cycles |
-| Vector DMA + banked core | 12,140 cycles | 46,412 cycles |
-| Speedup | **1.263x** | **1.302x** |
-
-These rows isolate the vector-DMA and banked-storage stage. They do not include
-the later K/V prefetch or fused output-update improvements.
+The E2E rows compare the byte-DMA/flat core with the vector-DMA/banked core at
+the same architecture stage. They exclude the later prefetch and fused-output
+changes.
 
 ### Incremental K/V prefetch
 
@@ -189,107 +197,91 @@ the later K/V prefetch or fused output-update improvements.
 | `N=64, d=16` | 12,140 | 11,912 | 228 cycles / **1.878%** |
 | `N=64, d=64` | 46,412 | 45,608 | 804 cycles / **1.732%** |
 
-The modest incremental gain is consistent with tile staging being only one
-part of the total runtime. All tested `rd_latency={0,20,100}` cases remained
-bit-exact.
+The incremental gain is modest because tile staging is only one part of total
+runtime. The `rd_latency={0,20,100}` sweep remained exact.
 
-### Later fused output update
-
-After the memory-system milestones above, rescaling the previous output and
-accumulating the new `PV` contribution were fused into one output-buffer
-traversal.
+### Fused output update
 
 | Banked-prefetch full top | Before fusion | After fusion | Reduction |
 |---|---:|---:|---:|
 | `N=64, d=16` | 11,912 | **7,800** | 34.52% |
 | `N=64, d=64` | 45,608 | **29,160** | 36.06% |
 
-This is a later compute/output-path optimization. Its complete improvement must
-not be attributed to the DMA or banked scratchpads.
+These results belong to the later fused-output RTL revision and are not
+reported as DMA-only improvement.
 
-## Core PPA Optimization
+## Final ASIC Synthesis / PPA
 
-The synthesis optimization targeted the current
-`flash_attn_core_banked_prefetch` at `SEQ_LEN=64`, `HEAD_DIM=16`. Profiling the
-mapped design showed that dequantization arithmetic, rather than DMA or
-scheduler control, dominated the standard-cell cost and critical path.
+The current core and `flash_attn_top_dma_banked_prefetch` use the same Design
+Compiler R-2020.09-SP4 flow, FreePDK45 `gscl45nm.db`, 10 ns clock, 1 ns I/O
+delay, and logical memory blackboxes.
 
-The dequantization scale arithmetic was restructured around a shared combined
-scale product, then registered when the transaction was accepted. This removed
-a long live-input/fanout path without changing workload cycles.
+### Core optimization evolution
 
-The "Before" row below already excludes unused per-tile softmax normalization;
-the measured area reduction is primarily from the combined-scale arithmetic
-restructuring.
+| Core synthesis stage | Area | Critical path | WNS @ 100 MHz | Setup violations |
+|---|---:|---:|---:|---:|
+| Baseline | 7,722,500 | 45.28 ns | -35.31 ns | 4,096 |
+| Remove unused normalized-softmax divider path | 5,463,488 | 6.62 ns | +2.29 ns | 0 |
+| Shared Q/K combined scale | 5,061,648.8 | 7.94 ns | +0.98 ns | 0 |
+| Final cleanup RTL | **5,061,246.151** | **5.96 ns** | **+3.96 ns** | **0** |
 
-| Metric | Before | Optimized | Change |
-|---|---:|---:|---:|
-| Standard-cell area | 5,463,487.889 | 5,060,883.851 | **-7.369%** |
-| Critical path | 6.62 ns | 5.99 ns | **-0.63 ns** |
-| WNS at 100 MHz | +2.29 ns | **+3.93 ns** | +1.64 ns |
-| TNS | 0 ns | 0 ns | unchanged |
-| Setup violations | 0 | 0 | unchanged |
-| Core cycles, `d=16 / d=64` | 7,589 / 28,337 | 7,589 / 28,337 | unchanged |
+### Final core versus DMA-integrated top
 
-## Full DMA + Optimized-Core Synthesis
-
-The full synthesis top is `flash_attn_top_dma_banked_prefetch`. It uses the same
-Synopsys Design Compiler R-2020.09-SP4 flow, FreePDK45 `gscl45nm.db`, 10 ns
-clock, 1 ns input/output delay, and logical memory blackboxes as the standalone
-core comparison.
-
-| Metric | Optimized core only | DMA + optimized core |
+| Metric | Final core only | DMA + final core |
 |---|---:|---:|
-| Standard-cell area | 5,060,883.851 | **5,072,707.864** |
-| Net area increase vs. standalone core | — | **11,824.013 (+0.2336%)** |
-| Critical path | 5.99 ns | **5.99 ns** |
-| WNS at 100 MHz | +3.93 ns | **+3.93 ns** |
+| Standard-cell area | 5,061,246.151 | **5,073,263.046** |
+| Integration overhead | — | **12,016.896 (+0.23743%)** |
+| Critical path | 5.96 ns | **6.02 ns** |
+| WNS at 100 MHz | +3.96 ns | **+3.90 ns** |
 | TNS | 0 ns | **0 ns** |
 | Setup violations | 0 | **0** |
 | Critical-path block | Core dequantizer | **Core dequantizer** |
 
-The preserved full-top hierarchy reports 3,682.128 area units in `u_dma` and
-8,176.614 in top-local configuration, scheduler, counters, glue, and arithmetic.
-Because the core maps 34.728 area units smaller in the full-top context than
-alone, the hierarchical system-side sum is 11,858.742 while the directly
-comparable net top-versus-standalone-core increase is 11,824.013.
-
-The DMA and system-side control therefore add approximately 0.23% standard-cell
-area relative to the optimized compute core while preserving the 100 MHz
-synthesis target. The critical path remains in a core dequantizer; DMA, AXI
-read-side logic, and scheduler control do not become the frequency bottleneck.
-
-These values are logical-synthesis standard-cell estimates, not final physical
-accelerator area.
+The full-top critical path remains inside the core dequantizer. Integrating the
+vector DMA, AXI read side, scheduler, and configuration logic therefore adds
+about 0.24% standard-cell area without becoming the timing bottleneck. Detailed
+hierarchy accounting is kept in the local synthesis reports.
 
 ## Verification
 
 ### Functional regression
 
-The Verilator regression checks fixed-point RTL output bit-for-bit against
-generated reference data across unit, subsystem, and end-to-end tests.
+The final optimized-core regression uses exact `hw[i] == expected[i]` equality,
+including entries whose expected value is zero. "Bit-exact" here means exact
+against the hardware-aware fixed-point reference, which models Q8.8 scales, LUT
+exponential, saturation, truncation/rounding, running softmax, and `scale_v`; it
+does not mean bit-exact against FP32 attention.
 
-| Coverage area | Representative configurations | Result |
-|---|---|---|
-| Arithmetic and shared compute array | INT8 array, dequantization, online softmax | PASS, 0 mismatches |
-| Original prefill/decode integrations | single-head, causal, MHA/GQA, `d=16/64` | PASS, 0 mismatches |
-| DMA and banked scratchpads | scalar/vector DMA, banked storage, shared loader | PASS, 0 mismatches |
-| Banked core and K/V prefetch | core-only and DMA-fed `N=64, d=16/64` | PASS, 0 mismatches |
-| Output write-back | unit, drain benchmark, full DRAM round trip | PASS, 0 mismatches |
-| Full `make regression` | all targets above | **PASS** |
+| Final-cleanup check | Result | Cycles |
+|---|---:|---:|
+| Optimized core, `N=64, d=16` | PASS, 0 / 1,024 exact mismatches | 7,589 |
+| Optimized core, `N=64, d=64` | PASS, 0 / 4,096 exact mismatches | 28,337 |
+| Optimized core causal, `N=64, d=16` | PASS, 0 / 1,024 exact mismatches | 5,195 |
+| DMA + optimized core causal, latency 0 / 20 / 100 | PASS, 0 exact mismatches | 5,406 / 5,646 / 6,606 |
+| Full existing regression | **PASS** | — |
+| Verilator lint | **PASS** | — |
+| Formal BMC depth 48 / cover | **PASS / PASS** | cover steps 19 / 27 / 41 |
+
+Directed contract tests also pass for invalid, shorter, and misaligned
+`cfg_seq_len`; unaligned AXI bases; accepted-start locking of Q/K/V scales,
+causal mode, DMA bases, and related configuration; busy-time extra starts; and
+the documented single-shot-until-reset behavior. Unsupported shorter lengths
+are rejected without hanging.
 
 ### Lightweight formal checks
 
-The scheduler/prefetch boundary has three focused SymbiYosys properties. The
-harness models the `N=64, d=16` prefill controller with legal abstract completion
-handshakes. Bounded model checking to depth 48 found no counterexample for:
+The scheduler/prefetch boundary has three focused formal properties. The current
+environment did not provide an `sby` executable, so the final-cleanup run used
+the equivalent current-source Yosys + `yosys-smtbmc` + Z3 flow rather than a
+native SymbiYosys command. Bounded model checking to depth 48 passed for:
 
 - compute starting only with a ready, matching active K/V tile;
 - shadow-to-active promotion requiring a complete, matching shadow tile; and
 - compute and prefetch tile indices remaining within the configured range.
 
-Non-vacuity covers reached `array_start`, `pf_start`, and `kv_swap_banks`. This
-is a bounded control-safety result, not an unbounded proof of the full datapath.
+The cover run also passed, reaching the three coverage points at steps 19, 27,
+and 41. This is a bounded control-safety result, not an unbounded proof of the
+full datapath.
 
 ### AXI read-channel characterization
 
@@ -301,31 +293,54 @@ ignores `SLVERR` and `DECERR`. No read-error status is exposed.
 These tests characterize the current implementation; they do not claim that
 the read DMA is fully AXI-robust.
 
+## Supported Configuration
+
+The optimized banked-prefetch prototype intentionally supports a bounded
+parameter space:
+
+- `TILE_SIZE=16` and `HEAD_DIM` in `{16, 64}`, with
+  `HEAD_DIM % TILE_SIZE == 0`;
+- `NUM_BANKS=16` for the current Q/K/V scratchpad organization;
+- a nonzero, tile-aligned compile-time `SEQ_LEN`; runtime `cfg_seq_len` must
+  equal that compile-time value;
+- `SEQ_LEN * HEAD_DIM <= SRAM_DEPTH`, `SRAM_DEPTH % 16 == 0`, and
+  `SRAM_DEPTH <= 4096` under the current 12-bit SRAM address interface;
+- `AXI_ADDR_W=32`, `AXI_DATA_W=64`, and 16-byte-aligned Q/K/V base addresses.
+
+At accepted start, the design locks Q/K/V base and DMA configuration,
+`scale_q`, `scale_k`, `scale_v`, causal mode, and relevant core mode/length
+state. External configuration changes and extra `start` pulses while busy do
+not affect the active transaction. Invalid configurations assert `cfg_error`
+and are not accepted.
+
 ## Limitations
 
-- The Q/K/V and output SRAMs are logical synthesis blackboxes. Physical SRAM
-  storage area, access timing, and power are not included.
-- The exponential LUT ROM is also a logical blackbox; its physical area and
-  access timing are not included.
-- Synthesis is pre-layout with an ideal clock. There is no placement, clock-tree
-  synthesis, routing, extracted parasitics, input driving-cell model, output
-  load, or clock uncertainty.
-- The full top still reports max-capacitance violations, so the result is not
-  design-rule or signoff clean. No final mm², post-route Fmax, or signoff PPA is
-  claimed.
+- SRAM and exponential-LUT ROM instances are logical blackboxes. Reported area,
+  timing, and power exclude physical memory macro area and access behavior.
+- Results are logical post-synthesis with an ideal clock and no placement, CTS,
+  routing, or extracted parasitics. They are not physical-signoff results;
+  max-capacitance and high-fanout issues remain for implementation.
 - Architectural cycle measurements use behavioral memory models with a
   configurable read latency, not a DDR/HBM controller or a characterized memory
   subsystem.
-- The current AXI read DMA does not implement complete `RLAST` or `RRESP` error
-  detection and propagation.
-- The optimized DMA/prefetch path is single-head and is primarily validated for
-  `N=64` with `d=16` and `d=64`. The four-head MHA/GQA path is a separate,
-  earlier integration.
-- Runtime `cfg_seq_len` controls DMA scheduling, while the compute extent
-  remains a compile-time parameter; validated runs use
-  `cfg_seq_len == SEQ_LEN`.
+- AXI read-side `RLAST`/`RRESP` error detection and propagation are not
+  production-grade.
+- The optimized single-head path has a bounded configuration space and is
+  primarily validated at `N=64`, `d=16/64`; the earlier MHA/GQA integration is
+  separate.
+- The optimized DMA/prefetch top does not implement runtime-variable sequence
+  length. A transaction is accepted only when `cfg_seq_len == SEQ_LEN`; zero,
+  shorter, longer, or misaligned values assert `cfg_error` and are rejected.
+- The optimized core and DMA/prefetch top are single-shot until reset. The
+  output SRAM is accumulation state and has no transaction-clear traversal;
+  accepting a second transaction without reset would otherwise add to stale
+  output data.
 - The write-back wrapper currently uses the non-prefetch banked core rather
   than the latest optimized banked-prefetch core.
+
+Detailed synthesis warnings, tool-specific parameter-guard behavior, and mapped
+timing audits are kept in the local reports; the reproducible flow and its
+assumptions are documented in `syn/README.md`.
 
 ## Future Work
 
@@ -335,8 +350,27 @@ the read DMA is fully AXI-robust.
 - Add AXI `RLAST`/`RRESP` checking, error propagation, and broader protocol
   stress testing.
 - Integrate output write-back with the optimized prefetch core.
+- Support back-to-back transactions by adding an output-SRAM clear traversal,
+  an epoch/tag scheme, or explicit output-buffer ownership/buffering. A simple
+  `DONE -> IDLE` transition is insufficient because the second result otherwise
+  accumulates onto prior output SRAM contents.
 - Extend the banked DMA path beyond the currently validated single-head N64
   configurations.
+
+## Engineering Highlights
+
+- Identified local-memory movement as the initial performance bottleneck and
+  redesigned the path with a vector DMA, 16-bank scratchpads, and K/V prefetch.
+- Fused output rescale and accumulation into one buffer traversal to eliminate
+  intermediate SRAM materialization.
+- Used synthesis timing reports to identify an unused normalized-softmax path
+  containing 256 combinational dividers and eliminated the failing 100 MHz path.
+- Shared the Q/K scale product while preserving the hardware-aware fixed-point
+  behavior.
+- Closed the final core and DMA-integrated hierarchy at 100 MHz without moving
+  the critical path into DMA or scheduler logic.
+- Verified supported d16/d64 configurations against a hardware-aware fixed-point
+  reference with exact, causal, transaction-contract, and bounded formal checks.
 
 ## Reproducing the Tests
 
@@ -362,8 +396,11 @@ make -C sim/verilator dma_vec_bench
 make -C sim/verilator dma_bench
 make -C sim/verilator core_banked_prefetch_N64
 make -C sim/verilator core_banked_prefetch_N64_d64
+make -C sim/verilator core_banked_prefetch_causal_N64
 make -C sim/verilator dma_banked_prefetch_top_N64
 make -C sim/verilator dma_banked_prefetch_top_N64_d64
+make -C sim/verilator dma_banked_prefetch_causal_top_N64
+make -C sim/verilator tb_dma_banked_prefetch_contract
 make -C sim/verilator tb_dma_vec_axi_protocol
 ```
 

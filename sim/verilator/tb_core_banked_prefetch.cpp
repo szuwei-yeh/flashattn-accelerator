@@ -8,6 +8,7 @@
 //  vs core_banked can be read off directly.
 //
 //  Usage: ./sim_core_banked_prefetch [--N <n>] [--D <d>] [--data <dir>]
+//         [--causal] [--stress-config-lock]
 // ============================================================
 #include <cstdio>
 #include <cstdlib>
@@ -49,10 +50,14 @@ static void load_scales(const char* p, uint16_t& sq, uint16_t& sk, uint16_t& sv)
 
 int main(int argc, char** argv) {
     int N = 64, D = 16; std::string data = "../../data/N64";
+    bool causal = false;
+    bool stress_config_lock = false;
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--N") && i + 1 < argc) N = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--D") && i + 1 < argc) D = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--data") && i + 1 < argc) data = argv[++i];
+        else if (!strcmp(argv[i], "--causal")) causal = true;
+        else if (!strcmp(argv[i], "--stress-config-lock")) stress_config_lock = true;
     }
     const int MAT = N * D;
 
@@ -70,7 +75,7 @@ int main(int argc, char** argv) {
     printf("=== flash_attn_core_banked_prefetch: N=%d D=%d (banked + KV double-buffer) ===\n", N, D);
 
     // Reset
-    dut->rst_n = 0; dut->start = 0; dut->mode = 0; dut->kv_len = 0; dut->causal = 0;
+    dut->rst_n = 0; dut->start = 0; dut->mode = 0; dut->kv_len = 0; dut->causal = causal;
     dut->q_we = dut->k_we = dut->v_we = 0;
     // Vector DMA port unused in this core-level test (scalar preload path);
     // dma_v_we=0 disables it, dma_v_data (128-bit VlWide) left as don't-care.
@@ -95,7 +100,20 @@ int main(int argc, char** argv) {
     int cycles = 0; bool done = false;
     dut->start = 1; tick(dut); dut->start = 0;
     while (cycles < max_cycle) {
+        // Deliberately corrupt every live transaction-level input and inject
+        // busy-time start pulses.  Accepted-start locking must isolate the run.
+        if (stress_config_lock && cycles == 1) {
+            dut->scale_q = sq ^ 0x0055;
+            dut->scale_k = sk ^ 0x0033;
+            dut->scale_v = sv ^ 0x0077;
+            dut->causal = !causal;
+            dut->mode = 1;
+            dut->kv_len = 16;
+        }
+        dut->start = stress_config_lock &&
+                     (cycles == 50 || cycles == 500 || cycles == 1500);
         tick(dut); cycles++;
+        dut->start = 0;
         if (dut->done) { done = true; break; }
     }
     if (!done) { printf("TIMEOUT after %d cycles\n", max_cycle); delete dut; return 1; }
@@ -107,27 +125,42 @@ int main(int argc, char** argv) {
         hw[i] = (int32_t)dut->out_rdata;
     }
 
-    int fail = 0; double max_rel = 0.0;
+    int exact_fail = 0;
+    int numerical_fail = 0;
+    double max_rel = 0.0, max_abs = 0.0;
     for (int i = 0; i < MAT; i++) {
         double h = hw[i] / 256.0, e = exp[i] / 256.0;
         double ae = fabs(h - e), ref = fabs(e);
         double re = (ref > 1e-3) ? ae / ref : 0.0;
+        if (ae > max_abs) max_abs = ae;
         if (re > max_rel) max_rel = re;
-        if (re > 0.05 && ref > 1e-3) fail++;
+        if ((ref > 1e-3 && re > 0.05) || (ref <= 1e-3 && ae > 0.05))
+            numerical_fail++;
+        if (hw[i] != exp[i]) {
+            if (exact_fail < 5)
+                printf("  exact mismatch [%d] hw=0x%08X expected=0x%08X\n",
+                       i, (uint32_t)hw[i], (uint32_t)exp[i]);
+            exact_fail++;
+        }
     }
 
-    bool pass = (fail == 0);
+    bool pass = (exact_fail == 0);
     printf("  done at cycle %d\n", cycles);
-    printf("  max relative error : %.4f%%   entries>5%%: %d/%d\n", max_rel * 100, fail, MAT);
+    printf("  exact mismatches   : %d/%d\n", exact_fail, MAT);
+    printf("  max absolute error : %.6f\n", max_abs);
+    printf("  max relative error : %.4f%%   entries>5%%: %d/%d\n",
+           max_rel * 100, numerical_fail, MAT);
     // Reference: banked core WITHOUT prefetch (core_banked_N64) = 11929 cycles.
     if (N == 64 && D == 16)
         printf("  reference (banked, no prefetch, core_banked_N64): 11929 cycles\n");
 
     printf("\n=== Coverage Summary ===\n");
     printf("Module           : flash_attn_core_banked_prefetch\n");
-    printf("Scenarios covered: banked_kv_double_buffer_end_to_end_N%d_d%d\n", N, D);
+    printf("Scenarios covered: banked_kv_double_buffer_end_to_end_N%d_d%d%s%s\n",
+           N, D, causal ? "_causal" : "",
+           stress_config_lock ? "_config_lock_stress" : "");
     printf("Test cases run   : 1\n");
-    printf("Mismatches       : %d\n", fail);
+    printf("Mismatches       : %d\n", exact_fail);
     printf("Result           : %s\n", pass ? "PASS" : "FAIL");
     printf("\nRESULT: %s\n", pass ? "PASS" : "FAIL");
 
