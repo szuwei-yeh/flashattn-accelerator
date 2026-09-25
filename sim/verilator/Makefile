@@ -480,6 +480,16 @@ core_banked_prefetch_causal_N64: ../../data/causal_N64/expected.hex
 	./obj_core_banked_prefetch_causal_N64/sim_core_banked_prefetch_causal_N64 \
 	    --N 64 --D 16 --data ../../data/causal_N64 --causal
 
+core_banked_prefetch_causal_N64_d64: ../../data/causal_N64_d64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module flash_attn_core_banked_prefetch \
+	    --Mdir obj_core_banked_prefetch_causal_N64_d64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp \
+	    -o sim_core_banked_prefetch_causal_N64_d64
+	./obj_core_banked_prefetch_causal_N64_d64/sim_core_banked_prefetch_causal_N64_d64 \
+	    --N 64 --D 64 --data ../../data/causal_N64_d64 --causal
+
 tb_transaction_scale:
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module tb_transaction_scale \
@@ -561,6 +571,20 @@ dma_banked_prefetch_causal_top_N64: ../../data/causal_N64/expected.hex
 	    tb_dma_banked_prefetch.cpp -o sim_dma_banked_prefetch_causal_top_N64
 	./obj_dma_banked_prefetch_causal_top_N64/sim_dma_banked_prefetch_causal_top_N64 \
 	    --N 64 --D 16 --data ../../data/causal_N64 --causal
+
+dma_banked_prefetch_causal_top_N64_d64: ../../data/causal_N64_d64/expected.hex
+	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
+	    --top-module tb_dma_banked_prefetch_harness \
+	    --Mdir obj_dma_banked_prefetch_causal_top_N64_d64 \
+	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    ../../rtl/interface/dma_engine_vec.sv \
+	    ../../rtl/interface/axi_mem_model.sv \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
+	    ../../rtl/top/flash_attn_top_dma_banked_prefetch.sv \
+	    tb_dma_banked_prefetch_harness.sv \
+	    tb_dma_banked_prefetch.cpp -o sim_dma_banked_prefetch_causal_top_N64_d64
+	./obj_dma_banked_prefetch_causal_top_N64_d64/sim_dma_banked_prefetch_causal_top_N64_d64 \
+	    --N 64 --D 64 --data ../../data/causal_N64_d64 --causal
 
 tb_dma_banked_prefetch_contract: ../../data/N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
@@ -826,77 +850,20 @@ regression: tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d
             dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64 \
 	    core_banked_prefetch_config_lock_N64 core_banked_prefetch_causal_N64 \
 	    dma_banked_prefetch_causal_top_N64 tb_dma_banked_prefetch_contract \
+            core_banked_prefetch_causal_N64_d64 dma_banked_prefetch_causal_top_N64_d64 \
             dma_banked_wb_top_N64 dma_banked_wb_top_N64_d64
 	@echo ""
 	@echo "=== Full regression PASS ==="
 
-# ── Week 7: coverage report ──────────────────────────────────────────────────
-coverage: tb_top_all tb_axi_slave week6_all
-	@echo ""
-	@echo "========================================"
-	@echo "  FlashAttention Accelerator — Coverage Report"
-	@echo "========================================"
-	@$(MAKE) --no-print-directory _cov_systolic
-	@$(MAKE) --no-print-directory _cov_quantizer
-	@$(MAKE) --no-print-directory _cov_exp_lut
-	@$(MAKE) --no-print-directory _cov_softmax
-	@$(MAKE) --no-print-directory _cov_sram
-	@$(MAKE) --no-print-directory _cov_addr_gen
-	@$(MAKE) --no-print-directory _cov_kv_buf
-	@$(MAKE) --no-print-directory _cov_top_N16
-	@$(MAKE) --no-print-directory _cov_top_N64
-	@$(MAKE) --no-print-directory _cov_top_N128
-	@$(MAKE) --no-print-directory _cov_top_N256
-	@$(MAKE) --no-print-directory _cov_axi_slave
-	@$(MAKE) --no-print-directory _cov_kv_cache
-	@$(MAKE) --no-print-directory _cov_kv_decode
-	@echo "========================================"
-	@echo "  Total test cases : 391"
-	@echo "  Total mismatches : 0"
-	@echo "  Overall result   : PASS"
-	@echo "========================================"
-
-_cov_systolic:
-	@./$(SIM_DIR)/Vsystolic_array 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_quantizer:
-	@./obj_quantizer/sim_quantizer 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_exp_lut:
-	@./obj_exp_lut/sim_exp_lut 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_softmax:
-	@./obj_softmax/sim_softmax 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_sram:
-	@./obj_sram/sim_sram 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_addr_gen:
-	@./obj_addr_gen/sim_addr_gen 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_kv_buf:
-	@./obj_kv_buf/sim_kv_buf 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_top_N16:
-	@./obj_top_N16/sim_top_N16 --N 16 --data ../../data 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_top_N64:
-	@./obj_top_N64/sim_top_N64 --N 64 --data ../../data/N64 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_top_N128:
-	@./obj_top_N128/sim_top_N128 --N 128 --data ../../data/N128 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_top_N256:
-	@./obj_top_N256/sim_top_N256 --N 256 --data ../../data/N256 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_axi_slave:
-	@./obj_axi_slave/tb_axi_slave 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_kv_cache:
-	@./obj_kv_cache/sim_kv_cache 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
-
-_cov_kv_decode:
-	@./obj_kv_decode/sim_kv_decode --data ../../data/kv_decode 2>/dev/null | grep -A6 "=== Coverage Summary ===" || true
+# Compatibility entry point: run scenario tests, not measured code coverage.
+# Every target builds/runs its test and propagates failure directly to make.
+COVERAGE_TEST_TARGETS := run tb_quantizer tb_exp_lut tb_softmax tb_sram \
+                        tb_addr_gen tb_kv_buf tb_top_all tb_axi_slave week6_all
+.PHONY: regression coverage $(COVERAGE_TEST_TARGETS) \
+        core_banked_prefetch_causal_N64_d64 dma_banked_prefetch_causal_top_N64_d64
+coverage: $(COVERAGE_TEST_TARGETS)
+	@echo "Scenario test result: PASS (all requested test targets completed successfully)"
+	@echo "This is a scenario test summary, not measured code or functional coverage."
 
 clean:
 	rm -rf $(SIM_DIR) obj_array_ctrl obj_quantizer obj_dequantizer_combined obj_transaction_scale obj_exp_lut \
@@ -909,6 +876,7 @@ clean:
 	        obj_dma_bench obj_dma_vec_bench obj_btl_d16 obj_btl_d64 \
 	        obj_core_banked_N64 obj_core_banked_N64_d64 \
 	        obj_core_banked_prefetch_config_lock_N64 obj_core_banked_prefetch_causal_N64 \
+	        obj_core_banked_prefetch_causal_N64_d64 obj_dma_banked_prefetch_causal_top_N64_d64 \
 	        obj_dma_banked_top_N64 obj_dma_banked_top_N64_d64 \
 	        obj_dma_banked_prefetch_top_N64 obj_dma_banked_prefetch_top_N64_d64 \
 	        obj_dma_banked_prefetch_causal_top_N64 obj_dma_banked_prefetch_contract \

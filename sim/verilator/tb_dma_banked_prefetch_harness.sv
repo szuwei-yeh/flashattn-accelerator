@@ -52,7 +52,8 @@ module tb_dma_banked_prefetch_harness #(
     output logic [15:0] perf_kv_tiles_loaded,
     output logic [31:0] perf_first_tile_wait_cycles,
 
-    output logic [15:0] dbg_kv_tiles_ready
+    output logic [15:0] dbg_kv_tiles_ready,
+    output logic        dbg_output_we
 );
     logic [AXI_ADDR_W-1:0] araddr;
     logic [7:0]            arlen;
@@ -62,6 +63,9 @@ module tb_dma_banked_prefetch_harness #(
     logic [AXI_DATA_W-1:0] rdata;
     logic [1:0]            rresp;
     logic                  rlast, rvalid, rready;
+
+    // Simulation-only observation: reset test waits for committed output writes.
+    assign dbg_output_we = u_dut.u_core.u_out_buf.we;
 
     flash_attn_top_dma_banked_prefetch #(
         .SEQ_LEN(SEQ_LEN), .HEAD_DIM(HEAD_DIM), .TILE_SIZE(TILE_SIZE),

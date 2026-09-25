@@ -265,6 +265,40 @@ int main(int argc, char** argv) {
           "reset-restart consumed stale output SRAM");
     std::printf("PASS same-instance reset-restart with retained output SRAM\n");
 
+    // Abort after eight real SRAM write edges, partway through the first fused
+    // output update. Common reset must cancel pending work without clearing SRAM.
+    dut->rst_n = 0; tick(dut); tick(dut); dut->rst_n = 1;
+    drive_valid_config(dut, N, MAT, sq, sk, sv, false);
+    pulse_start(dut);
+    int output_writes = 0;
+    for (int cycle = 0; cycle < 200000 && output_writes < 8 && !dut->done; ++cycle) {
+        dut->clk = 0; dut->eval();
+        const bool write_at_edge = dut->dbg_output_we;
+        tick(dut);
+        if (write_at_edge) ++output_writes;
+    }
+    check(output_writes == 8 && !dut->done && !dut->dma_error,
+          "mid-output reset trigger was not reached during a healthy transaction");
+    dut->rst_n = 0; tick(dut); tick(dut);
+    check(!dut->done && !dut->dma_error && !dut->dbg_output_we &&
+          dut->dbg_kv_tiles_ready == 0 && dut->perf_total_cycles == 0,
+          "common reset did not clear pending work and transaction state");
+    dut->rst_n = 1;
+    // Change V for the restarted transaction: zero output is independent of the
+    // old partial result, so replaying stale data cannot masquerade as recovery.
+    write_dram(2 * MAT, std::vector<int8_t>(MAT, 0));
+    drive_valid_config(dut, N, MAT, sq, sk, sv, false);
+    pulse_start(dut);
+    check(wait_done_with_hostile_inputs(dut, 200000, false),
+          "restart after mid-output reset timed out");
+    check(!dut->dma_error && compare_exact(dut, std::vector<int32_t>(MAT, 0)) == 0,
+          "mid-output reset recovery leaked stale or partial output");
+    check(dut->perf_dma_bytes == 3 * MAT && dut->dbg_kv_tiles_ready == N / 16,
+          "mid-output reset recovery did not reload a complete transaction");
+    write_dram(2 * MAT, v); // restore canonical data for subsequent error cases
+    if (failures == 0)
+        std::printf("PASS mid-output reset after %d writes; changed-V restart exact\n", output_writes);
+
     // Check error propagation both before compute and while later K/V streams.
     for (int kind = 0; kind < 3; ++kind) {
         dut->rst_n = 0; tick(dut); tick(dut); dut->rst_n = 1;

@@ -139,6 +139,10 @@ Canonical exact regression covers N64 d16/d64. Core counts are 7,589 / 28,337;
 DMA-prefetch counts are 7,800 / 29,160 at modeled latency zero. The DMA tests also
 exercise latency 20 and 100. Directed checks cover configuration locking,
 invalid configuration rejection, busy starts, causal operation, and reset/restart.
+Optimized causal core/top regression includes both d16 and d64; the top runs
+each at modeled read latencies 0/20/100. The N64/d16 contract test also resets
+mid-output update after eight SRAM writes, changes V, then checks the restarted
+transaction exactly. This is one directed abort point, not an all-phase reset sweep.
 
 The Python reference models signed scales and INT16 dequantizer saturation.
 Additional extreme-value full-core cases exercise saturation and negative scales
@@ -195,6 +199,7 @@ python3 golden/test_hw_reference.py
 # Uses the d16/d64 core binaries built by regression; generates only temp files.
 python3 golden/check_rtl_corners.py
 python3 syn/scripts/test_run_metadata.py
+python3 sim/verilator/test_regression_reporting.py
 make -C formal all
 ```
 
@@ -204,12 +209,17 @@ Selected targets:
 make -C sim/verilator dma_vec_bench dma_bench
 make -C sim/verilator core_banked_prefetch_N64 core_banked_prefetch_N64_d64
 make -C sim/verilator dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64
+make -C sim/verilator core_banked_prefetch_causal_N64_d64 dma_banked_prefetch_causal_top_N64_d64
 make -C sim/verilator tb_dma_vec_axi_protocol tb_dma_banked_prefetch_contract
 ```
 
-`make coverage` is an older human-readable test summary, not measured code or
-functional coverage. Historical full reports and development notes stay local;
-public tables state the run/configuration boundaries needed to interpret claims.
+`make coverage` is a compatibility entry point for scenario tests. It builds and
+runs its listed test targets, propagates failures, and prints a success summary
+only when all prerequisites succeed; it does not report measured code/functional
+coverage or a fabricated aggregate case count. Four-state, Python checks and
+formal remain separate commands above. Historical full reports and development
+notes stay local; public tables state the run/configuration boundaries needed
+to interpret claims.
 
 ## Source organization
 

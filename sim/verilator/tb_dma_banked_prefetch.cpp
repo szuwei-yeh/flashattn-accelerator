@@ -200,8 +200,9 @@ int main(int argc, char** argv) {
         if (r.perf_dma_bytes != exp_bytes || r.perf_kv_tiles != exp_tiles) invariants_ok = false;
         // Every run: RTL counter starts one cycle earlier than the C++ loop.
         if (r.perf_total != (uint32_t)(r.tb_cycles + 1)) invariants_ok = false;
-        // KV double buffer must beat the non-prefetch top at every latency.
-        if (r.perf_core_busy >= CORE_BUSY_NOPREFETCH) invariants_ok = false;
+        // The stored baseline is noncausal. Do not compare causal execution
+        // against a workload that performs more tiles.
+        if (!causal && r.perf_core_busy >= CORE_BUSY_NOPREFETCH) invariants_ok = false;
         if (li == 0) core_busy_rl0 = r.perf_core_busy;
     }
 
@@ -210,6 +211,9 @@ int main(int argc, char** argv) {
     printf("  - perf_dma_bytes = %u and perf_kv_tiles_loaded = %u are latency-invariant\n",
            exp_bytes, exp_tiles);
     printf("    (they count work done, not time): %s\n", invariants_ok ? "CONFIRMED" : "MISMATCH");
+    if (causal) {
+        printf("  - Causal run: no speedup comparison against the noncausal baseline.\n");
+    } else {
     printf("  - KV double-buffer: core_busy=%u at rd_lat=0 — below the non-prefetch top's %u,\n",
            core_busy_rl0, CORE_BUSY_NOPREFETCH);
     printf("    i.e. the KV loads that used to serialize before compute are now hidden.\n");
@@ -217,6 +221,7 @@ int main(int argc, char** argv) {
     printf("    prefetch fires early (S_UPDATE_SOFTMAX); when a tile has not streamed in yet it\n");
     printf("    gates off and falls back to the residency-stalled reload (graceful degradation).\n");
     printf("    first_wait still absorbs the bulk of the latency and every run stays bit-exact.\n");
+    }
     printf("  - exact mismatches across all latency points: %d\n",
            total_exact_mismatches);
 

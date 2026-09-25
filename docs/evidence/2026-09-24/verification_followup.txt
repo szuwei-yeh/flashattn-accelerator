@@ -1,0 +1,53 @@
+Verification follow-up: scenario reporting, causal d64, mid-output reset
+Base release: a121d7cda131a3279d2d32eff92c5dd7123b4641 plus test/documentation changes.
+At validation time this follow-up was uncommitted; source hashes identify the tested bytes.
+Simulator: Verilator 5.046. No waveform or mapped synthesis run performed.
+RTL, formal, golden, checked-in data and synthesis flow: unchanged from base.
+Both mapped PPA source manifests still match byte-for-byte.
+Original provenance.json is an archive; its four changed TB/Makefile hashes are
+superseded for these new tests only. Prior formal/four-state evidence is retained.
+
+Commands and results (all exit 0):
+- make -C sim/verilator core_banked_prefetch_causal_N64_d64
+  PASS, zero exact mismatches / 4096 outputs, 19463 cycles.
+- make -C sim/verilator dma_banked_prefetch_causal_top_N64_d64
+  PASS, zero exact mismatches at read latency 0/20/100.
+  Cycles: 20286 / 21246 / 25086.
+- make -C sim/verilator tb_dma_banked_prefetch_contract
+  PASS: prior config/start/error/recovery checks plus N64/d16 mid-output reset.
+  Trigger: eight consumed SRAM write edges, before done, no DMA error.
+  Reset clears output write-enable, done/error, residency and transaction counter.
+  Restart changes V to zero, checks all 1024 outputs equal zero, Q/K/V byte count
+  3072 and four resident K/V pairs. Same DUT and retained SRAM; common AXI reset.
+- make -C sim/verilator dma_banked_prefetch_causal_top_N64
+  PASS, zero exact mismatches at latency 0/20/100; cycles 5406 / 5646 / 6606.
+- make -C sim/verilator dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64
+  PASS, zero exact mismatches at latency 0/20/100 for each dimension.
+  Noncausal d16 cycles: 7800 / 8059 / 9195; d64: 29160 / 30187 / 35079.
+- make -C sim/verilator coverage
+  PASS: actual scenario-target builds/runs; no hard-coded aggregate case or
+  mismatch count, and no swallowed subprocess errors. Not measured coverage.
+- python3 sim/verilator/test_regression_reporting.py
+  PASS: one unittest with success/failure subcases. Injected child exit 7 makes
+  the real make coverage target fail and suppresses its success summary.
+
+Causal runs do not claim speedup versus the stored noncausal performance baseline.
+The new causal targets are dependencies of make regression. A complete new
+make regression run was not performed; checks above cover this test-only change.
+Reset evidence is one directed N64/d16 point, not an all-phase/dimension sweep.
+No new formal, full-system four-state, physical signoff or PPA claim is added.
+
+Changed/new test source SHA-256:
+a90747f029bc68d6b0aec7bcc59d1b4ccc743ef52836d23580aeebdad9fa932f  sim/verilator/Makefile
+77bee3bca4900260d3c1e5609776fc5bf759eb9917a5ede4a644dd183beba7b5  sim/verilator/tb_dma_banked_prefetch.cpp
+d6ec028d39005fa51cac014a76a100ae6206358a7ce1c6ad457056e4f51125cb  sim/verilator/tb_dma_banked_prefetch_contract.cpp
+a010dad4456d9b5f84fa6f0fd395b5949f23acbc1e4c32028c31f86c71a633fc  sim/verilator/tb_dma_banked_prefetch_harness.sv
+b4bed52b83044426318d4e507667bd9af870c814641161770fc96b10f825a2fe  sim/verilator/test_regression_reporting.py
+
+Raw log SHA-256 (logs retained privately):
+directed.log records the core/contract checks and an initial causal-top run;
+top_matrix.log validates the final top TB after its causal-reporting correction.
+15cb731cd66752aac19140a018de17612dbfcc84acb829fd2025c6ea459307c0  directed.log
+6a78f66eb2b098633c7e0e8ba5d751fb1c04beb07e3be1eff7b28bbb080f82e7  top_matrix.log
+aea63e49378c0fc1dff6d8fbbaad8b77fff0ebe5e5b982d82fa52b6d7f518c06  coverage.log
+412fbac06d9d5c5a43d5cbc7140a2e7e1666408565f390acfd8ae465689519f7  reporting.log

@@ -153,8 +153,9 @@ Public extracts: [historical shared-scale evidence](evidence/2026-09-24/historic
 
 ## Verification linked to this RTL
 
-The prior audit-fix source fingerprints match all current RTL, formal and test
-inputs; the linked provenance preserves 108 source hashes and ten PASS-log hashes.
+At publication commit `a121d7cda131a3279d2d32eff92c5dd7123b4641`, the prior audit-fix
+source fingerprints matched its RTL, formal and test inputs. The linked original
+provenance preserves 108 source hashes and ten PASS-log hashes for that snapshot.
 Selected [verification excerpts](evidence/2026-09-24/verification.txt) are public.
 No large regression was rerun during this documentation/synthesis-only closure.
 
@@ -170,6 +171,13 @@ No large regression was rerun during this documentation/synthesis-only closure.
 Formal depth is in solver steps, not full accelerator transactions. VCS evidence
 is a focused block test, not a VCS full-system regression. No mapped-netlist
 functional-equivalence proof or gate-level simulation is claimed.
+
+A subsequent verification-only follow-up adds optimized N64/d64 causal core/top
+targets, a directed N64/d16 mid-output reset/restart case, and scenario-report
+failure propagation checks. See [follow-up evidence](evidence/2026-09-24/verification_followup.txt)
+for results and changed test-source hashes. These TB/Makefile changes do not
+replace the archived audit hashes. RTL, formal sources and synthesis inputs
+remain identical to the measured PPA snapshot; no new PPA run is implied.
 
 The optimization claims were checked individually:
 
