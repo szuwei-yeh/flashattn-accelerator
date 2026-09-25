@@ -64,6 +64,7 @@ static Res run_once(int N, int D, int latency,
                     uint16_t sq, uint16_t sk, uint16_t sv, bool causal) {
     const int MAT = N * D;
     auto* dut = new Vtb_dma_banked_prefetch_harness;
+    dut->inject_rresp = 0; dut->inject_bad_rlast = 0;
     Res r{}; r.timeout = false;
 
     // Reset

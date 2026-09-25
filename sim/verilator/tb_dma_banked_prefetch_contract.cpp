@@ -158,6 +158,7 @@ int main(int argc, char** argv) {
     load_scales(data + "/scales.txt", sq, sk, sv);
 
     auto* dut = new Vtb_dma_banked_prefetch_harness;
+    dut->inject_rresp = 0; dut->inject_bad_rlast = 0;
     dut->rst_n = 0;
     dut->start = 0;
     dut->causal = 0;
@@ -252,6 +253,49 @@ int main(int argc, char** argv) {
           "post-done start must be ignored until reset");
     check(compare_exact(dut, expected) == 0,
           "rejected post-done start must not alter the completed result");
+
+    // Reset and rerun the same DUT; SRAM retains the previous transaction.
+    dut->rst_n = 0;
+    tick(dut); tick(dut);
+    dut->rst_n = 1;
+    drive_valid_config(dut, N, MAT, sq, sk, sv, false);
+    pulse_start(dut);
+    check(wait_done_with_hostile_inputs(dut, 200000, false), "reset-restart timed out");
+    check(!dut->dma_error && compare_exact(dut, expected) == 0,
+          "reset-restart consumed stale output SRAM");
+    std::printf("PASS same-instance reset-restart with retained output SRAM\n");
+
+    // Check error propagation both before compute and while later K/V streams.
+    for (int kind = 0; kind < 3; ++kind) {
+        dut->rst_n = 0; tick(dut); tick(dut); dut->rst_n = 1;
+        dut->inject_rresp = 0; dut->inject_bad_rlast = 0;
+        drive_valid_config(dut, N, MAT, sq, sk, sv, false);
+        pulse_start(dut);
+        if (kind == 2) {
+            int wait = 0;
+            while (dut->dbg_kv_tiles_ready == 0 && wait++ < 10000) tick(dut);
+            check(dut->dbg_kv_tiles_ready == 1, "first K/V did not become resident");
+        }
+        const auto ready_before = dut->dbg_kv_tiles_ready;
+        if (kind == 1) dut->inject_bad_rlast = 1;
+        else dut->inject_rresp = 2;
+        int wait = 0;
+        while (!dut->dma_error && wait++ < 10000) tick(dut);
+        check(dut->dma_error, "DMA fault not exposed to host");
+        for (int i = 0; i < 1000; ++i) {
+            tick(dut);
+            check(!dut->done && dut->dma_error, "fault reported as successful completion");
+        }
+        check(dut->dbg_kv_tiles_ready == ready_before, "failed tile promoted resident");
+        dut->inject_rresp = 0; dut->inject_bad_rlast = 0;
+    }
+    // Recovery requires the shared reset of the DMA and modeled AXI slave.
+    dut->rst_n = 0; tick(dut); tick(dut); dut->rst_n = 1;
+    drive_valid_config(dut, N, MAT, sq, sk, sv, false);
+    pulse_start(dut);
+    check(wait_done_with_hostile_inputs(dut, 200000, false), "post-error recovery timed out");
+    check(!dut->dma_error && compare_exact(dut, expected) == 0, "post-error recovery mismatch");
+    std::printf("PASS host error propagation, residency suppression, common-reset recovery\n");
 
     if (failures == 0) {
         std::printf("PASS zero/runtime-short/misaligned cfg and unaligned-base rejection\n");

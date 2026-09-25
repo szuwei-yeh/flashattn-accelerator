@@ -13,10 +13,10 @@ __pycache__/
 *.pyo
 .pytest_cache/
 
-# Local Markdown notes stay private; root and synthesis-flow READMEs are public.
 *.md
 !/README.md
 !/syn/README.md
+!/docs/RESULTS_EVIDENCE.md
 
 # Synopsys Design Compiler generated runs. Each server run is isolated under
 # syn/runs/<run-tag>/<profile>/ and synced separately from source control.

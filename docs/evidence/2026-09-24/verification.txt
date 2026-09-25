@@ -1,0 +1,53 @@
+Audit-fix verification excerpts; reused for PPA closure because RTL/test hashes match.
+Source and complete log hashes: provenance.json / verification.
+Full raw logs remain private; no new full regression was run for PPA closure.
+
+[full_regression.log]
+=== DMA → banked_scratchpad microbenchmark (tile = 256 B) ===
+  DMA load (DRAM→scratchpad, 1 B/cyc writes) : 312 cycles, correctness=PASS
+
+  tile-load read path     cycles   bytes/cyc   correctness
+  -------------------     ------   ---------   -----------
+  scalar (1 B/cyc)           256         1.0   PASS
+  banked stripe (16 B)        17        15.1   PASS   (16 beats)
+
+  stripe speedup vs scalar tile-load : 15.1x
+
+[full_regression.log]
+=== DMA fill: byte-serial vs vector (tile = 256 B) ===
+
+  fill path                 load cyc   sp-write cyc   bytes/cyc(sp-write)   correctness
+  ----------------------    --------   ------------   -------------------   -----------
+  A scalar  (dma_engine)         312            256                   1.0   PASS
+  B vector  (dma_engine_vec)      56             16                  16.0   PASS
+
+  scratchpad-write speedup : 16.0x  (256 → 16 writes)
+  total DMA-load speedup   : 5.6x  (312 → 56 cycles)
+
+[full_regression.log]
+RESULT: PASS
+RESULT: PASS
+=== Full regression PASS ===
+
+[contract_errors.log]
+RESULT: PASS
+
+[final_directed.log]
+RESULT: PASS four-state initialization, stale overwrite, reset, wrap, normalization
+RESULT: PASS (0 failures)
+
+[vcs_output_init_final.log]
+RESULT: PASS four-state initialization, stale overwrite, reset, wrap, normalization
+
+[formal_bmc.log]
+Status: PASSED (bound 48 solver steps)
+[formal_cover.log]
+Status: PASSED (covers reached at steps 19, 27, 41)
+
+Exact optimized core cycles: N64/d16 7589, N64/d64 28337.
+Exact DMA-top cycles (read latency 0 / 20 / 100):
+N64/d16: 7800 / 8059 / 9195
+N64/d64: 29160 / 30187 / 35079
+Six extreme full-core numerical cases: PASS.
+Formal models loader/datapath completions abstractly; this is bounded controller safety.
+VCS evidence is an output-buffer block test, not a full-accelerator VCS regression.

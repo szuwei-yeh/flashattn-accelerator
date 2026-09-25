@@ -44,6 +44,7 @@ module flash_attn_top_dma_banked_prefetch #(
     input  logic [31:0]           cfg_k_base,
     input  logic [31:0]           cfg_v_base,
     output logic                  cfg_error,
+    output logic                  dma_error, // sticky failure; common AXI reset required
 
     input  logic [11:0]        out_raddr,
     output logic signed [31:0] out_rdata,
@@ -120,7 +121,7 @@ module flash_attn_top_dma_banked_prefetch #(
         .clk(clk), .rst_n(rst_n),
         .desc_valid(desc_valid), .desc_ready(desc_ready),
         .desc_addr(desc_addr), .desc_dst_addr(desc_dst_addr),
-        .desc_len_bytes(desc_len_bytes), .desc_dst(desc_dst), .done(dma_done),
+        .desc_len_bytes(desc_len_bytes), .desc_dst(desc_dst), .done(dma_done), .error(dma_error),
         .m_araddr(m_araddr), .m_arlen(m_arlen), .m_arsize(m_arsize),
         .m_arburst(m_arburst), .m_arvalid(m_arvalid), .m_arready(m_arready),
         .m_rdata(m_rdata), .m_rresp(m_rresp), .m_rlast(m_rlast),
@@ -232,9 +233,8 @@ module flash_attn_top_dma_banked_prefetch #(
                         end
                     end
                 end
-                // Single-shot until reset.  The core output SRAM has no
-                // transaction-clear traversal, so re-arming here would make a
-                // second result accumulate on top of the first transaction.
+                // Keep the single-shot interface contract; reset re-arms the
+                // controller and first-tile overwrite initializes output data.
                 SCH_DONE: ;
                 default: sch_state <= SCH_IDLE;
             endcase
@@ -276,16 +276,21 @@ module flash_attn_top_dma_banked_prefetch #(
                 if (w_en)          perf_dma_bytes <= perf_dma_bytes + 32'd16;
                 if ((sch_state == SCH_V_WAIT) && dma_done)
                     perf_kv_tiles_loaded <= perf_kv_tiles_loaded + 16'd1;
-                if (done)          run_active <= 1'b0;
+                if (done || dma_error) run_active <= 1'b0;
             end
 
             if (core_start)      core_active <= 1'b1;
-            else if (done)       core_active <= 1'b0;
+            else if (done || dma_error) core_active <= 1'b0;
             if (core_active)     perf_core_busy_cycles <= perf_core_busy_cycles + 32'd1;
 
             if (core_start)      waiting_first <= 1'b0;
         end
     end
+
+    logic core_done;
+    // Errors invalidate all partial results, even if causal compute can finish
+    // without the failed later tile. The host observes dma_error, never success.
+    assign done = core_done && !dma_error;
 
     // ── Banked prefetch core; DMA fills its scratchpads via the vector port ──
     flash_attn_core_banked_prefetch #(
@@ -293,7 +298,7 @@ module flash_attn_top_dma_banked_prefetch #(
         .SEQ_LEN(SEQ_LEN), .SRAM_DEPTH(SRAM_DEPTH)
     ) u_core (
         .clk(clk), .rst_n(rst_n),
-        .start(core_start), .done(done),
+        .start(core_start), .done(core_done),
         .mode(1'b0), .kv_len(16'b0),
         .scale_q(r_scale_q), .scale_k(r_scale_k), .scale_v(r_scale_v),
         // scalar preload ports unused (DMA fills via vector port)

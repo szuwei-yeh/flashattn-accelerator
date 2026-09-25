@@ -115,13 +115,16 @@ module flash_attn_top_dma_banked_wb #(
     logic [11:0]       w_addr;
     logic [VEC_W-1:0]  w_vdata;
 
+    /* verilator lint_off UNUSEDSIGNAL */
+    logic unused_dma_error; // Legacy wrapper: success-only interface, reset on failure.
+    /* verilator lint_on UNUSEDSIGNAL */
     dma_engine_vec #(
         .AXI_ADDR_W(AXI_ADDR_W), .AXI_DATA_W(AXI_DATA_W), .NUM_BANKS(16)
     ) u_dma (
         .clk(clk), .rst_n(rst_n),
         .desc_valid(desc_valid), .desc_ready(desc_ready),
         .desc_addr(desc_addr), .desc_dst_addr(desc_dst_addr),
-        .desc_len_bytes(desc_len_bytes), .desc_dst(desc_dst), .done(dma_done),
+        .desc_len_bytes(desc_len_bytes), .desc_dst(desc_dst), .done(dma_done), .error(unused_dma_error),
         .m_araddr(m_araddr), .m_arlen(m_arlen), .m_arsize(m_arsize),
         .m_arburst(m_arburst), .m_arvalid(m_arvalid), .m_arready(m_arready),
         .m_rdata(m_rdata), .m_rresp(m_rresp), .m_rlast(m_rlast),

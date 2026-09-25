@@ -26,6 +26,9 @@ module output_buffer #(
 )(
     input  logic                  clk,
     input  logic                  rst_n,
+    // First K/V tile owns a fresh output row. Ignore prior SRAM contents on
+    // updates (including X power-up contents); normalization still reads SRAM.
+    input  logic                  first_tile,
 
     // Accumulate: new = old + data_in
     input  logic                  accum_en,
@@ -54,9 +57,11 @@ module output_buffer #(
     logic signed [31:0]    data_in_d;
     logic [15:0]           rescale_q88_d;
     logic [31:0]           norm_divisor_d;
+    logic                  first_tile_d;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
+            first_tile_d   <= 1'b0;
             accum_en_d     <= 1'b0;
             accum_addr_d   <= '0;
             data_in_d      <= '0;
@@ -67,6 +72,7 @@ module output_buffer #(
             norm_addr_d    <= '0;
             norm_divisor_d <= 32'd1;
         end else begin
+            first_tile_d   <= first_tile;
             accum_en_d     <= accum_en;
             accum_addr_d   <= addr;
             data_in_d      <= data_in;
@@ -110,15 +116,15 @@ module output_buffer #(
 
     always_comb begin
         if (rescale_en_d && accum_en_d)
-            new_val = rescaled_val + data_in_d;              // fused, 32-bit wrap
+            new_val = first_tile_d ? data_in_d : rescaled_val + data_in_d;
         else if (rescale_en_d)
-            new_val = rescaled_val;                          // >>8, truncate to 32b
+            new_val = first_tile_d ? 32'sd0 : rescaled_val;
         else if (norm_en_d)
             new_val = (norm_divisor_d != 32'd0)
                       ? 32'($signed(norm_numer) / $signed({8'b0, norm_divisor_d}))
                       : old_data;
         else
-            new_val = old_data + data_in_d;                  // accum
+            new_val = first_tile_d ? data_in_d : old_data + data_in_d;
     end
 
     // ── SRAM write enables and address ───────────────────────

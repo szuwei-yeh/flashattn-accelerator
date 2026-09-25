@@ -183,11 +183,8 @@ module flash_attn_core_banked_prefetch #(
         .dbg_state(_dbg_state)
     );
 
-    // The output SRAM is an accumulation state store and has no transaction
-    // clear traversal.  Until such a traversal (or an epoch scheme) exists,
-    // accepting a second transaction would add to stale output data.  Enforce
-    // the documented single-shot-until-reset contract instead of silently
-    // producing a wrong second result.
+    // Preserve one operation per reset. First-tile overwrite initializes SRAM
+    // data on the next accepted operation; reset itself only resets control.
     assign start_allowed = start && !transaction_consumed;
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)
@@ -537,6 +534,7 @@ module flash_attn_core_banked_prefetch #(
 
     output_buffer #(.DATA_WIDTH(32), .DEPTH(SRAM_DEPTH)) u_out_buf (
         .clk(clk), .rst_n(rst_n),
+        .first_tile(tile_col == 16'd0),
         // Assert both legacy update enables to select output_buffer's fused mode.
         .accum_en(fused_update_en),     .addr(out_global_addr[11:0]),         .data_in(accum_data_in),
         .rescale_en(fused_update_en),   .rescale_addr(out_global_addr[11:0]), .rescale_q88(rescale_q88_sel),
@@ -544,6 +542,62 @@ module flash_attn_core_banked_prefetch #(
         .re_ext(done_latch), .raddr_ext(out_raddr),
         .rdata_ext(out_rdata)
     );
+
+    // synthesis translate_off
+    // Monitor the real shared loader and register-bank handoff, complementing
+    // the abstract controller formal harness. Counts are consumer-edge writes.
+    integer check_stripes;
+    logic check_loading, check_shadow_complete, check_active_valid;
+    logic [15:0] check_shadow_tile, check_active_tile;
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n || start_accepted) begin
+            check_stripes <= 0;
+            check_loading <= 1'b0;
+            check_shadow_complete <= 1'b0;
+            check_active_valid <= 1'b0;
+            check_shadow_tile <= '0;
+            check_active_tile <= '0;
+        end else begin
+            if (ld_start && pf_start) $fatal(1, "foreground/prefetch loader conflict");
+            if (loader_start) begin
+                if (check_loading) $fatal(1, "loader request while occupied");
+                check_loading <= 1'b1;
+                check_stripes <= 0;
+            end
+            if (pf_start) begin
+                check_shadow_tile <= pf_tile_col;
+                check_shadow_complete <= 1'b0;
+            end
+            if (ld_wr_en) begin
+                if (!check_loading || int'(ld_wr_index) != check_stripes * NUM_BANKS)
+                    $fatal(1, "loader stripe gap, duplicate, or unexpected write");
+                if (!pf_load_active && ld_mode == MODE_KV && array_busy)
+                    $fatal(1, "active K/V overwritten during compute");
+                check_stripes <= check_stripes + 1;
+            end
+            if (loader_done) begin
+                if (!check_loading || check_stripes != KV_FLAT / NUM_BANKS)
+                    $fatal(1, "loader completion before a complete tile");
+                check_loading <= 1'b0;
+                if (pf_load_active) check_shadow_complete <= 1'b1;
+                else if (ld_mode == MODE_KV) begin
+                    check_active_valid <= 1'b1;
+                    check_active_tile <= tile_col;
+                end
+            end
+            if (kv_swap_banks) begin
+                if (!pf_valid || !check_shadow_complete || check_shadow_tile != tile_col || array_busy)
+                    $fatal(1, "invalid or busy shadow promotion");
+                check_active_valid <= 1'b1;
+                check_active_tile <= check_shadow_tile;
+                check_shadow_complete <= 1'b0;
+            end
+            if (array_start && (!check_active_valid || check_active_tile != tile_col ||
+                                (tile_col >> LOG2_T) >= kv_tiles_ready))
+                $fatal(1, "compute consumes incomplete/nonresident/wrong tile");
+        end
+    end
+    // synthesis translate_on
 
     // ── Suppress unused warnings ──────────────────────────────
     /* verilator lint_off UNUSEDSIGNAL */

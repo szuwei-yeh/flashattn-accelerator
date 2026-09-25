@@ -174,6 +174,11 @@ module tile_controller_banked_prefetch_formal;
     // Property 1: every QK/PV array launch consumes a complete, resident active
     // K/V tile, and that active tile is the controller's current tile.
     always @(posedge clk) begin : p_compute_uses_ready_kv
+        if (rst_n) begin
+            assert(!(ld_start && pf_start));
+            if (ld_start) assert(!f_prefetch_pending && !f_load_pending);
+            if (pf_start) assert(!f_prefetch_pending && !f_load_pending);
+        end
         if (rst_n && array_start) begin
             assert(f_active_valid);
             assert(f_active_tile == current_tile_idx);

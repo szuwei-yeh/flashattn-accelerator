@@ -63,6 +63,8 @@ puts $manifest "io_delay_ns=$IO_DELAY"
 puts $manifest "target_library=$TARGET_DB"
 puts $manifest "git_commit=$GIT_COMMIT"
 puts $manifest "git_dirty=$GIT_DIRTY"
+puts $manifest "elaboration_parameters=$::env(SYN_ELAB_PARAMETERS)"
+puts $manifest "source_hashes=source_sha256.json"
 puts $manifest "started_at=[clock format [clock seconds] -format {%Y-%m-%dT%H:%M:%S%z}]"
 close $manifest
 
@@ -124,8 +126,16 @@ if {[info exists ::env(SYN_ELAB_PARAMETERS)] &&
     elaborate $TOP_MODULE -work WORK
 }
 
-current_design $TOP_MODULE
-link
+# elaborate already selected the effective parameterized design. Re-selecting
+# the unparameterized module name can fail or synthesize the wrong geometry.
+set EFFECTIVE_TOP [get_object_name [current_design]]
+if {![string match "${TOP_MODULE}*" $EFFECTIVE_TOP]} {
+    error "Unexpected elaborated top: $EFFECTIVE_TOP"
+}
+set manifest [open [file join $RUN_DIR manifest.txt] a]
+puts $manifest "effective_top=$EFFECTIVE_TOP"
+close $manifest
+if {![link]} { error "Link failed for $EFFECTIVE_TOP" }
 
 check_design > [file join $REPORT_DIR check_design.rpt]
 report_hierarchy > [file join $REPORT_DIR hierarchy.rpt]

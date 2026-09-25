@@ -1,0 +1,129 @@
+Run: 2026-09-02_no_softmax_norm_d16/core
+Selected verbatim report excerpts; raw files are retained privately.
+Units: library cell-area units; timing in ns.
+
+[hierarchy.rpt — elaborated designs]
+Design : flash_attn_core_banked_prefetch_HEAD_DIM16_SEQ_LEN64
+flash_attn_core_banked_prefetch_HEAD_DIM16_SEQ_LEN64
+tile_controller_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64
+
+[qor.rpt — clock timing group]
+Timing Path Group 'clk'
+  -----------------------------------
+  Levels of Logic:              91.00
+  Critical Path Length:          6.62
+  Critical Path Slack:           2.29
+  Critical Path Clk Period:     10.00
+  Total Negative Slack:          0.00
+  No. of Violating Paths:        0.00
+  Worst Hold Violation:          0.00
+  Total Hold Violation:          0.00
+  No. of Hold Violations:        0.00
+  -----------------------------------
+
+[area.rpt — area totals]
+Combinational area:            5080104.512856
+Buf/Inv area:                   351634.279386
+Noncombinational area:          383383.376404
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:               5463487.889260
+Total area:                 undefined
+
+[timing_setup.rpt — first / worst reported setup path; cell rows omitted]
+  Startpoint: scale_q[15]
+              (input port clocked by clk)
+  Endpoint: gen_dequant[43].u_deq/data_out_reg[14]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+  ... cell-by-cell path omitted ...
+  clock network delay (ideal)                             0.00      10.00
+  gen_dequant[43].u_deq/data_out_reg[14]/CLK (DFFSR)      0.00      10.00 r
+  library setup time                                     -0.08       9.92
+  data required time                                                 9.92
+  --------------------------------------------------------------------------
+  data required time                                                 9.92
+  data arrival time                                                 -7.62
+  --------------------------------------------------------------------------
+  slack (MET)                                                        2.29
+
+[Derived hierarchy sums — area.rpt; do not add nested rows]
+{
+  "256_dequantizers": 4098707.6278,
+  "16_softmax_lanes": 424513.7673,
+  "u_array_ctrl": 590444.168,
+  "u_out_buf": 20066.7991,
+  "u_addr_gen": 12774.8155,
+  "u_fsm": 1673.5238,
+  "u_loader": 940.9465,
+  "u_q_sp": 1580.1331,
+  "u_k_sp": 1580.1331,
+  "u_v_sp": 1580.1331
+}
+
+Run: 2026-09-03_combined_scale_d16/core
+Selected verbatim report excerpts; raw files are retained privately.
+Units: library cell-area units; timing in ns.
+
+[hierarchy.rpt — elaborated designs]
+Design : flash_attn_core_banked_prefetch_HEAD_DIM16_SEQ_LEN64
+flash_attn_core_banked_prefetch_HEAD_DIM16_SEQ_LEN64
+tile_controller_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64
+
+[qor.rpt — clock timing group]
+Timing Path Group 'clk'
+  -----------------------------------
+  Levels of Logic:             123.00
+  Critical Path Length:          7.94
+  Critical Path Slack:           0.98
+  Critical Path Clk Period:     10.00
+  Total Negative Slack:          0.00
+  No. of Violating Paths:        0.00
+  Worst Hold Violation:          0.00
+  Total Hold Violation:          0.00
+  No. of Hold Violations:        0.00
+  -----------------------------------
+
+[area.rpt — area totals]
+Combinational area:            4678265.433504
+Buf/Inv area:                   678268.952042
+Noncombinational area:          383383.376404
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:               5061648.809908
+Total area:                 undefined
+
+[timing_setup.rpt — first / worst reported setup path; cell rows omitted]
+  Startpoint: scale_k[3] (input port clocked by clk)
+  Endpoint: gen_dequant[115].u_deq/data_out_reg[2]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  ... cell-by-cell path omitted ...
+  clock network delay (ideal)                             0.00      10.00
+  gen_dequant[115].u_deq/data_out_reg[2]/CLK (DFFSR)      0.00      10.00 r
+  library setup time                                     -0.08       9.92
+  data required time                                                 9.92
+  --------------------------------------------------------------------------
+  data required time                                                 9.92
+  data arrival time                                                 -8.94
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.98
+
+[Derived hierarchy sums — area.rpt; do not add nested rows]
+{
+  "256_dequantizers": 3691327.0698,
+  "16_softmax_lanes": 424556.0043,
+  "u_array_ctrl": 590720.1164,
+  "u_out_buf": 20066.7991,
+  "u_addr_gen": 12774.8155,
+  "u_fsm": 1673.5238,
+  "u_loader": 940.9465,
+  "u_q_sp": 1580.1331,
+  "u_k_sp": 1580.1331,
+  "u_v_sp": 1580.1331
+}

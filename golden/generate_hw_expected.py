@@ -19,7 +19,7 @@ Simulates TRUE cross-tile online FlashAttention softmax (v4):
            S_ACCUM:         exp_vals[i] = lut[to_addr(sc[i], running_max)]
                             running_sum += sum(exp_vals)
       5. S_RESCALE_OUTPUT: output_accum *= rescale_q88 / 256  (per row, signed)
-      6. P_int8:           exp_flat capped at 0xFF; lower byte as signed INT8
+      6. P_uint8:          exp_flat capped at 0xFF; unsigned 8-bit PV operand
       7. PV matmul:        P_int8 @ V_tile  → INT32
       8. Scale PV:         (PV × sv_q88) >> 8
       9. Accumulate:       output_accum += PV_scaled
@@ -62,9 +62,9 @@ def load_scales(path):
             if '=' in line:
                 k, v = line.split('=')
                 scales[k.strip()] = v.strip()
-    sq_q88 = int(scales['scale_q_q88'], 16)
-    sk_q88 = int(scales['scale_k_q88'], 16)
-    sv_q88 = int(scales['scale_v_q88'], 16)
+    sq_q88 = signed16(int(scales['scale_q_q88'], 16))
+    sk_q88 = signed16(int(scales['scale_k_q88'], 16))
+    sv_q88 = signed16(int(scales['scale_v_q88'], 16))
     N = int(scales['N'])
     d = int(scales['d'])
     return sq_q88, sk_q88, sv_q88, N, d
@@ -83,6 +83,12 @@ def to_addr(score_q88, maxv_q88):
     if result > 255: return 255
     if result < 0:   return 0
     return result
+
+
+def signed16(x):
+    """Interpret a scale port's 16 bits as signed Q8.8."""
+    x = int(x) & 0xFFFF
+    return x - 0x10000 if x >= 0x8000 else x
 
 
 def int32(x):
@@ -111,6 +117,7 @@ def flash_attn_q_tile(Q_tile, K, V, sq_q88, sk_q88, sv_q88, lut, tile_size,
     q_tile_idx: Q-tile index (tile_row // tile_size), used for causal skip.
     """
     d            = Q_tile.shape[1]
+    sq_q88, sk_q88, sv_q88 = map(signed16, (sq_q88, sk_q88, sv_q88))
     num_kv_tiles = K.shape[0] // tile_size
 
     # Per Q-row running state (match hardware reset values)
@@ -118,7 +125,7 @@ def flash_attn_q_tile(Q_tile, K, V, sq_q88, sk_q88, sv_q88, lut, tile_size,
     running_max = [-32768] * tile_size
     running_sum = [0]      * tile_size
 
-    # Output accumulator — INT32 (match output_buffer reset = 0)
+    # First K/V tile overwrites output state; SRAM itself has no reset.
     output_accum = [[0] * d for _ in range(tile_size)]
 
     for j in range(num_kv_tiles):
@@ -137,10 +144,11 @@ def flash_attn_q_tile(Q_tile, K, V, sq_q88, sk_q88, sv_q88, lut, tile_size,
         scale_shift = d.bit_length() // 2   # d=16→2, d=64→3
         QKT         = Q_tile.astype(np.int32) @ K_tile.astype(np.int32).T  # [TS,TS]
         scores_q88  = ((QKT.astype(np.int64) * sq_q88 * sk_q88) + 128) >> 8
+        scores_q88  = np.clip(scores_q88, -32768, 32767)  # dequantizer saturation
         scores_sc   = scores_q88 >> scale_shift                             # ÷√d
 
         # ── Causal: mask upper triangle of diagonal tile ──────────────────────
-        # Masked value = -32768 (0x8000 in Q8.8) → exp LUT index 255 ≈ 0.
+        # Masked value = -32768 (0x8000 in Q8.8) → exp LUT index 0 ≈ 0.
         if causal and j == q_tile_idx:
             for r in range(tile_size):
                 for c in range(tile_size):

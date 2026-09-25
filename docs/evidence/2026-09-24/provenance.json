@@ -1,0 +1,447 @@
+{
+  "schema": 1,
+  "revision_description": "At synthesis time: base commit plus then-uncommitted audit fixes; the release preserves the measured bytes identified by source hashes",
+  "measured_source_union_sha256": "27e668eb053edfbdc7d5c914571a81847ea59253d58e24a617f392217aaade07",
+  "runs": {
+    "core": {
+      "run": "ppa_20260924_n64d16/core",
+      "manifest": {
+        "run_tag": "ppa_20260924_n64d16",
+        "profile": "core",
+        "top_module": "flash_attn_core_banked_prefetch",
+        "filelist": "syn/filelists/core_banked_prefetch_macro.f",
+        "run_mode": "compile",
+        "clock_period_ns": "10.0",
+        "io_delay_ns": "1.0",
+        "git_commit": "36ec6158da5490ba1baea04081b311ad86d085f5",
+        "git_dirty": "yes",
+        "elaboration_parameters": "TILE_SIZE=16,HEAD_DIM=16,SEQ_LEN=64,SRAM_DEPTH=4096",
+        "source_hashes": "source_sha256.json",
+        "started_at": "2026-09-24T17:38:10-0700",
+        "effective_top": "flash_attn_core_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64_SRAM_DEPTH4096",
+        "finished_at": "2026-09-24T19:31:18-0700",
+        "target_library": "gscl45nm.db"
+      },
+      "metrics": {
+        "cell_area": 5061521.160437,
+        "critical_path_ns": 6.01,
+        "worst_setup_slack_ns": 3.9,
+        "setup_tns_ns": 0.0,
+        "setup_violating_paths": 0,
+        "max_cap_violations": 105926,
+        "macro_blackbox_area": 0.0,
+        "startpoint": "combined_scale_reg_reg[31]",
+        "endpoint": "gen_dequant[54].u_deq/data_out_reg[14]",
+        "timing_report_slack_ns": 3.9
+      },
+      "major_hierarchy_area": {
+        "256_dequantizers": 3691327.0698,
+        "16_softmax_lanes": 424565.8596,
+        "u_array_ctrl": 590842.1344,
+        "u_out_buf": 20298.6333,
+        "u_addr_gen": 12770.1225,
+        "u_fsm": 1682.9098,
+        "u_loader": 940.9465,
+        "u_q_sp": 1580.1331,
+        "u_k_sp": 1580.1331,
+        "u_v_sp": 1580.1331
+      },
+      "raw_report_sha256": {
+        "reports/qor.rpt": "f6f15d0b8db5bf8fb8c08d190a9bbbc2bab26ebba908f0439cd1aa10864ef9f9",
+        "reports/area.rpt": "51c42d7b487c0a6396adf5e4f9899ace66e39baffab3b73385a7060cdca8fe5c",
+        "reports/hierarchy.rpt": "18dafbc0247f7f6ba3fd02ef16afd7e754db8c464004f97abaee13f8a29caee8",
+        "reports/timing_setup.rpt": "0a36d696223f4c6465a8c02460bb3aada14e5302071a0f6fff9c7aaab4682ab8"
+      },
+      "source_sha256": {
+        "rtl/core/flash_attn_core_banked_prefetch.sv": "5f0bbefbac13474830b58d77f494908df0ac3cdb93c1da304dea04bd26cecaa5",
+        "rtl/ctrl/addr_gen.sv": "192c6a77fc1d82289605db80e828622cb9ba556bf8768bf5c0cc2286d78d7383",
+        "rtl/ctrl/tile_controller_banked_prefetch.sv": "a0bdaf77662a8c0ea917ead9ffee0d3dedd6fa3a4944ba4dfffbabf214d7a555",
+        "rtl/memory/banked_scratchpad.sv": "90fa93cab878043847df0a4839dca410d6146609dd02f0b4f8e24a205cf56c0f",
+        "rtl/memory/banked_tile_loader.sv": "d9f60df133664df2d293ee22ecea0e639297261604666e65b89f5241f04a73db",
+        "rtl/memory/output_buffer.sv": "e784cce001ca734f3ab53f56ba4eccc7c2835569a626b1009e388cba87e31daa",
+        "rtl/quantization/dequantizer.sv": "6ec665292432d32ea31d57df4065da58a6cf0e2de724e92fd9d3d0449cbc9f97",
+        "rtl/softmax/online_softmax.sv": "4950cf080084a9a7f2101c37ead2d2cf0b7aed61ac84522598cf4fea56768a13",
+        "rtl/systolic/array_controller.sv": "0cf0cf337efdba71308037dd60d6e383104ef9242cd0e8ed0b9f2435da2a57bc",
+        "rtl/systolic/pe.sv": "40cd1bdee315ee16ffeaf46ecac35b8f6fc2d0f6e8e25ce1ba8fa92ff45e42eb",
+        "rtl/systolic/systolic_array.sv": "d86f54408d10e33e6786bfebdf602fc4a216e670ae39e221c2a469a8f04d339d",
+        "syn/blackboxes/exp_lut_bb.sv": "540e2702416dbe2d4e7050c172e9a7ae6739ee539642415061717a5e7cebf9cc",
+        "syn/blackboxes/sram_1r1w_bb.sv": "fe298edaa31b4bd8416b60f0967fb5d2ed479b1c3062c91eda63e20aee846e7c",
+        "syn/filelists/core_banked_prefetch_macro.f": "ce2556ff0b74f7b78ca9a8e461a03b5d42adf5f931782e3cfbe0dd218f7bcdd8",
+        "syn/scripts/dc_run.tcl": "d84d024dfb1c9007d0f667333c205202f217b3b5691c11194d8bcd90b10e3aeb",
+        "syn/scripts/run_metadata.py": "c5f32bbb87810ea1209d2a0668474d4ebb2e466d6ea99a98f67e22193fe0cb95",
+        "syn/scripts/run_server.sh": "c35710d408d5e4c31566128489223a1662b0de8163c9af555761bdfa5750033c"
+      },
+      "source_bundle_sha256": "08b6193a6d9f3da766d2c17bff2cc9f96a95a076972a90ba6224baa180191d3b",
+      "netlist_evidence": {
+        "module_declarations": [
+          "tile_controller_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64",
+          "flash_attn_core_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64_SRAM_DEPTH4096"
+        ],
+        "mapped_netlist_sha256": "c268eacfc85c68d722d5570b8b1549fa4543a7fb50d2c3fc8dbc478744f5abff",
+        "constraints_sdc_sha256": "f8ca2f1c194d2d04bab3ff707b66db2584d31edf602d8d1cccc42ef7717ae381",
+        "sdc_clock_commands": [
+          "create_clock [get_ports clk]  -period 10  -waveform {0 5}"
+        ],
+        "sdc_exception_commands": [
+          "set_ideal_network [get_ports rst_n]",
+          "set_false_path   -from [get_ports rst_n]"
+        ],
+        "sdc_input_delay_commands": 302,
+        "sdc_output_delay_commands": 33,
+        "sdc_input_output_delay_ns": 1.0
+      }
+    },
+    "top": {
+      "run": "ppa_20260924_n64d16/top",
+      "manifest": {
+        "run_tag": "ppa_20260924_n64d16",
+        "profile": "top",
+        "top_module": "flash_attn_top_dma_banked_prefetch",
+        "filelist": "syn/filelists/top_dma_banked_prefetch_macro.f",
+        "run_mode": "compile",
+        "clock_period_ns": "10.0",
+        "io_delay_ns": "1.0",
+        "git_commit": "36ec6158da5490ba1baea04081b311ad86d085f5",
+        "git_dirty": "yes",
+        "elaboration_parameters": "TILE_SIZE=16,HEAD_DIM=16,SEQ_LEN=64,SRAM_DEPTH=4096,AXI_ADDR_W=32,AXI_DATA_W=64",
+        "source_hashes": "source_sha256.json",
+        "started_at": "2026-09-24T17:39:58-0700",
+        "effective_top": "flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64",
+        "finished_at": "2026-09-24T19:35:44-0700",
+        "target_library": "gscl45nm.db"
+      },
+      "metrics": {
+        "cell_area": 5073910.211095,
+        "critical_path_ns": 6.01,
+        "worst_setup_slack_ns": 3.91,
+        "setup_tns_ns": 0.0,
+        "setup_violating_paths": 0,
+        "max_cap_violations": 106988,
+        "macro_blackbox_area": 0.0,
+        "startpoint": "u_core/combined_scale_reg_reg[31]",
+        "endpoint": "u_core/gen_dequant[51].u_deq/data_out_reg[14]",
+        "timing_report_slack_ns": 3.91
+      },
+      "major_hierarchy_area": {
+        "256_dequantizers": 3691327.0698,
+        "16_softmax_lanes": 424565.8596,
+        "u_array_ctrl": 590834.6256,
+        "u_out_buf": 20298.6333,
+        "u_addr_gen": 12770.1225,
+        "u_fsm": 1691.8265,
+        "u_loader": 940.9465,
+        "u_q_sp": 1580.1331,
+        "u_k_sp": 1580.1331,
+        "u_v_sp": 1580.1331,
+        "u_core": 5061564.336,
+        "u_dma": 4139.226,
+        "outside_in_context_core": 12345.875095,
+        "top_local_including_arithmetic": 8206.649095
+      },
+      "raw_report_sha256": {
+        "reports/qor.rpt": "5be33b901030883c84e282b40d542e0f722c9785026e3f99febe2cad9e145739",
+        "reports/area.rpt": "6d4a7b997d3940a7784a068f362518a57c25409bcbf68043fceea8e5173aa5ba",
+        "reports/hierarchy.rpt": "3d5cbf69178980f81412d7a5908a1688ff264d8a73f6f4a43d55aea754b70822",
+        "reports/timing_setup.rpt": "089de4eb38af3df2ae200e827c4153b255aaf9f48352c58c5c23f69a80d1a8fa"
+      },
+      "source_sha256": {
+        "rtl/core/flash_attn_core_banked_prefetch.sv": "5f0bbefbac13474830b58d77f494908df0ac3cdb93c1da304dea04bd26cecaa5",
+        "rtl/ctrl/addr_gen.sv": "192c6a77fc1d82289605db80e828622cb9ba556bf8768bf5c0cc2286d78d7383",
+        "rtl/ctrl/tile_controller_banked_prefetch.sv": "a0bdaf77662a8c0ea917ead9ffee0d3dedd6fa3a4944ba4dfffbabf214d7a555",
+        "rtl/interface/dma_engine_vec.sv": "bde600069ab3387b228d68cdb9b4d04e4f14483f6e2b83216f2d3cdc9cf01c66",
+        "rtl/memory/banked_scratchpad.sv": "90fa93cab878043847df0a4839dca410d6146609dd02f0b4f8e24a205cf56c0f",
+        "rtl/memory/banked_tile_loader.sv": "d9f60df133664df2d293ee22ecea0e639297261604666e65b89f5241f04a73db",
+        "rtl/memory/output_buffer.sv": "e784cce001ca734f3ab53f56ba4eccc7c2835569a626b1009e388cba87e31daa",
+        "rtl/quantization/dequantizer.sv": "6ec665292432d32ea31d57df4065da58a6cf0e2de724e92fd9d3d0449cbc9f97",
+        "rtl/softmax/online_softmax.sv": "4950cf080084a9a7f2101c37ead2d2cf0b7aed61ac84522598cf4fea56768a13",
+        "rtl/systolic/array_controller.sv": "0cf0cf337efdba71308037dd60d6e383104ef9242cd0e8ed0b9f2435da2a57bc",
+        "rtl/systolic/pe.sv": "40cd1bdee315ee16ffeaf46ecac35b8f6fc2d0f6e8e25ce1ba8fa92ff45e42eb",
+        "rtl/systolic/systolic_array.sv": "d86f54408d10e33e6786bfebdf602fc4a216e670ae39e221c2a469a8f04d339d",
+        "rtl/top/flash_attn_top_dma_banked_prefetch.sv": "ac3f9fb5c4dc53c0d1a6056466cc5a1d1aee994e29362b35908e54a41614e1ab",
+        "syn/blackboxes/exp_lut_bb.sv": "540e2702416dbe2d4e7050c172e9a7ae6739ee539642415061717a5e7cebf9cc",
+        "syn/blackboxes/sram_1r1w_bb.sv": "fe298edaa31b4bd8416b60f0967fb5d2ed479b1c3062c91eda63e20aee846e7c",
+        "syn/filelists/top_dma_banked_prefetch_macro.f": "c444e1c295cff4567fb4c3123df7aef4b8d4ff4c389a2ce0d979b48557211da8",
+        "syn/scripts/dc_run.tcl": "d84d024dfb1c9007d0f667333c205202f217b3b5691c11194d8bcd90b10e3aeb",
+        "syn/scripts/run_metadata.py": "c5f32bbb87810ea1209d2a0668474d4ebb2e466d6ea99a98f67e22193fe0cb95",
+        "syn/scripts/run_server.sh": "c35710d408d5e4c31566128489223a1662b0de8163c9af555761bdfa5750033c"
+      },
+      "source_bundle_sha256": "b8f0c8929823a6d3b9fb47a444df4f721a63503382dda1a21bf533641e6c7c23",
+      "netlist_evidence": {
+        "module_declarations": [
+          "tile_controller_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64",
+          "flash_attn_core_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64_SRAM_DEPTH4096",
+          "flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64"
+        ],
+        "mapped_netlist_sha256": "705c5fed7d66caf44509941f29b71522fbd3f18cb1a2cb834736ba8f4cfc87f5",
+        "constraints_sdc_sha256": "b6518a96eef960d3717027dd2b3cfae62b41477e5bb533657dd0fc19d8fa4d89",
+        "sdc_clock_commands": [
+          "create_clock [get_ports clk]  -period 10  -waveform {0 5}"
+        ],
+        "sdc_exception_commands": [
+          "set_ideal_network [get_ports rst_n]",
+          "set_false_path   -from [get_ports rst_n]"
+        ],
+        "sdc_input_delay_commands": 244,
+        "sdc_output_delay_commands": 274,
+        "sdc_input_output_delay_ns": 1.0
+      }
+    }
+  },
+  "common_source_files": 16,
+  "library_sha256": "4968d1dba7ff9911cc51dfac7d8ea8b94fbab59d2f862f0531d7c774fb0a5791",
+  "integration_delta_area": 12389.050658,
+  "integration_delta_percent": 0.24476931470400215,
+  "historical_shared_scale": [
+    {
+      "run": "2026-09-02_no_softmax_norm_d16/core",
+      "manifest": {
+        "run_tag": "2026-09-02_no_softmax_norm_d16",
+        "profile": "core",
+        "top_module": "flash_attn_core_banked_prefetch",
+        "filelist": "syn/filelists/core_banked_prefetch_macro.f",
+        "run_mode": "compile",
+        "clock_period_ns": "10.0",
+        "io_delay_ns": "1.0",
+        "git_commit": "4aa075f28c82b83a65180f5f7b081bbedac91625",
+        "git_dirty": "no",
+        "started_at": "2026-09-02T21:55:46-0700",
+        "finished_at": "2026-09-02T23:48:04-0700",
+        "target_library": "gscl45nm.db"
+      },
+      "metrics": {
+        "cell_area": 5463487.88926,
+        "critical_path_ns": 6.62,
+        "worst_setup_slack_ns": 2.29,
+        "setup_tns_ns": 0.0,
+        "setup_violating_paths": 0,
+        "max_cap_violations": 108967,
+        "macro_blackbox_area": 0.0,
+        "startpoint": "scale_q[15]",
+        "endpoint": "gen_dequant[43].u_deq/data_out_reg[14]",
+        "timing_report_slack_ns": 2.29
+      },
+      "major_hierarchy_area": {
+        "256_dequantizers": 4098707.6278,
+        "16_softmax_lanes": 424513.7673,
+        "u_array_ctrl": 590444.168,
+        "u_out_buf": 20066.7991,
+        "u_addr_gen": 12774.8155,
+        "u_fsm": 1673.5238,
+        "u_loader": 940.9465,
+        "u_q_sp": 1580.1331,
+        "u_k_sp": 1580.1331,
+        "u_v_sp": 1580.1331
+      },
+      "raw_report_sha256": {
+        "reports/qor.rpt": "0fd2fd47be8d8939663d48039003158579184096802d42dcd612c0a73a0848bb",
+        "reports/area.rpt": "3f860718ccadd23b2856bd5c239c65fb45d560d006c292b3fc1761bccb454436",
+        "reports/hierarchy.rpt": "893c336d91421b63acd3f4de4c4f74d28eeae9ee88cb9254d9d2950f0baa06c1",
+        "reports/timing_setup.rpt": "78b4bf05efe1605296a9f4af996fa95a9c9cfbc4f3e66deadf9e7b4836bb7fea"
+      }
+    },
+    {
+      "run": "2026-09-03_combined_scale_d16/core",
+      "manifest": {
+        "run_tag": "2026-09-03_combined_scale_d16",
+        "profile": "core",
+        "top_module": "flash_attn_core_banked_prefetch",
+        "filelist": "syn/filelists/core_banked_prefetch_macro.f",
+        "run_mode": "compile",
+        "clock_period_ns": "10.0",
+        "io_delay_ns": "1.0",
+        "git_commit": "bacdec60d21d3c3e7f69c915c5b07345f6cdc7e8",
+        "git_dirty": "no",
+        "started_at": "2026-09-03T11:21:22-0700",
+        "finished_at": "2026-09-03T13:11:08-0700",
+        "target_library": "gscl45nm.db"
+      },
+      "metrics": {
+        "cell_area": 5061648.809908,
+        "critical_path_ns": 7.94,
+        "worst_setup_slack_ns": 0.98,
+        "setup_tns_ns": 0.0,
+        "setup_violating_paths": 0,
+        "max_cap_violations": 104849,
+        "macro_blackbox_area": 0.0,
+        "startpoint": "scale_k[3]",
+        "endpoint": "gen_dequant[115].u_deq/data_out_reg[2]",
+        "timing_report_slack_ns": 0.98
+      },
+      "major_hierarchy_area": {
+        "256_dequantizers": 3691327.0698,
+        "16_softmax_lanes": 424556.0043,
+        "u_array_ctrl": 590720.1164,
+        "u_out_buf": 20066.7991,
+        "u_addr_gen": 12774.8155,
+        "u_fsm": 1673.5238,
+        "u_loader": 940.9465,
+        "u_q_sp": 1580.1331,
+        "u_k_sp": 1580.1331,
+        "u_v_sp": 1580.1331
+      },
+      "raw_report_sha256": {
+        "reports/qor.rpt": "d86f2ac4fc68927c7b4f6f9d9b6dd058f4056b59ddff7cd3e3aafe3ade0e838d",
+        "reports/area.rpt": "47a4e8c6f2834d6f992bb435c1e285d5e0c58c4a8542f2a5be9fc4c7eb40db37",
+        "reports/hierarchy.rpt": "37e94397f55bad0a9b2db167db6642c689b9c6c55c2db8268568a40d0b9536ad",
+        "reports/timing_setup.rpt": "3587bf1a9e55b8945e96349220faefbeb6e4d32cd3ece6ef092a610206635832"
+      }
+    }
+  ],
+  "historical_scale_reduction_percent": 7.354991673760749,
+  "verification": {
+    "source_sha256": {
+      "formal/.gitignore": "61f65dd9598c7421870bf4918332637f83f34abe1f9fc7cc095852ef7a1b44f7",
+      "formal/Makefile": "7d350da1c7aec43dd49eef656623c4010a7fd999136ad4da3b7878a217351105",
+      "formal/tile_controller_banked_prefetch.sby": "4b04fb8dc944d0b266bfa662c5a3aadf6a95c1d0e1966743a8c3bda794aedcee",
+      "formal/tile_controller_banked_prefetch_formal.sv": "d6cd8cb3adde6510af6d5450cd2461b3c6ae9945a4e0c711491200214640959b",
+      "golden/check_rtl_corners.py": "bf2b02f0759136a895328d1d44501af43c51bd3ef117590af760269ff5fc3d79",
+      "golden/flash_attention.py": "f7848257e956dce913e2d863b102d8c7f4b30e092ff528ac5e018706e84fc0ae",
+      "golden/generate_exp_lut.py": "67d1cf90283fd7aa452cb516dfef7c31ddafa8d4b276f50697766f2c39f1eef7",
+      "golden/generate_hw_expected.py": "46d2eb14fd488179933ed67a57619ec7f2a76a0b034a708a5f8c0d93ca330210",
+      "golden/generate_kv_cache_test.py": "1a60d0efc79113ecad95db296f0e7cb942e3797b07d60f37a0756727eb280b75",
+      "golden/generate_multihead_data.py": "6a71805637f0a1431fb5fd09b59e7abcf708ef20bbca9d44c2b147732f62da36",
+      "golden/generate_test_vectors.py": "2da428078c5c40790946e858f7bbb34cd34504a19b0d0972cdca356a0c4a4abd",
+      "golden/int8_attention.py": "2dfe275413525819d261837350d65cae973e29ad732b3526e8aef119117d9ccd",
+      "golden/test_hw_reference.py": "f8cd71f1bb846cb36e74e56c8b88616f13e65fdb715ea0a50a1be54547ea2e26",
+      "rtl/bench/dma_bench_top.sv": "516cc5ed9f66930a5b090e9a9c816d000a924e4ecb6f545ccb35de9232fffb4c",
+      "rtl/bench/dma_vec_bench_top.sv": "19f8f24d496fe726ca8be58a7e2b4eeca561192ee7aa9c3f55615d8e2cfc9ab4",
+      "rtl/core/flash_attn_core.sv": "10ce3d3337e707ab2afcbc51e6ee726f5bd335f1274b77a8c416277ed0e97be9",
+      "rtl/core/flash_attn_core_banked.sv": "14a6697e9269db6a964be3406300b69d416117f02b320f00c7281587e61a6804",
+      "rtl/core/flash_attn_core_banked_prefetch.sv": "5f0bbefbac13474830b58d77f494908df0ac3cdb93c1da304dea04bd26cecaa5",
+      "rtl/ctrl/addr_gen.sv": "192c6a77fc1d82289605db80e828622cb9ba556bf8768bf5c0cc2286d78d7383",
+      "rtl/ctrl/tile_controller.sv": "819a41f44fc357c2e954d8be2d914e4797ea541ed1a05f5a91b205f26f1530ee",
+      "rtl/ctrl/tile_controller_banked.sv": "66b3ad2453528fdeae86a242c9f0ade9d97363f23dd993c0e0f3d37c04682138",
+      "rtl/ctrl/tile_controller_banked_prefetch.sv": "a0bdaf77662a8c0ea917ead9ffee0d3dedd6fa3a4944ba4dfffbabf214d7a555",
+      "rtl/interface/axi4_stream_master.sv": "105f3f7792850a2fcca2e667888c9abcc0a9889d58855dd618e91f3faf3ce963",
+      "rtl/interface/axi4_stream_slave.sv": "0669db46d0b1cca393bb1cd979d40cc95c08856d6dcedc81ce591eb81285f66e",
+      "rtl/interface/axi_mem_model.sv": "6f400f4664dfade76dce47de8d0a01a5d2b1449ddb09fb2d989d809cfad506f4",
+      "rtl/interface/axi_mem_model_rw.sv": "8bed507e7e65a55d80331f7126d56721c504ee012a8c9427eb9fa0db8ae9aa9b",
+      "rtl/interface/dma_engine.sv": "9ab33f6204259352cfde292a30ca304cfba59e0fa80b2bcee5dbec3856db918b",
+      "rtl/interface/dma_engine_vec.sv": "bde600069ab3387b228d68cdb9b4d04e4f14483f6e2b83216f2d3cdc9cf01c66",
+      "rtl/interface/dma_write_engine.sv": "68305a3823d23686fe79b8666f357ab857ec87f6209f751d350e3c8db0799620",
+      "rtl/interface/output_writeback_packer.sv": "6a8516bfc9093eb7a3811f500de3be38264b85755b15ebabf33a4d2b6511384b",
+      "rtl/memory/banked_scratchpad.sv": "90fa93cab878043847df0a4839dca410d6146609dd02f0b4f8e24a205cf56c0f",
+      "rtl/memory/banked_tile_loader.sv": "d9f60df133664df2d293ee22ecea0e639297261604666e65b89f5241f04a73db",
+      "rtl/memory/kv_cache.sv": "2411a3700d9073d450418c3ebe7bfcbac05ddbb7ed8336ed1e05b9a637e74083",
+      "rtl/memory/kv_tile_buffer.sv": "31f903fbc35eb2e973d1a64c9d3b7bbe9998e1270f937ac66d811691f13c191a",
+      "rtl/memory/output_buffer.sv": "e784cce001ca734f3ab53f56ba4eccc7c2835569a626b1009e388cba87e31daa",
+      "rtl/memory/q_tile_buffer.sv": "a55f306bbea15016e7c946b0187c468d93ea318d308761defde0fc72ca3f213d",
+      "rtl/memory/sram_1r1w.sv": "c958106159d57ad7294753b085a9b339c373d2a96244042831f1e4baa9af4fd5",
+      "rtl/memory/stripe_reader.sv": "233d17c1c64a3da8f0c0a4832f9d49e6b794494b2f4aab695c1d5ccb00273378",
+      "rtl/quantization/dequantizer.sv": "6ec665292432d32ea31d57df4065da58a6cf0e2de724e92fd9d3d0449cbc9f97",
+      "rtl/quantization/quantizer.sv": "477731535d78c85cd2736a938db953c6c96938e500a3065a21102057a6bbb64b",
+      "rtl/softmax/exp_lut.sv": "1f8f1d5ae96de4113501293ef464de14a9f15ced34ad64b6470e6d2fd608d411",
+      "rtl/softmax/online_softmax.sv": "4950cf080084a9a7f2101c37ead2d2cf0b7aed61ac84522598cf4fea56768a13",
+      "rtl/systolic/array_controller.sv": "0cf0cf337efdba71308037dd60d6e383104ef9242cd0e8ed0b9f2435da2a57bc",
+      "rtl/systolic/pe.sv": "40cd1bdee315ee16ffeaf46ecac35b8f6fc2d0f6e8e25ce1ba8fa92ff45e42eb",
+      "rtl/systolic/systolic_array.sv": "d86f54408d10e33e6786bfebdf602fc4a216e670ae39e221c2a469a8f04d339d",
+      "rtl/top/flash_attn_top.sv": "8aee49af9ea37c57af165c4ecc89ee93928d9e7f90ea0c0f15b487d070e70d5c",
+      "rtl/top/flash_attn_top_axi.sv": "69a481b51c7ab2be307439606d21f335fc6a6954a6e278426170ccf08a75b8d7",
+      "rtl/top/flash_attn_top_dma.sv": "36d3a2e7158897073aa7c8bf4af5fc045f1d61a055b7b106693d61ee80c39565",
+      "rtl/top/flash_attn_top_dma_banked.sv": "c8fc31f27dfd4725ad1ae78b065bf67a1477276f076da80dd27264316ed48723",
+      "rtl/top/flash_attn_top_dma_banked_prefetch.sv": "ac3f9fb5c4dc53c0d1a6056466cc5a1d1aee994e29362b35908e54a41614e1ab",
+      "rtl/top/flash_attn_top_dma_banked_wb.sv": "90c0c2764e7d3969dd571d7cf0f4f5752fad093c4293bc80b115076217c73256",
+      "sim/icarus/tb_output_buffer_init.sv": "5637cd8ecb4d49b02759605b3f27bd6049096992bc86e8c1c37e4e4088921d40",
+      "sim/verilator/Makefile": "b70a6bbd9db5c58db92d2e885f88f820eff879d75474f4f7287993c0a490de5b",
+      "sim/verilator/sim_main.cpp": "f765ebdaecd980559e503a7bd9734fdeca37e43557502468158eea15a4bbb406",
+      "sim/verilator/tb_addr_gen.cpp": "ac8f0cac965d592ad24075e520b82b1c317ecc2bb30fa14e08b56a747d44eaab",
+      "sim/verilator/tb_array_controller.cpp": "4382160fe0b6cc18141fc175eca196ef53b387e6e3c7b6685cabf158b4502176",
+      "sim/verilator/tb_axi_slave.cpp": "8ec8a5098679bf3f4401d4c1e90843c682f6403d252466327b0e64f79f988b73",
+      "sim/verilator/tb_banked_scratchpad.cpp": "ecd4b4f87f817f68c8d2fd70defaedfb2ce05cca1f277182f69dc42f2a6a9ce4",
+      "sim/verilator/tb_banked_tile_loader.cpp": "8494444118c60183e2a7a2ac38d18c17bb3677b64ca8ff42cb3d426160398328",
+      "sim/verilator/tb_banked_tile_loader.sv": "d86ca6fc6f8e1fce62cf382fbab98ec584421b1987dc8b8b557a1a91403e390f",
+      "sim/verilator/tb_core_banked.cpp": "224878887407a03612690a32cf8b228470f20b6bec4506f0ba66eb63fe4a0bf5",
+      "sim/verilator/tb_core_banked_prefetch.cpp": "bff0d66b7196b245098822bf0aa1f84eee925bb770a0f909744b25c7cb617b3c",
+      "sim/verilator/tb_dequantizer_combined.cpp": "870ab938f07bfa5590b7643b6b48790a535cbb708d37366f0fdcb93114c02fe1",
+      "sim/verilator/tb_dequantizer_combined.sv": "0e9767c88ff7c9c8797c39a385d29a6603c6c5804e6ec289cb53976692ed9618",
+      "sim/verilator/tb_dma_banked.cpp": "4dc5dae8cf6625fe6e29516bd1be3f039ab3fbc2b2d49f0d442f1b60182762a3",
+      "sim/verilator/tb_dma_banked_harness.sv": "dbbe8333e102dfec6c09108ec76eb5b5a72079337024f6ddae1a2f7acf34239f",
+      "sim/verilator/tb_dma_banked_prefetch.cpp": "f4cc5191d6d0b9ea80dc5b8c8bde4ec11472785c1ec727ef105d710c577a8875",
+      "sim/verilator/tb_dma_banked_prefetch_contract.cpp": "a75ffb813de5732fef7552daa77c8f019d33d2d20053ad9d6de8d87efb282f38",
+      "sim/verilator/tb_dma_banked_prefetch_harness.sv": "f22f6fef2c17966ffd1aaa222d488f2a102b3adc1febea3feb684564a7c48d1d",
+      "sim/verilator/tb_dma_banked_wb.cpp": "34402eba5d3feae9f94adbb5bd26118555506d6b3ec8038550b63a4b8dbcf086",
+      "sim/verilator/tb_dma_banked_wb_harness.sv": "1cb81ba77eb04fcae0e4f5b198b7d51b7d51b267560e9a200c4953c35caf4e6e",
+      "sim/verilator/tb_dma_bench.cpp": "2c5a0899a4f5eeff520d802d5053345f93d9cfe7ad9f1c2bd6dc4f163f433767",
+      "sim/verilator/tb_dma_bench.sv": "2c2cc6189ce015eb1419b44b4240e13ca6aca87742ddec16969c13f68d32eb91",
+      "sim/verilator/tb_dma_harness.sv": "524f81d78478758d342328a42a06020c5d1a602b2a7553159f034b46d6c142b1",
+      "sim/verilator/tb_dma_unit.cpp": "d7319bc636d356c8408ca3423e4f080847b9a3db6badcacb8795541b0892ce1f",
+      "sim/verilator/tb_dma_unit.sv": "a8b7cbb5f72f5cceb3488e8006f4029bdf2ac6487f66b630e759f275ac10fabd",
+      "sim/verilator/tb_dma_vec_axi_protocol.cpp": "ecf72e791f96eb3c5b8a4fe0f9a8e63d933b7398a5b1dbe40ec617809604b8ce",
+      "sim/verilator/tb_dma_vec_bench.cpp": "701b062fbf45db43e2f69e60545ad72404d20a0d86d3896625ad9879aa5c5a27",
+      "sim/verilator/tb_dma_vec_bench.sv": "4a7f9dc4562331f50d1d816a6fd4ae5b2b6c7a32d25cb101f18a501164b732ff",
+      "sim/verilator/tb_dma_write_unit.cpp": "44a0be8b3ddfb2225dd95a90232ce67f172af04e6c779d0ff237fb39ecbede0e",
+      "sim/verilator/tb_dma_write_unit.sv": "59f55429e952acace672862d7d6e4323c49a4b0e757d109f4ef0de38ec6edee2",
+      "sim/verilator/tb_exp_lut.cpp": "378748442caf74c36c88c58548423b2b4960357b59db8eb5d2ad1636363b85d2",
+      "sim/verilator/tb_flash_attn_top.cpp": "a74293d7d18d2521f57624cb964a77b42963617ce71e35615a4939c0d8e5c32a",
+      "sim/verilator/tb_flash_attn_top_axi.cpp": "c4b2aa5dbd669b3fc2e4f55caca1bfefbe3ee10f55cee92af78280daf3bafa97",
+      "sim/verilator/tb_flash_attn_top_dma.cpp": "ef3fba5e52ff97ef328d5d5a06498313dc7e6cb7dccc8adf01a786a21cc0fd80",
+      "sim/verilator/tb_kv_buf.cpp": "9d71cee23ed47060a77d2e1a5a994853485f6d38f806337094755f4efb7191ae",
+      "sim/verilator/tb_kv_cache.cpp": "b9dcd338d7a68520438410be54cc5ceb06eb2d6b169c231bac480ea14b1f2f69",
+      "sim/verilator/tb_kv_decode.cpp": "1f234e400e226f6c7bd9d42583d8e9fa8f1762504e78ad43799bd0d988e95521",
+      "sim/verilator/tb_online_softmax.cpp": "3e2ccf8029ee672d21945507c3c9508b52b614daf73b2c3007b8a146dd1f1455",
+      "sim/verilator/tb_output_writeback_packer.cpp": "468a7ca20cb76def51344f92e8ef4e9c7acbecaab69c3841c86783bc52d446ca",
+      "sim/verilator/tb_output_writeback_packer.sv": "18005ba5215fd2d181e598b3af55ef12fb3b79fa73c5e21294b031051b25ac7c",
+      "sim/verilator/tb_quantizer.cpp": "1579c095f3696e179d292d80343cc2eb18e0fcc53761948354f6ed2c676e3ecb",
+      "sim/verilator/tb_sram.cpp": "b9813481dc1afbc0894bae837a5871be60c501ec99417d04a81fa2c1717d6723",
+      "sim/verilator/tb_transaction_scale.cpp": "d4211024c89835566b75b19f9211c7a22f38b41377b79c6c9fd7eb21faa8808c",
+      "sim/verilator/tb_transaction_scale.sv": "b85a2061b2f6efd0832583e4d1a5beaa8165b9096440754b190fccb565357318",
+      "syn/blackboxes/exp_lut_bb.sv": "540e2702416dbe2d4e7050c172e9a7ae6739ee539642415061717a5e7cebf9cc",
+      "syn/blackboxes/sram_1r1w_bb.sv": "fe298edaa31b4bd8416b60f0967fb5d2ed479b1c3062c91eda63e20aee846e7c",
+      "syn/filelists/banked_tile_loader.f": "e91cea5b29b3c00782b6bc94518eb2c3f911897be3a0387a4f446befa77f960c",
+      "syn/filelists/core_banked_prefetch.f": "4587a194824e248d728602661e2fb8996bb38f5302072a710f211060214f1bab",
+      "syn/filelists/core_banked_prefetch_macro.f": "ce2556ff0b74f7b78ca9a8e461a03b5d42adf5f931782e3cfbe0dd218f7bcdd8",
+      "syn/filelists/dma_engine_vec.f": "b06fcfe808ff2920dd5e181f4272456980eb139c46327bd27acc79813a25c0e5",
+      "syn/filelists/systolic_array.f": "beee96a13509b7cdf58cc1a20bf21987428125e01809f183ed9cc9f0d71cf083",
+      "syn/filelists/top_dma_banked_prefetch.f": "b10d3b01d2f402a3015ec511a6ea45ea809229c9c079c640b2c36eaa089e5865",
+      "syn/filelists/top_dma_banked_prefetch_macro.f": "c444e1c295cff4567fb4c3123df7aef4b8d4ff4c389a2ce0d979b48557211da8",
+      "syn/scripts/dc_run.tcl": "d84d024dfb1c9007d0f667333c205202f217b3b5691c11194d8bcd90b10e3aeb",
+      "syn/scripts/run_metadata.py": "c5f32bbb87810ea1209d2a0668474d4ebb2e466d6ea99a98f67e22193fe0cb95",
+      "syn/scripts/run_server.sh": "c35710d408d5e4c31566128489223a1662b0de8163c9af555761bdfa5750033c",
+      "syn/scripts/test_run_metadata.py": "0946050612a0ae60712b736bfa9409983330ffd418a2f9d666128e7456a5140a"
+    },
+    "source_bundle_sha256": "25a4f87422ce8b92d083b84f04b9d7470183cd42d48cce017333dc36301a69e6",
+    "logs": {
+      "full_regression.log": {
+        "sha256": "77a62f4b527af3f1fb2a3b90cb7bf3857c88bf2463d3e59ad18969e2bf5b7984",
+        "pass_marker": "=== Full regression PASS ==="
+      },
+      "optimized_regression.log": {
+        "sha256": "a6f612cc09231537a7eaf8edd6ea8b95f1aaa094a6ac73618144639d44dc300c",
+        "pass_marker": "RESULT: PASS"
+      },
+      "contract_errors.log": {
+        "sha256": "3777800031828cb85134fd35c1e623a2d668768bf11d3ca8161b0d9afa50af44",
+        "pass_marker": "RESULT: PASS"
+      },
+      "final_directed.log": {
+        "sha256": "19141f75c1f4ac855526b7506ede9a2d071bc5b088a2e0221468ef798d764200",
+        "pass_marker": "RESULT: PASS (0 failures)"
+      },
+      "vcs_output_init_final.log": {
+        "sha256": "652065870cda7226c0ff1c9e839199bae9157e021ee28d4cc867d7aaa10aafda",
+        "pass_marker": "RESULT: PASS four-state"
+      },
+      "formal_bmc.log": {
+        "sha256": "f869ae62a5cccdd13051457f699cba848c77f2e70ed2cbd6313c8c3ddef116cd",
+        "pass_marker": "Status: PASSED"
+      },
+      "formal_cover.log": {
+        "sha256": "cedf08840cd9700b5eba45f4ff2206dd678c7e742b498a1a64c293267c2249e6",
+        "pass_marker": "Status: PASSED"
+      },
+      "golden.log": {
+        "sha256": "b7830e67d61b451b902dcd12e4ef9244bd4afd9ed931be59cf980647e2f2344a",
+        "pass_marker": "OK"
+      },
+      "synthesis_geometry.log": {
+        "sha256": "d589b54ea4d5472ad6df8e5169c33c19b5d5544c3a0dac49d54d4d6062aea5e7",
+        "pass_marker": "OK"
+      },
+      "numerical_corners.log": {
+        "sha256": "09968778a2c668b7bde109137df7843f63ee1e4471d77beaf4dbc6989609a0f0",
+        "pass_marker": "RESULT: PASS"
+      }
+    },
+    "reuse_basis": "RTL, test sources and flow hashes unchanged since audit-fix verification; no new RTL changes in PPA closure"
+  }
+}

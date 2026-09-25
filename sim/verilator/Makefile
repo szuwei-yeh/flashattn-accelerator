@@ -913,3 +913,25 @@ clean:
 	        obj_dma_banked_prefetch_top_N64 obj_dma_banked_prefetch_top_N64_d64 \
 	        obj_dma_banked_prefetch_causal_top_N64 obj_dma_banked_prefetch_contract \
 	        obj_dma_banked_wb_top_N64 obj_dma_banked_wb_top_N64_d64
+
+# Audit closure: four-state SRAM semantics, protocol scoreboard, retained SRAM.
+.PHONY: audit_fixes tb_output_buffer_init
+IVERILOG ?= iverilog
+VVP ?= vvp
+tb_output_buffer_init:
+	mkdir -p obj_output_buffer_init
+	$(IVERILOG) -g2012 -s tb_output_buffer_init -o obj_output_buffer_init/sim.out \
+	    ../../rtl/memory/sram_1r1w.sv ../../rtl/memory/output_buffer.sv \
+	    ../icarus/tb_output_buffer_init.sv
+	$(VVP) obj_output_buffer_init/sim.out
+
+audit_fixes: tb_output_buffer_init tb_dma_vec_axi_protocol tb_dma_banked_prefetch_contract
+
+# Same four-state test under VCS; set VCS to the licensed executable path.
+VCS ?= vcs
+.PHONY: vcs_output_buffer_init
+vcs_output_buffer_init:
+	mkdir -p obj_output_buffer_vcs
+	cd obj_output_buffer_vcs && $(VCS) -full64 -sverilog -top tb_output_buffer_init \
+	    ../../../rtl/memory/sram_1r1w.sv ../../../rtl/memory/output_buffer.sv \
+	    ../../icarus/tb_output_buffer_init.sv -o simv -l compile.log && ./simv -no_save -l run.log

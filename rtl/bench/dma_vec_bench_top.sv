@@ -116,11 +116,14 @@ module dma_vec_bench_top #(
     logic [11:0]           b_w_addr;
     logic [VEC_W-1:0]      b_w_vdata;
 
+    /* verilator lint_off UNUSEDSIGNAL */
+    logic unused_dma_error; // Legacy wrapper: success-only interface, reset on failure.
+    /* verilator lint_on UNUSEDSIGNAL */
     dma_engine_vec #(.AXI_ADDR_W(AXI_ADDR_W), .AXI_DATA_W(AXI_DATA_W), .NUM_BANKS(NUM_BANKS)) u_dma_b (
         .clk(clk), .rst_n(rst_n),
         .desc_valid(b_desc_valid), .desc_ready(b_desc_ready),
         .desc_addr(dram_base), .desc_dst_addr(12'd0),
-        .desc_len_bytes(tile_bytes), .desc_dst(2'd1), .done(b_dma_done),
+        .desc_len_bytes(tile_bytes), .desc_dst(2'd1), .done(b_dma_done), .error(unused_dma_error),
         .m_araddr(b_araddr), .m_arlen(b_arlen), .m_arsize(b_arsize),
         .m_arburst(b_arburst), .m_arvalid(b_arvalid), .m_arready(b_arready),
         .m_rdata(b_rdata), .m_rresp(b_rresp), .m_rlast(b_rlast),

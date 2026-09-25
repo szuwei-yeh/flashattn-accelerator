@@ -26,6 +26,8 @@ module tb_dma_banked_prefetch_harness #(
     input  logic signed [15:0] scale_v,
 
     input  logic [15:0] rd_latency,
+    input  logic [1:0]  inject_rresp,
+    input  logic        inject_bad_rlast,
 
     input  logic                  init_we,
     input  logic [AXI_ADDR_W-1:0] init_addr,
@@ -40,6 +42,7 @@ module tb_dma_banked_prefetch_harness #(
     input  logic [31:0] cfg_k_base,
     input  logic [31:0] cfg_v_base,
     output logic        cfg_error,
+    output logic        dma_error,
 
     // Performance counters
     output logic [31:0] perf_total_cycles,
@@ -67,11 +70,11 @@ module tb_dma_banked_prefetch_harness #(
         .clk(clk), .rst_n(rst_n), .start(start), .done(done),
         .causal(causal), .scale_q(scale_q), .scale_k(scale_k), .scale_v(scale_v),
         .cfg_seq_len(cfg_seq_len), .cfg_q_base(cfg_q_base),
-        .cfg_k_base(cfg_k_base), .cfg_v_base(cfg_v_base), .cfg_error(cfg_error),
+        .cfg_k_base(cfg_k_base), .cfg_v_base(cfg_v_base), .cfg_error(cfg_error), .dma_error(dma_error),
         .out_raddr(out_raddr), .out_rdata(out_rdata),
         .m_araddr(araddr), .m_arlen(arlen), .m_arsize(arsize),
         .m_arburst(arburst), .m_arvalid(arvalid), .m_arready(arready),
-        .m_rdata(rdata), .m_rresp(rresp), .m_rlast(rlast),
+        .m_rdata(rdata), .m_rresp(rresp | inject_rresp), .m_rlast(rlast ^ inject_bad_rlast),
         .m_rvalid(rvalid), .m_rready(rready),
         .perf_total_cycles(perf_total_cycles),
         .perf_dma_busy_cycles(perf_dma_busy_cycles),

@@ -369,6 +369,7 @@ module flash_attn_core_banked #(
 
     output_buffer #(.DATA_WIDTH(32), .DEPTH(SRAM_DEPTH)) u_out_buf (
         .clk(clk), .rst_n(rst_n),
+        .first_tile(tile_col == 16'd0),
         .accum_en(accum_en),     .addr(out_global_addr[11:0]),         .data_in(accum_data_in),
         .rescale_en(rescale_en), .rescale_addr(out_global_addr[11:0]), .rescale_q88(rescale_q88_sel),
         .norm_en(norm_en),       .norm_addr(out_global_addr[11:0]),    .norm_divisor(norm_divisor_sel),

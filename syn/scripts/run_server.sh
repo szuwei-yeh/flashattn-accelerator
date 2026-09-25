@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -uo pipefail
+set -euo pipefail
 
 usage() {
     cat <<'EOF'
@@ -22,7 +22,8 @@ Optional environment:
   DC_SHELL_BIN=dc_shell       # executable name/path
   CLK_PERIOD=10.0             # ns
   IO_DELAY=1.0                # ns
-  ELAB_PARAMETERS='HEAD_DIM=64,SEQ_LEN=64'
+  ELAB_PARAMETERS='HEAD_DIM=64,SEQ_LEN=64' # partial override of explicit N64/d16 defaults
+  PYTHON_BIN=python3
 
 Example:
   DC_TARGET_LIBRARY=/path/to/gscl45nm.db \
@@ -117,7 +118,12 @@ if [[ -e $run_dir ]]; then
     exit 2
 fi
 
+python_bin=${PYTHON_BIN:-python3}
+elab_parameters=$("$python_bin" "$script_dir/run_metadata.py" parameters \
+    --profile "$profile" --parameters "${ELAB_PARAMETERS:-}")
 mkdir -p "$run_dir/logs"
+"$python_bin" "$script_dir/run_metadata.py" capture --root "$repo_root" \
+    --filelist "$filelist" --output "$run_dir/source_sha256.json"
 
 export SYN_PROFILE=$profile
 export SYN_RUN_TAG=$run_tag
@@ -126,7 +132,7 @@ export SYN_TOP_MODULE=$top_module
 export SYN_FILELIST=$filelist
 export SYN_CLK_PERIOD=${CLK_PERIOD:-10.0}
 export SYN_IO_DELAY=${IO_DELAY:-1.0}
-export SYN_ELAB_PARAMETERS=${ELAB_PARAMETERS:-}
+export SYN_ELAB_PARAMETERS=$elab_parameters
 export SYN_GIT_COMMIT
 export SYN_GIT_DIRTY
 
@@ -150,6 +156,19 @@ set +e
 dc_status=${PIPESTATUS[0]}
 set -e
 
+# DC may print Error: yet return zero. Require complete artifacts and a final
+# manifest marker, and reject source drift as well as textual tool errors.
+if [[ $dc_status -eq 0 ]]; then
+    if grep -Eq '(^|[[:space:]])Error:' "$log_file" ||
+       ! grep -q '^finished_at=' "$run_dir/manifest.txt"; then
+        dc_status=1
+    fi
+    artifact=artifacts/mapped.v
+    [[ $run_mode == elab ]] && artifact=artifacts/elaborated.ddc
+    [[ -s "$run_dir/$artifact" ]] || dc_status=1
+    "$python_bin" "$script_dir/run_metadata.py" verify --root "$repo_root" \
+        --filelist "$filelist" --output "$run_dir/source_sha256.json" || dc_status=1
+fi
 if [[ $dc_status -eq 0 ]]; then
     touch "$run_dir/SUCCESS"
     echo "Synthesis completed successfully: $run_dir"

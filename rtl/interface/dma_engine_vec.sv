@@ -40,6 +40,9 @@ module dma_engine_vec #(
     input  logic [31:0]           desc_len_bytes,   // multiple of STRIPE_BYTES
     input  logic [1:0]            desc_dst,
     output logic                  done,
+    // Sticky fatal status. No successful done after an error; reset both AXI
+    // endpoints before reuse. This prototype does not drain/recover bad bursts.
+    output logic                  error,
 
     // ── AXI4 read address channel (master) ───────────────────────────
     output logic [AXI_ADDR_W-1:0] m_araddr,
@@ -51,10 +54,8 @@ module dma_engine_vec #(
 
     // ── AXI4 read data channel (master) ──────────────────────────────
     input  logic [AXI_DATA_W-1:0] m_rdata,
-    /* verilator lint_off UNUSEDSIGNAL */
     input  logic [1:0]            m_rresp,
     input  logic                  m_rlast,
-    /* verilator lint_on UNUSEDSIGNAL */
     input  logic                  m_rvalid,
     output logic                  m_rready,
 
@@ -66,7 +67,7 @@ module dma_engine_vec #(
     output logic [VEC_W-1:0]  w_vdata
 );
 
-    typedef enum logic [1:0] { S_IDLE, S_AR, S_R } state_t;
+    typedef enum logic [1:0] { S_IDLE, S_AR, S_R, S_ERROR } state_t;
     state_t state;
 
     logic [AXI_ADDR_W-1:0] cur_addr;          // DRAM read pointer
@@ -81,14 +82,19 @@ module dma_engine_vec #(
 
     // Beats requested in current AR
     logic [8:0] req_beats;
+    logic [12:0] boundary_beats;
+    logic bad_beat;
+    assign boundary_beats = (13'd4096 - {1'b0, cur_addr[11:0]}) >> BEAT_LOG2;
+    assign bad_beat = (m_rresp != 2'b00) || (m_rlast != (burst_beats_left == 9'd1));
     always_comb begin
         if (total_beats_left >= 32'(MAX_BURST)) req_beats = 9'(MAX_BURST);
         else                                    req_beats = total_beats_left[8:0];
+        if ({4'b0, req_beats} > boundary_beats) req_beats = 9'(boundary_beats);
     end
 
     // The completing (second) beat of a stripe forms the vector write this cycle
     logic stripe_complete;
-    assign stripe_complete = (state == S_R) & m_rvalid & (beat_in_stripe == 1'b1);
+    assign stripe_complete = (state == S_R) & m_rvalid & !bad_beat & (beat_in_stripe == 1'b1);
 
     always_comb begin
         m_araddr  = cur_addr;
@@ -117,6 +123,7 @@ module dma_engine_vec #(
             stripe_lo        <= '0;
             beat_in_stripe   <= 1'b0;
             done             <= 1'b0;
+            error            <= 1'b0;
         end else begin
             done <= 1'b0;
 
@@ -128,7 +135,13 @@ module dma_engine_vec #(
                         stripe_addr      <= desc_dst_addr;
                         dst              <= desc_dst;
                         total_beats_left <= desc_len_bytes >> BEAT_LOG2;
-                        state            <= S_AR;
+                        if ((desc_len_bytes == 0) ||
+                            (desc_len_bytes % STRIPE_BYTES != 0) ||
+                            (desc_addr[BEAT_LOG2-1:0] != 0) ||
+                            (desc_dst_addr[$clog2(NUM_BANKS)-1:0] != 0)) begin
+                            error <= 1'b1;
+                            state <= S_ERROR;
+                        end else state <= S_AR;
                     end
                 end
 
@@ -140,7 +153,10 @@ module dma_engine_vec #(
                 end
 
                 S_R: begin
-                    if (m_rvalid) begin
+                    if (m_rvalid && bad_beat) begin
+                        error <= 1'b1;
+                        state <= S_ERROR;
+                    end else if (m_rvalid) begin
                         // accumulate beat
                         if (beat_in_stripe == 1'b0) begin
                             stripe_lo      <= m_rdata;
@@ -166,6 +182,7 @@ module dma_engine_vec #(
                     end
                 end
 
+                S_ERROR: ;
                 default: state <= S_IDLE;
             endcase
         end
@@ -173,15 +190,10 @@ module dma_engine_vec #(
 
     assign desc_ready = (state == S_IDLE);
 
-    // synthesis translate_off
-    always_ff @(posedge clk) begin
-        if (desc_valid && (state == S_IDLE)) begin
-            if (desc_dst_addr[$clog2(NUM_BANKS)-1:0] != '0)
-                $error("dma_engine_vec: desc_dst_addr not %0d-byte aligned", NUM_BANKS);
-            if ((desc_len_bytes % STRIPE_BYTES) != 0)
-                $error("dma_engine_vec: desc_len_bytes not a multiple of %0d", STRIPE_BYTES);
-        end
+    initial begin
+        if (AXI_DATA_W != 64 || NUM_BANKS != 16 || AXI_ADDR_W < 12 ||
+            MAX_BURST < 1 || MAX_BURST > 256)
+            $fatal(1, "dma_engine_vec: unsupported geometry or burst limit");
     end
-    // synthesis translate_on
 
 endmodule
