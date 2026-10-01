@@ -26,9 +26,10 @@ static void reset(Vdma_engine_vec& d) {
 }
 // error_kind: 0 good, 1 early RLAST, 2 missing RLAST, 3 SLVERR,
 // 4 DECERR, 5 EXOKAY (nonexclusive read), 6 late RLAST.
-static void transfer(Vdma_engine_vec& d, uint32_t base, int bytes, int error_kind) {
+static void transfer(Vdma_engine_vec& d, uint32_t base, int bytes, int error_kind,
+                     uint32_t dst_base = 0) {
     reset(d);
-    d.desc_addr = base; d.desc_dst_addr = 0; d.desc_len_bytes = bytes;
+    d.desc_addr = base; d.desc_dst_addr = dst_base; d.desc_len_bytes = bytes;
     d.desc_dst = 1; d.desc_valid = 1; tick(d); d.desc_valid = 0;
     int beat = 0, bursts = 0;
     bool failed = false, completed = false;
@@ -89,7 +90,7 @@ static void transfer(Vdma_engine_vec& d, uint32_t base, int bytes, int error_kin
         check(completed && !d.error, "normal transfer did not complete");
         check(int(writes.size()) == bytes / 16, "stripe count");
         for (int i = 0; i < int(writes.size()); ++i)
-            check(writes[i].addr == unsigned(i * 16) && writes[i].lo == pattern(2*i) &&
+            check(writes[i].addr == dst_base + unsigned(i * 16) && writes[i].lo == pattern(2*i) &&
                   writes[i].hi == pattern(2*i+1), "stripe order or data");
     }
     std::printf("case base=0x%X bytes=%d error=%d bursts=%d checked\n",base,bytes,error_kind,bursts);
@@ -101,14 +102,21 @@ int main(int argc, char** argv) {
     transfer(d, 0x0FF0, 512, 0);
     transfer(d, 0x0FF8, 256, 0); // stripe spans two AXI bursts: keep its low beat
     transfer(d, 0x1000, 4096, 0);
+    transfer(d, 0xFFFFFFF0, 16, 0, 4080); // final legal source/destination stripe
+    transfer(d, 0xFFFFF000, 4096, 0);      // final legal full scratchpad transfer
     for (int e = 1; e <= 6; ++e) transfer(d, 0x1000, 32, e);
     // Invalid descriptor rejection must not put an underflowed ARLEN on AXI.
-    for (int kind = 0; kind < 4; ++kind) {
+    for (int kind = 0; kind < 8; ++kind) {
         reset(d); d.desc_addr = kind == 1 ? 3 : 0x1000;
         d.desc_dst_addr = kind == 2 ? 1 : 0;
         d.desc_len_bytes = kind == 0 ? 0 : kind == 3 ? 24 : 32;
+        if (kind == 4) d.desc_addr = 0xFFFFFFF0; // source wraps after two beats
+        if (kind == 5) d.desc_dst_addr = 4080;   // destination wraps after a stripe
+        if (kind == 6) d.desc_len_bytes = 4112; // exceeds the whole scratchpad
+        if (kind == 7) d.desc_len_bytes = 0xFFFFFFF0; // widened sum must not wrap
         d.desc_valid = 1; tick(d); d.desc_valid = 0;
         check(d.error && !d.m_arvalid && !d.done, "invalid descriptor accepted");
+        check(writes.empty(), "invalid descriptor wrote scratchpad data");
     }
     // Abort in the middle of a burst. Common reset discards its half stripe.
     reset(d); d.desc_addr = 0x1000; d.desc_dst_addr = 0; d.desc_len_bytes = 32;

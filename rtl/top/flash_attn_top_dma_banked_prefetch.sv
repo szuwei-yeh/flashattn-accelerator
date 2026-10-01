@@ -76,11 +76,17 @@ module flash_attn_top_dma_banked_prefetch #(
     // ── Config validation (combinational, from live inputs) ──────────
     // The core is compile-time sized; runtime-short sequences are rejected.
     // Vector DMA descriptors operate on aligned 16-byte scratchpad stripes.
+    // Validate each whole matrix before tiled K/V address additions can wrap.
+    localparam logic [31:0] LAST_MATRIX_BASE =
+        32'hFFFF_FFFF - 32'(SEQ_LEN * HEAD_DIM - 1);
     assign cfg_error = (cfg_seq_len != 16'(SEQ_LEN))
                     || ((cfg_seq_len & 16'(TILE_SIZE - 1)) != 16'd0)
                     || (cfg_q_base[3:0] != 4'b0)
                     || (cfg_k_base[3:0] != 4'b0)
-                    || (cfg_v_base[3:0] != 4'b0);
+                    || (cfg_v_base[3:0] != 4'b0)
+                    || (cfg_q_base > LAST_MATRIX_BASE)
+                    || (cfg_k_base > LAST_MATRIX_BASE)
+                    || (cfg_v_base > LAST_MATRIX_BASE);
 
     initial begin : p_parameter_guard
         if (TILE_SIZE != 16)

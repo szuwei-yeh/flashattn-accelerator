@@ -84,6 +84,13 @@ module dma_engine_vec #(
     logic [8:0] req_beats;
     logic [12:0] boundary_beats;
     logic bad_beat;
+    // Compare exclusive ends in widened arithmetic. Ending exactly at the
+    // address-space limit is legal; crossing it would wrap and corrupt data.
+    localparam int RANGE_W = ((AXI_ADDR_W > 32) ? AXI_ADDR_W : 32) + 1;
+    logic [RANGE_W-1:0] source_end;
+    logic [32:0] destination_end;
+    assign source_end = RANGE_W'(desc_addr) + RANGE_W'(desc_len_bytes);
+    assign destination_end = {21'd0, desc_dst_addr} + {1'b0, desc_len_bytes};
     assign boundary_beats = (13'd4096 - {1'b0, cur_addr[11:0]}) >> BEAT_LOG2;
     assign bad_beat = (m_rresp != 2'b00) || (m_rlast != (burst_beats_left == 9'd1));
     always_comb begin
@@ -138,7 +145,9 @@ module dma_engine_vec #(
                         if ((desc_len_bytes == 0) ||
                             (desc_len_bytes % STRIPE_BYTES != 0) ||
                             (desc_addr[BEAT_LOG2-1:0] != 0) ||
-                            (desc_dst_addr[$clog2(NUM_BANKS)-1:0] != 0)) begin
+                            (desc_dst_addr[$clog2(NUM_BANKS)-1:0] != 0) ||
+                            (source_end > (RANGE_W'(1) << AXI_ADDR_W)) ||
+                            (destination_end > 33'd4096)) begin
                             error <= 1'b1;
                             state <= S_ERROR;
                         end else state <= S_AR;

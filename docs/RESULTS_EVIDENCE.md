@@ -39,9 +39,12 @@ this identity remains valid when documentation is committed later.
 
 Post-baseline maintenance restricts the optimized path to `SRAM_DEPTH=4096` in
 the RTL parameter guards and synthesis validator, and repairs test runners.
-The datapath and synthesis constraints are unchanged, but these edited files
-have new source hashes. The archived metrics and fingerprints above continue
-to identify the measured baseline; they are not a new mapped run of the cleanup.
+The arithmetic core and synthesis constraints are unchanged. A later September
+30 boundary fix adds synthesizable source/destination range guards to the vector
+DMA and complete-matrix range validation to the optimized top. The archived
+metrics and fingerprints above identify the measured baseline; they are not a
+new full-top mapped run of these changes. Current whole-top area/timing remains
+unmeasured; no inference of unchanged slack or area is made from functional tests.
 
 Both runs explicitly use `TILE_SIZE=16, HEAD_DIM=16, SEQ_LEN=64, SRAM_DEPTH=4096`.
 Top additionally uses `AXI_ADDR_W=32, AXI_DATA_W=64`.
@@ -215,6 +218,19 @@ unsupported dimensions or incomplete tiles before writing expected output.
 The LUT-address comment now includes its rounding offset; its formula did not
 change. RTL, synthesis sources and checked-in data are unchanged by this follow-up.
 
+### September 30 address-range follow-up
+
+Directed tests reproduced acceptance of four out-of-range DMA descriptors and
+three wrapping Q/K/V matrix configurations. The DMA now checks widened exclusive
+source/destination ends, and the optimized top checks whole matrix spans before
+tile-offset addition. Legal transfers ending at 0xFFFFFFFF or scratchpad byte
+4095 are retained. New tests cover these exact upper boundaries and rejection
+before any address request/write; existing protocol/reset/recovery tests remain.
+The compute core, arithmetic reference and checked-in datasets are unchanged.
+Full regression, scenario checks, audit checks and lint pass after the fix.
+Synopsys DC accepts the updated N64/d16 top through analyze/elaborate/link and
+maps the standalone DMA successfully. This is not a new mapped whole-top PPA run.
+
 The optimization claims were checked individually:
 
 | Claim | Disposition |
@@ -229,8 +245,8 @@ Supported PPA wording:
 
 > Optimized softmax/dequantization using Synopsys DC synthesis and static timing
 > analysis; sharing Q/K scaling across 256 dequantization lanes reduced N64/d16
-> core area by 7.35% in a matched historical comparison. The final N64/d16
-> DMA-integrated top met 100 MHz with +3.91 ns setup slack in pre-layout synthesis.
+> core area by 7.35% in a matched historical comparison. The measured September
+> 24 N64/d16 DMA-integrated top met 100 MHz with +3.91 ns setup slack in pre-layout synthesis.
 
 The historical area comparison and final timing result are separate experiments,
 both using logical SRAM/ROM blackboxes. Keep the integration difference in

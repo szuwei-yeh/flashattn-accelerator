@@ -184,6 +184,29 @@ int main(int argc, char** argv) {
     check(dut->perf_total_cycles == 0 && dut->dbg_kv_tiles_ready == 0,
           "rejected unaligned-base start must not launch work");
 
+    // The complete matrix must fit in the 32-bit external address space.
+    // Check K/V spans too: their separate tile descriptors could otherwise
+    // each look valid after the scheduler's base+offset arithmetic wrapped.
+    for (int operand = 0; operand < 3; ++operand) {
+        drive_valid_config(dut, N, MAT, sq, sk, sv, false);
+        auto* base = operand == 0 ? &dut->cfg_q_base :
+                     operand == 1 ? &dut->cfg_k_base : &dut->cfg_v_base;
+        *base = uint32_t(0) - MAT; // last legal matrix ends at 0xFFFFFFFF
+        dut->eval();
+        check(!dut->cfg_error, "matrix ending at final address must be legal");
+        *base += 16; // still aligned, but the matrix now crosses the limit
+        dut->eval();
+        check(dut->cfg_error, "wrapping Q/K/V matrix span must be rejected");
+        // Keep the negative-control run bounded even against the old RTL.
+        if (dut->cfg_error) {
+            pulse_start(dut);
+            for (int i = 0; i < 16; ++i) tick(dut);
+            check(dut->perf_total_cycles == 0 && dut->perf_dma_bytes == 0 &&
+                  dut->dbg_kv_tiles_ready == 0 && !dut->dma_error && !dut->done,
+                  "rejected wrapping matrix must remain idle");
+        }
+    }
+
     // Transaction 1: accept non-causal config, then corrupt all pins and inject
     // busy starts.  The result must remain exactly the accepted transaction.
     drive_valid_config(dut, N, MAT, sq, sk, sv, false);

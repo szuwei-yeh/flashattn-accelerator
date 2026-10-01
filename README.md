@@ -37,7 +37,7 @@ raw synthesis runs remain in ignored `syn/runs/`. Start with
 | Incremental K/V prefetch | 12,140 / 46,412 | **11,912 / 45,608** | Same historical memory stage; −1.878% / −1.732% |
 | Fused output update | 11,912 / 45,608 | **7,800 / 29,160** | N64, d16/d64 prefetch top; −34.52% / −36.06% |
 | Shared Q/K scale | 5,463,487.889 area units | **5,061,648.810 (−7.35%)** | Historical N64/d16 core, identical library/constraints |
-| Current DMA-integrated timing | 10 ns target | **+3.91 ns setup slack** | September 24 corrected N64/d16; mapped DC, memory blackboxes |
+| Measured DMA-integrated timing | 10 ns target | **+3.91 ns setup slack** | September 24 N64/d16 baseline; mapped DC, memory blackboxes |
 
 E2E counts are testbench `start → done`, with zero modeled read latency unless
 stated otherwise. They exclude host initialization, output readout, and AXI
@@ -115,9 +115,9 @@ division truncates toward zero.
   Disabling that output path removed the failing divider path while preserving
   the running state and exp weights actually consumed by the core.
 - Sharing the Q/K scale product reduced area further. The dequantizers remain
-  the largest area contributor, 72.75% of the current integrated top.
+  the largest area contributor, 72.75% of the measured integrated top.
 
-## Current N64/d16 logical-synthesis PPA
+## Measured N64/d16 logical-synthesis PPA baseline
 
 Design Compiler R-2020.09-SP4, FreePDK45 `gscl45nm.db`, typical corner,
 10 ns clock, 1 ns input/output delays, logical SRAM/ROM blackboxes. Both profiles
@@ -138,8 +138,10 @@ effects; it is not isolated DMA area. The top critical path starts at
 `u_core/gen_dequant[51].u_deq/data_out_reg[14]`.
 
 At synthesis time, the measured revision was base commit `36ec615` plus the audit
-fixes. This release preserves those source bytes, identified by source hashes in
-[public provenance](docs/evidence/2026-09-24/provenance.json).
+fixes, identified by source hashes in
+[public provenance](docs/evidence/2026-09-24/provenance.json). Subsequent maintenance
+adds DMA address-range guards. The table describes the archived baseline, not a
+new full-top mapping of those guards; current whole-top area/timing is unmeasured.
 Area excludes physical storage; the top has **106,988 max-capacitance violations**.
 No memory access characterization, CTS, placement, routing or extraction is
 included. Vectorless power is not a measured system-power result. This is
@@ -150,7 +152,7 @@ experiment, `4aa075f` → `bacdec6`, 5,463,487.889 → 5,061,648.810. Today's re
 does not replace either endpoint. The exact reduction is 7.3549917%; the old
 7.36% matches intermediate rounding and is corrected to 7.35%.
 The old September 4 top's +3.90 ns is historical;
-use the new margin above for the corrected RTL. Its old approximately 0.24%
+use the margin above for the September 24 baseline. Its old approximately 0.24%
 integration comparison and the 29.25% divider-stage area delta mixed N16/N64
 and must not be used as controlled same-configuration claims.
 
@@ -179,7 +181,11 @@ stale-data overwrite, reset/restart, 32-bit wrap, and signed normalization.
 The optimized interface remains one transaction per reset.
 
 **AXI:** the vector DMA splits bursts at 4 KiB boundaries and checks each accepted
-RRESP/RLAST. Invalid descriptors or bad responses latch `error`; the optimized
+RRESP/RLAST. It rejects descriptors whose source span exceeds the address space
+or destination span exceeds the 4096-byte scratchpad. The optimized top rejects
+wrapping Q/K/V matrix spans through `cfg_error` before accepting start, including
+K/V spans split into separate descriptors. A span ending exactly at the final
+legal byte is accepted. Invalid descriptors or bad responses latch `error`; the optimized
 top exposes `dma_error`, suppresses successful `done`, and does not promote a
 failed tile as resident. The offending stripe is not written. Partial results
 are invalid. Recovery requires **common reset of master and slave**; there is
@@ -205,7 +211,8 @@ formal proofs.
 - `SRAM_DEPTH=4096` only, with `SEQ_LEN * HEAD_DIM <= 4096`. The optimized
   path uses fixed 12-bit internal interfaces; smaller depths are unsupported
   and rejected by the RTL guards and synthesis parameter validator.
-- AXI 32-bit addresses, 64-bit data; Q/K/V bases 16-byte aligned.
+- AXI 32-bit addresses, 64-bit data; Q/K/V bases 16-byte aligned, with each
+  complete `SEQ_LEN * HEAD_DIM`-byte matrix fitting below the 2^32-byte limit.
 - One shared clock and one outstanding AXI read burst.
 - Behavioral external memory models fixed first-beat latency, not a DDR/HBM
   controller, bank scheduling, refresh, response reordering, or physical timing.
