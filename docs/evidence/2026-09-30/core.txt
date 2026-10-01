@@ -1,0 +1,114 @@
+Run: final_20260930_n64d16/core
+Selected verbatim report excerpts; raw files are retained privately.
+Units: library cell-area units; timing in ns.
+
+[hierarchy.rpt — elaborated designs]
+Design : flash_attn_core_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64_SRAM_DEPTH4096
+flash_attn_core_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64_SRAM_DEPTH4096
+tile_controller_banked_prefetch_TILE_SIZE16_HEAD_DIM16_SEQ_LEN64
+
+[qor.rpt — clock timing group]
+Timing Path Group 'clk'
+  -----------------------------------
+  Levels of Logic:              88.00
+  Critical Path Length:          6.01
+  Critical Path Slack:           3.90
+  Critical Path Clk Period:     10.00
+  Total Negative Slack:          0.00
+  No. of Violating Paths:        0.00
+  Worst Hold Violation:          0.00
+  Total Hold Violation:          0.00
+  No. of Hold Violations:        0.00
+  -----------------------------------
+
+[area.rpt — area totals]
+Combinational area:            4677435.711218
+Buf/Inv area:                   676839.933554
+Noncombinational area:          384085.449219
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:               5061521.160437
+Total area:                 undefined
+
+[timing_setup.rpt — first / worst reported setup path; cell rows omitted]
+  Startpoint: combined_scale_reg_reg[31]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: gen_dequant[54].u_deq/data_out_reg[14]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+  ... cell-by-cell path omitted ...
+  clock network delay (ideal)                             0.00      10.00
+  gen_dequant[54].u_deq/data_out_reg[14]/CLK (DFFSR)      0.00      10.00 r
+  library setup time                                     -0.08       9.92
+  data required time                                                 9.92
+  --------------------------------------------------------------------------
+  data required time                                                 9.92
+  data arrival time                                                 -6.01
+  --------------------------------------------------------------------------
+  slack (MET)                                                        3.90
+
+[Derived hierarchy sums — area.rpt; do not add nested rows]
+{
+  "256_dequantizers": 3691327.0698,
+  "16_softmax_lanes": 424565.8596,
+  "u_array_ctrl": 590842.1344,
+  "u_out_buf": 20298.6333,
+  "u_addr_gen": 12770.1225,
+  "u_fsm": 1682.9098,
+  "u_loader": 940.9465,
+  "u_q_sp": 1580.1331,
+  "u_k_sp": 1580.1331,
+  "u_v_sp": 1580.1331
+}
+
+[Supplementary mapped-design checks]
+{
+  "reported_min_delay_slack_ns": 0.12,
+  "constraint_review": {
+    "sampled_library_output_max_capacitance": {
+      "gscl45nm/NAND2X1/Y": "0.000000",
+      "gscl45nm/NAND3X1/Y": "0.000000",
+      "gscl45nm/NOR2X1/Y": "0.000000",
+      "gscl45nm/AOI21X1/Y": "0.000000",
+      "gscl45nm/AOI22X1/Y": "0.000000",
+      "gscl45nm/DFFSR/Q": "0.000000",
+      "gscl45nm/TBUFX1/Y": "0.000000"
+    },
+    "postcheck_log_sha256": "611bccf6e00a865cb996e52fe467f9d165764fe524e29e7411a583fd58d6a123",
+    "max_cap_violations": 105926,
+    "all_required_caps_zero": true,
+    "check_timing": "Information: Checking generated_clocks...\n\nInformation: Checking loops...\n\nInformation: Checking no_input_delay...\n\nInformation: Checking unconstrained_endpoints...\n\nInformation: Checking pulse_clock_cell_type...\n\nInformation: Checking no_driving_cell...\n\nInformation: Checking partial_input_delay...\n1"
+  },
+  "power_estimate": {
+    "dynamic_mw": 94.1163,
+    "leakage_mw": 24.9417,
+    "scope": "DC vectorless low-effort estimate; unannotated primary/sequential/blackbox outputs; no workload activity, physical memories or extracted parasitics",
+    "warnings": [
+      "Warning: Design has unannotated primary inputs. (PWR-414)",
+      "Warning: Design has unannotated sequential cell outputs. (PWR-415)",
+      "Warning: Design has unannotated black box outputs. (PWR-428)"
+    ]
+  },
+  "mapped_structure_review": {
+    "check_design_warning_counts": {
+      "LINT-2": 13981,
+      "LINT-3": 320,
+      "LINT-5": 320,
+      "LINT-8": 3440,
+      "LINT-28": 35863,
+      "LINT-29": 10255,
+      "LINT-31": 61,
+      "LINT-32": 31226,
+      "LINT-33": 2489,
+      "LINT-52": 4130
+    },
+    "undriven_product_bit1_pins": 320,
+    "pins_with_flat_fanout_endpoints": 0,
+    "mapped_level_sensitive_registers": 0,
+    "method": "DC all_fanout -flat -endpoints_only for every LINT-5 PRODUCT[1] pin; all_registers -level_sensitive on linked mapped DDC",
+    "structure_log_sha256": "df0f747b4394a680273b477eadfc7d8946757489f1032d30b9cdff6ee38d6d76",
+    "scope": "Explains unused truncated-product ports and checks the elaboration latch warning against mapped structure; not netlist equivalence."
+  }
+}

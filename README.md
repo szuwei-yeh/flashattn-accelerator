@@ -37,7 +37,7 @@ raw synthesis runs remain in ignored `syn/runs/`. Start with
 | Incremental K/V prefetch | 12,140 / 46,412 | **11,912 / 45,608** | Same historical memory stage; −1.878% / −1.732% |
 | Fused output update | 11,912 / 45,608 | **7,800 / 29,160** | N64, d16/d64 prefetch top; −34.52% / −36.06% |
 | Shared Q/K scale | 5,463,487.889 area units | **5,061,648.810 (−7.35%)** | Historical N64/d16 core, identical library/constraints |
-| Measured DMA-integrated timing | 10 ns target | **+3.91 ns setup slack** | September 24 N64/d16 baseline; mapped DC, memory blackboxes |
+| Final DMA-integrated timing | 10 ns target | **+3.94 ns setup slack** | Final N64/d16, `d2bb204`; mapped DC, memory blackboxes |
 
 E2E counts are testbench `start → done`, with zero modeled read latency unless
 stated otherwise. They exclude host initialization, output readout, and AXI
@@ -45,9 +45,9 @@ writeback. Memory, prefetch, and fusion rows belong to successive RTL milestones
 the total fusion gain is not a DMA-only speedup. RTL performance counters begin
 one cycle earlier than the testbench count.
 
-The September 24 correctness/protocol fixes preserve the canonical core and
-full-top cycle counts in exact regression. Both corrected **N64/d16** profiles
-now have a matched mapped-synthesis baseline. See the public
+Final regression of the guarded RTL preserves the canonical core and full-top
+cycle counts. Both **N64/d16** profiles now have matched mapped-synthesis
+evidence from clean commit `d2bb204`. See the public
 [results evidence](docs/RESULTS_EVIDENCE.md) for source identity, parameter proof,
 report excerpts, metric definitions and the disposition of older claims.
 
@@ -115,50 +115,44 @@ division truncates toward zero.
   Disabling that output path removed the failing divider path while preserving
   the running state and exp weights actually consumed by the core.
 - Sharing the Q/K scale product reduced area further. The dequantizers remain
-  the largest area contributor, 72.75% of the measured integrated top.
+  the largest area contributor, 72.74% of the final measured integrated top.
 
-## Measured N64/d16 logical-synthesis PPA baseline
+## Final N64/d16 logical-synthesis PPA
 
-Design Compiler R-2020.09-SP4, FreePDK45 `gscl45nm.db`, typical corner,
-10 ns clock, 1 ns input/output delays, logical SRAM/ROM blackboxes. Both profiles
-use the same corrected RTL snapshot and `compile` flow; generated hierarchy and
-mapped declarations confirm **SEQ_LEN64 / HEAD_DIM16** in both cores.
+Both profiles were mapped from clean commit `d2bb204` after the DMA
+address-range fix, using Design Compiler R-2020.09-SP4, typical `gscl45nm.db`,
+10 ns clock, 1 ns input/output delays and the unchanged `compile` flow.
+SRAM/ROM remain logical blackboxes. Actual hierarchy and mapped declarations
+confirm **SEQ_LEN64 / HEAD_DIM16** in both cores.
 
-| September 24 mapped result | Standalone core | DMA-integrated top |
+| Final mapped result | Standalone core | DMA-integrated top |
 |---|---:|---:|
-| Standard-cell area (library units) | 5,061,521.160 | 5,073,910.211 |
-| Critical path length | 6.01 ns | 6.01 ns |
-| Worst setup slack at 100 MHz | +3.90 ns | +3.91 ns |
+| Standard-cell area (library units) | 5,061,521.160 | 5,074,696.289 |
+| Critical path length | 6.01 ns | 5.98 ns |
+| Worst setup slack at 100 MHz | +3.90 ns | +3.94 ns |
 | Setup TNS / violating paths | 0.00 ns / 0 | 0.00 ns / 0 |
 
-Matched top-minus-standalone-core area is **12,389.051 units
-(0.24477%)**. This net integration difference includes mapping-context
-effects; it is not isolated DMA area. The top critical path starts at
-`u_core/combined_scale_reg_reg[31]` and ends at
-`u_core/gen_dequant[51].u_deq/data_out_reg[14]`.
+Matched top-minus-core area is **13,175.128 units (0.26030%)**.
+This includes mapping-context effects and is not isolated DMA area. The top
+critical path starts at `u_core/combined_scale_reg_reg[31]` and ends at `u_core/gen_dequant[251].u_deq/data_out_reg[14]`.
+Source manifests, netlist/SDC hashes and report extracts are in
+[final provenance](docs/evidence/2026-09-30/provenance.json) and
+[results evidence](docs/RESULTS_EVIDENCE.md).
 
-At synthesis time, the measured revision was base commit `36ec615` plus the audit
-fixes, identified by source hashes in
-[public provenance](docs/evidence/2026-09-24/provenance.json). Subsequent maintenance
-adds DMA address-range guards. The table describes the archived baseline, not a
-new full-top mapping of those guards; current whole-top area/timing is unmeasured.
-Area excludes physical storage; the top has **106,988 max-capacitance violations**.
-No memory access characterization, CTS, placement, routing or extraction is
-included. Vectorless power is not a measured system-power result. This is
-pre-layout logical synthesis, not physical signoff.
+The top reports **107,039 max-capacitance violations**. The
+high-precision recheck finds a zero required-capacitance limit on every reported
+violation; sampled library output pins have `max_capacitance=0`. This library
+constraint issue does not establish physical electrical closure. Memory area
+and access timing, placement, CTS, routing and extracted parasitics are absent.
+DC vectorless power estimates are retained with their unannotated-activity
+warnings; they are not workload or measured system power. No physical signoff
+or independently measured Fmax is claimed.
 
-The historical **7.35% shared-scale area reduction** remains a separate N64/d16
-experiment, `4aa075f` → `bacdec6`, 5,463,487.889 → 5,061,648.810. Today's result
-does not replace either endpoint. The exact reduction is 7.3549917%; the old
-7.36% matches intermediate rounding and is corrected to 7.35%.
-The old September 4 top's +3.90 ns is historical;
-use the margin above for the September 24 baseline. Its old approximately 0.24%
-integration comparison and the 29.25% divider-stage area delta mixed N16/N64
-and must not be used as controlled same-configuration claims.
-
-See [results evidence](docs/RESULTS_EVIDENCE.md) for hierarchy areas, report
-extracts and complete claim comparisons, and [synthesis flow](syn/README.md)
-for reproduction and acceptance checks.
+The **7.35% shared-scale area reduction** remains the separate historical
+N64/d16 comparison `4aa075f` → `bacdec6`, 5,463,487.889 → 5,061,648.810.
+Its exact reduction is 7.3549917%; this release does not replace either endpoint
+or attribute that delta to divider removal. The prior September 24 mapping is
+retained as [archival evidence](docs/evidence/2026-09-24/provenance.json).
 
 ## Verification and operating contracts
 

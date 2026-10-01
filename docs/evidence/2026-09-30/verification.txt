@@ -1,0 +1,21 @@
+Final RTL revision: d2bb2044d7a70ef53ac2aa64fe95e732a2abf153
+Fresh clean checkout; verification inputs unchanged throughout the run.
+
+PASS: make -j2 -C sim/verilator regression coverage audit_fixes lint
+PASS: python3 golden/test_hw_reference.py (5 methods)
+PASS: python3 golden/check_rtl_corners.py (6 full-core cases)
+PASS: python3 syn/scripts/test_run_metadata.py (5 methods)
+PASS: Yosys/SMT/Z3 controller BMC48 and reachability cover
+PASS: VCS output-buffer four-state test and 8 full-top transactions
+
+Independent numerical checks: 40 fixtures, 160 core/top transactions.
+Oracle negative controls: 147 deliberately rejected scenarios.
+Primary optimized geometry: N64/d16,d64; top modeled latency 0/20/100.
+Four-state full-top: d16/d64, causal/noncausal, latency20,
+canonical then same-instance common-reset V=0 restart, exact/X-aware comparison.
+Formal scope: abstract controller, depth48 solver steps, not datapath proof.
+Coverage scope: scenarios; no measured percentage or fabricated aggregate count.
+No mapped-netlist equivalence or gate-level simulation claim.
+
+Verification source bundle SHA-256: 58a0505a655d10774541363911d89296c8c1a6301f651e2473b228603550bb30
+Exact source and log hashes are in provenance.json.
