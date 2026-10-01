@@ -9,6 +9,7 @@
 
 #include "Vtb_dma_banked_prefetch_harness.h"
 #include "verilated.h"
+#include "tb_fixture_checks.h"
 
 namespace {
 
@@ -60,19 +61,6 @@ bool load_i32(const std::string& path, std::vector<int32_t>& out, int count) {
     return true;
 }
 
-void load_scales(const std::string& path, uint16_t& sq, uint16_t& sk,
-                 uint16_t& sv) {
-    FILE* f = std::fopen(path.c_str(), "r");
-    if (!f) return;
-    char line[128];
-    while (std::fgets(line, sizeof(line), f)) {
-        unsigned value;
-        if (std::sscanf(line, "scale_q_q88 = 0x%X", &value) == 1) sq = value;
-        if (std::sscanf(line, "scale_k_q88 = 0x%X", &value) == 1) sk = value;
-        if (std::sscanf(line, "scale_v_q88 = 0x%X", &value) == 1) sv = value;
-    }
-    std::fclose(f);
-}
 
 void pulse_start(Vtb_dma_banked_prefetch_harness* dut) {
     dut->start = 1;
@@ -155,7 +143,7 @@ int main(int argc, char** argv) {
         return 1;
     }
     uint16_t sq = 0x100, sk = 0x100, sv = 0x100;
-    load_scales(data + "/scales.txt", sq, sk, sv);
+    if (!load_required_scales(data + "/scales.txt", sq, sk, sv)) return 1;
 
     auto* dut = new Vtb_dma_banked_prefetch_harness;
     dut->inject_rresp = 0; dut->inject_bad_rlast = 0;

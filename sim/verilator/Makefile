@@ -444,11 +444,14 @@ RTL_CORE_BANKED_PREFETCH_SRCS := \
 	    ../../rtl/ctrl/tile_controller_banked_prefetch.sv \
 	    ../../rtl/core/flash_attn_core_banked_prefetch.sv
 
+# Keep RTL and C++ geometry tied to the same build arguments.
+PREFETCH_GEOMETRY = -GSEQ_LEN=$(1) -GHEAD_DIM=$(2) --CFLAGS "-DTB_SEQ_LEN=$(1) -DTB_HEAD_DIM=$(2)"
+
 core_banked_prefetch_N64: ../../data/N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module flash_attn_core_banked_prefetch \
 	    --Mdir obj_core_banked_prefetch_N64 \
-	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(call PREFETCH_GEOMETRY,64,16) \
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp -o sim_core_banked_prefetch_N64
 	./obj_core_banked_prefetch_N64/sim_core_banked_prefetch_N64 --N 64 --D 16 --data ../../data/N64
 
@@ -456,7 +459,7 @@ core_banked_prefetch_N64_d64: ../../data/N64_d64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module flash_attn_core_banked_prefetch \
 	    --Mdir obj_core_banked_prefetch_N64_d64 \
-	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(call PREFETCH_GEOMETRY,64,64) \
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp -o sim_core_banked_prefetch_N64_d64
 	./obj_core_banked_prefetch_N64_d64/sim_core_banked_prefetch_N64_d64 --N 64 --D 64 --data ../../data/N64_d64
 
@@ -464,7 +467,7 @@ core_banked_prefetch_config_lock_N64: ../../data/N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module flash_attn_core_banked_prefetch \
 	    --Mdir obj_core_banked_prefetch_config_lock_N64 \
-	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(call PREFETCH_GEOMETRY,64,16) \
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp \
 	    -o sim_core_banked_prefetch_config_lock_N64
 	./obj_core_banked_prefetch_config_lock_N64/sim_core_banked_prefetch_config_lock_N64 \
@@ -474,7 +477,7 @@ core_banked_prefetch_causal_N64: ../../data/causal_N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module flash_attn_core_banked_prefetch \
 	    --Mdir obj_core_banked_prefetch_causal_N64 \
-	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(call PREFETCH_GEOMETRY,64,16) \
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp \
 	    -o sim_core_banked_prefetch_causal_N64
 	./obj_core_banked_prefetch_causal_N64/sim_core_banked_prefetch_causal_N64 \
@@ -484,7 +487,7 @@ core_banked_prefetch_causal_N64_d64: ../../data/causal_N64_d64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module flash_attn_core_banked_prefetch \
 	    --Mdir obj_core_banked_prefetch_causal_N64_d64 \
-	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(call PREFETCH_GEOMETRY,64,64) \
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) tb_core_banked_prefetch.cpp \
 	    -o sim_core_banked_prefetch_causal_N64_d64
 	./obj_core_banked_prefetch_causal_N64_d64/sim_core_banked_prefetch_causal_N64_d64 \
@@ -533,7 +536,7 @@ dma_banked_prefetch_top_N64: ../../data/N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module tb_dma_banked_prefetch_harness \
 	    --Mdir obj_dma_banked_prefetch_top_N64 \
-	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(call PREFETCH_GEOMETRY,64,16) \
 	    ../../rtl/interface/dma_engine_vec.sv \
 	    ../../rtl/interface/axi_mem_model.sv \
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
@@ -549,7 +552,7 @@ dma_banked_prefetch_top_N64_d64: ../../data/N64_d64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module tb_dma_banked_prefetch_harness \
 	    --Mdir obj_dma_banked_prefetch_top_N64_d64 \
-	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(call PREFETCH_GEOMETRY,64,64) \
 	    ../../rtl/interface/dma_engine_vec.sv \
 	    ../../rtl/interface/axi_mem_model.sv \
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
@@ -562,7 +565,7 @@ dma_banked_prefetch_causal_top_N64: ../../data/causal_N64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module tb_dma_banked_prefetch_harness \
 	    --Mdir obj_dma_banked_prefetch_causal_top_N64 \
-	    -GSEQ_LEN=64 -GHEAD_DIM=16 \
+	    $(call PREFETCH_GEOMETRY,64,16) \
 	    ../../rtl/interface/dma_engine_vec.sv \
 	    ../../rtl/interface/axi_mem_model.sv \
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
@@ -576,7 +579,7 @@ dma_banked_prefetch_causal_top_N64_d64: ../../data/causal_N64_d64/expected.hex
 	$(VERILATOR) --sv -cc --exe --build -j 0 -Wall \
 	    --top-module tb_dma_banked_prefetch_harness \
 	    --Mdir obj_dma_banked_prefetch_causal_top_N64_d64 \
-	    -GSEQ_LEN=64 -GHEAD_DIM=64 \
+	    $(call PREFETCH_GEOMETRY,64,64) \
 	    ../../rtl/interface/dma_engine_vec.sv \
 	    ../../rtl/interface/axi_mem_model.sv \
 	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
@@ -839,7 +842,7 @@ week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 	@echo "=== All Week 6 tests passed ==="
 
 # ── Full regression (Week 1–7: all configs including GQA) ────────────────────
-regression: test_runners tb_array_ctrl tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
+regression: test_runners tb_oracle_checks tb_array_ctrl tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
             tb_top_causal_N64 tb_top_causal_N256 \
             tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
             axi_all week6_all tb_dma_unit tb_dma_vec_axi_protocol tb_dma_write_unit wb_drain_bench dma_top_N64 dma_top_N64_d64 \
@@ -910,3 +913,11 @@ vcs_output_buffer_init:
 test_runners:
 	$(PYTHON) test_regression_reporting.py
 	$(PYTHON) test_vcs_runner.py
+
+# Negative controls run the real binaries on corrupt fixtures and a temporary
+# missing-done loader mutant. No checked-in fixture or RTL file is modified.
+.PHONY: tb_oracle_checks
+tb_oracle_checks: core_banked_prefetch_N64 core_banked_prefetch_N64_d64 \
+                 dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64 \
+                 tb_exp_lut tb_banked_tile_loader
+	VERILATOR="$(VERILATOR)" $(PYTHON) test_tb_oracles.py

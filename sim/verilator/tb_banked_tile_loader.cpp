@@ -45,14 +45,20 @@ static void fill(int sel, int base, int D, uint8_t (*pat)(int)) {
 }
 
 // run the loader; capture the tile-register write stream into out[3][TILE*D]
-static void run_load(int mode, int base, int D, std::vector<uint8_t> out[3]) {
+static int run_load(int mode, int base, int D, std::vector<uint8_t> out[3]) {
     for (int s = 0; s < 3; s++) out[s].assign(TILE * D, 0xEE);
     dut->mode = mode; dut->base_addr = base;
     dut->start = 1; tick(); dut->start = 0;
+    int stripes = 0;
     for (int i = 0; i < 100000; i++) {
         tick();
         if (dut->wr_en) {
             int idx = dut->wr_index;
+            if (idx != stripes * 16 || idx + 16 > TILE * D) {
+                printf("FAIL loader stripe index/order: index=%d stripe=%d\n", idx, stripes);
+                return 1;
+            }
+            ++stripes;
             for (int b = 0; b < 16; b++) {
                 if (mode == 0) {
                     out[0][idx + b] = vbyte(dut->q_stripe, b);
@@ -62,8 +68,16 @@ static void run_load(int mode, int base, int D, std::vector<uint8_t> out[3]) {
                 }
             }
         }
-        if (dut->done) break;
+        if (dut->done) {
+            if (stripes != TILE * D / 16) {
+                printf("FAIL loader completed after %d stripes\n", stripes);
+                return 1;
+            }
+            return 0;
+        }
     }
+    printf("FAIL loader TIMEOUT waiting for done after %d stripes\n", stripes);
+    return 1;
 }
 
 // row-major layout check: reg[r*D + c] == pat(r*D + c)
@@ -86,6 +100,10 @@ int main(int argc, char** argv) {
     int D = 16;
     for (int i = 1; i < argc; i++)
         if (!strcmp(argv[i], "--D") && i + 1 < argc) D = atoi(argv[++i]);
+    if (D != 16 && D != 64) {
+        printf("ERROR: loader test requires D=16 or D=64\n");
+        return 1;
+    }
 
     dut = new Vtb_banked_tile_loader;
     reset();
@@ -98,7 +116,7 @@ int main(int argc, char** argv) {
     // ── Q tile load ──────────────────────────────────────────────────
     fill(0, base, D, qpat);
     std::vector<uint8_t> q_out[3];
-    run_load(/*mode=Q*/0, base, D, q_out);
+    errors += run_load(/*mode=Q*/0, base, D, q_out);
     int q_err = check(q_out[0], D, qpat, "Q");
     printf("  Q  load  (d=%d, base=%d) row-major : %s\n", D, base, q_err ? "FAIL" : "PASS");
     errors += q_err;
@@ -107,7 +125,7 @@ int main(int argc, char** argv) {
     fill(1, base, D, kpat);
     fill(2, base, D, vpat);
     std::vector<uint8_t> kv_out[3];
-    run_load(/*mode=KV*/1, base, D, kv_out);
+    errors += run_load(/*mode=KV*/1, base, D, kv_out);
     int k_err = check(kv_out[1], D, kpat, "K");
     int v_err = check(kv_out[2], D, vpat, "V");
     printf("  KV load  (d=%d, base=%d) K row-major: %s\n", D, base, k_err ? "FAIL" : "PASS");

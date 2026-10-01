@@ -2,7 +2,8 @@
 //
 // Scans all 256 addresses, compares the Q8.8 output against
 // the analytical exp(x) value, and reports max relative error.
-// Acceptance criterion: max relative error < 0.5 % (Q8.8 precision floor).
+// Acceptance: absolute error < 0.002 everywhere, plus relative error < 0.5 %
+// where exp(x) >= 0.5 (avoid relative-error amplification near zero).
 //
 // Build & run (from sim/verilator/):
 //   verilator --cc --exe --build -Wall \
@@ -63,7 +64,8 @@ int main(int argc, char **argv) {
                    a, x, exp_true, results[a], lut_f, abs_err, rel_err * 100.0);
         }
 
-        if (exp_true >= 0.5 && rel_err > REL_THRESHOLD) fail_count++;
+        if (abs_err >= ABS_THRESHOLD ||
+            (exp_true >= 0.5 && rel_err >= REL_THRESHOLD)) fail_count++;
     }
 
     printf("\nSummary:\n");
@@ -72,7 +74,8 @@ int main(int argc, char **argv) {
     printf("  Max relative error (exp≥0.5): %.4f%%  (threshold %.1f%%)\n",
            max_rel_err * 100.0, REL_THRESHOLD * 100.0);
 
-    if (max_abs_err < ABS_THRESHOLD && max_rel_err < REL_THRESHOLD) {
+    const bool pass = fail_count == 0;
+    if (pass) {
         printf("RESULT: PASS\n");
     } else {
         printf("RESULT: FAIL  (%d entries exceed threshold)\n", fail_count);
@@ -82,13 +85,12 @@ int main(int argc, char **argv) {
     delete dut;
     delete ctx;
 
-    int mismatches = (max_abs_err < ABS_THRESHOLD && max_rel_err < REL_THRESHOLD) ? 0 : fail_count;
     printf("\n=== Coverage Summary ===\n");
     printf("Module           : exp_lut\n");
     printf("Scenarios covered: full_lut_sweep\n");
     printf("Test cases run   : 256\n");
-    printf("Mismatches       : %d\n", mismatches);
-    printf("Result           : %s\n", mismatches == 0 ? "PASS" : "FAIL");
+    printf("Mismatches       : %d\n", fail_count);
+    printf("Result           : %s\n", pass ? "PASS" : "FAIL");
 
-    return mismatches == 0 ? 0 : 1;
+    return pass ? 0 : 1;
 }

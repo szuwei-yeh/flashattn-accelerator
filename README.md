@@ -230,10 +230,19 @@ make -C sim/verilator core_banked_prefetch_N64 core_banked_prefetch_N64_d64
 make -C sim/verilator dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64
 make -C sim/verilator core_banked_prefetch_causal_N64_d64 dma_banked_prefetch_causal_top_N64_d64
 make -C sim/verilator tb_dma_vec_axi_protocol tb_dma_banked_prefetch_contract
+make -C sim/verilator tb_oracle_checks
 ```
 
-`regression` also runs the standalone 16×16 array-controller test and the
-runner failure-propagation checks. The licensed VCS four-state check is optional:
+`regression` also runs the standalone 16×16 array-controller test, LUT sweep,
+runner failure-propagation checks, and `tb_oracle_checks`. The latter exercises
+the real optimized core/top binaries with mismatched geometry, missing/short
+vectors, invalid scales, and one-bit errors in the first/last expected output.
+It also corrupts LUT entries and builds a temporary loader with `done` suppressed
+to verify that bad results and missing completion fail the test. All mutations
+stay in temporary directories. Optimized E2E test geometry is tied to the RTL
+build parameters, and all three scale values are required fixture inputs.
+
+The licensed VCS four-state check is optional:
 `make -C sim/verilator vcs_output_buffer_init VCS=/path/to/vcs`. Its runner
 requires a fresh explicit PASS, a zero exit status, and no failure diagnostics;
 VCS process status alone is insufficient after `$fatal`.

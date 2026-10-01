@@ -20,6 +20,7 @@
 
 #include "Vflash_attn_core_banked_prefetch.h"
 #include "verilated.h"
+#include "tb_fixture_checks.h"
 
 static void tick(Vflash_attn_core_banked_prefetch* dut) {
     dut->clk = 0; dut->eval();
@@ -38,18 +39,9 @@ static bool load_i32(const char* p, std::vector<int32_t>& o, int n) {
     for (int i = 0; i < n; i++) { unsigned v; if (fscanf(f, "%X", &v) != 1) { fclose(f); return false; } o[i] = (int32_t)v; }
     fclose(f); return true;
 }
-static void load_scales(const char* p, uint16_t& sq, uint16_t& sk, uint16_t& sv) {
-    FILE* f = fopen(p, "r"); if (!f) return;
-    unsigned a = 0x100, b = 0x100, c = 0x100; char ln[128];
-    while (fgets(ln, sizeof(ln), f)) { unsigned v;
-        if (sscanf(ln, "scale_q_q88 = 0x%X", &v) == 1) a = v;
-        if (sscanf(ln, "scale_k_q88 = 0x%X", &v) == 1) b = v;
-        if (sscanf(ln, "scale_v_q88 = 0x%X", &v) == 1) c = v; }
-    fclose(f); sq = a; sk = b; sv = c;
-}
 
 int main(int argc, char** argv) {
-    int N = 64, D = 16; std::string data = "../../data/N64";
+    int N = TB_SEQ_LEN, D = TB_HEAD_DIM; std::string data = "../../data/N64";
     bool causal = false;
     bool stress_config_lock = false;
     for (int i = 1; i < argc; i++) {
@@ -59,6 +51,7 @@ int main(int argc, char** argv) {
         else if (!strcmp(argv[i], "--causal")) causal = true;
         else if (!strcmp(argv[i], "--stress-config-lock")) stress_config_lock = true;
     }
+    if (!check_tb_geometry(N, D, TB_SEQ_LEN, TB_HEAD_DIM)) return 1;
     const int MAT = N * D;
 
     std::vector<int8_t> q, k, v; std::vector<int32_t> exp;
@@ -67,7 +60,7 @@ int main(int argc, char** argv) {
     if (!load_i8((data + "/v_input.hex").c_str(), v, MAT)) return 1;
     if (!load_i32((data + "/expected.hex").c_str(), exp, MAT)) return 1;
     uint16_t sq = 0x100, sk = 0x100, sv = 0x100;
-    load_scales((data + "/scales.txt").c_str(), sq, sk, sv);
+    if (!load_required_scales(data + "/scales.txt", sq, sk, sv)) return 1;
 
     Verilated::commandArgs(argc, argv);
     auto* dut = new Vflash_attn_core_banked_prefetch;
