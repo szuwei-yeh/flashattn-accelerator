@@ -10,6 +10,23 @@ The main portfolio path is the **single-head DMA/banked/prefetch design**.
 Earlier AXI4-Stream multihead/GQA/decode and non-prefetch writeback integrations
 remain separate reference configurations.
 
+## Repository guide
+
+| Directory | Contents |
+|---|---|
+| `rtl/` | Synthesizable blocks, organized by function; the optimized entry point is `top/flash_attn_top_dma_banked_prefetch.sv` |
+| `sim/verilator/` | Simulation testbenches, regression targets, and runner checks |
+| `sim/icarus/` | Four-state output-buffer testbench, also used by VCS |
+| `formal/` | Bounded controller safety and reachability checks |
+| `golden/` | Numerical references, fixture generators, and numerical checks |
+| `data/` | Versioned input fixtures, expected outputs, scales, and exponential LUT |
+| `syn/` | Synthesis scripts, filelists, and logical memory blackboxes; see the [flow guide](syn/README.md) |
+| `docs/` | Public results documentation and compact evidence in `evidence/2026-09-24/` |
+
+Generated simulator builds remain in ignored `sim/verilator/obj_*` directories;
+raw synthesis runs remain in ignored `syn/runs/`. Start with
+[results evidence](docs/RESULTS_EVIDENCE.md) for the measured synthesis baseline.
+
 ## Measured results and scope
 
 | Optimization | Before | After | Configuration / definition |
