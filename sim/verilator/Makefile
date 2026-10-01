@@ -842,7 +842,7 @@ week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 	@echo "=== All Week 6 tests passed ==="
 
 # ── Full regression (Week 1–7: all configs including GQA) ────────────────────
-regression: test_runners tb_oracle_checks tb_array_ctrl tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
+regression: test_runners tb_oracle_checks numerical_checks tb_array_ctrl tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
             tb_top_causal_N64 tb_top_causal_N256 \
             tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
             axi_all week6_all tb_dma_unit tb_dma_vec_axi_protocol tb_dma_write_unit wb_drain_bench dma_top_N64 dma_top_N64_d64 \
@@ -921,3 +921,9 @@ tb_oracle_checks: core_banked_prefetch_N64 core_banked_prefetch_N64_d64 \
                  dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64 \
                  tb_exp_lut tb_banked_tile_loader
 	VERILATOR="$(VERILATOR)" $(PYTHON) test_tb_oracles.py
+
+# Independent analytic outputs and exact data-layout invariants (no NumPy).
+.PHONY: numerical_checks
+numerical_checks: core_banked_prefetch_N64 core_banked_prefetch_N64_d64 \
+                  dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64
+	$(PYTHON) test_attention_numerics.py

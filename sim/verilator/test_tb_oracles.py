@@ -21,7 +21,7 @@ def fixture(dim):
     return ROOT / 'data' / ('N64' if dim == 16 else 'N64_d64')
 
 
-def run_attention(kind, dim, data=None, shape=None):
+def run_attention(kind, dim, data=None, shape=None, causal=False):
     target = ('core_banked_prefetch_N64' if kind == 'core' else
               'dma_banked_prefetch_top_N64') + ('_d64' if dim == 64 else '')
     n, d = shape or (64, dim)
@@ -29,6 +29,8 @@ def run_attention(kind, dim, data=None, shape=None):
                '--N', str(n), '--D', str(d), '--data', str(data or fixture(dim))]
     if kind == 'top' and dim == 64:
         command += ['--core_busy_ref', '45590']
+    if causal:
+        command += ['--causal']
     return subprocess.run(command, cwd=SIM, stdout=subprocess.PIPE,
                           stderr=subprocess.STDOUT, text=True, timeout=30)
 
@@ -98,6 +100,27 @@ class TestbenchOracles(unittest.TestCase):
                         scales.write_text(re.sub(r'scale_q_q88 = \S+',
                                                  'scale_q_q88 = ' + bad, scales.read_text()))
                     self.assert_rejected(run_attention(kind, dim, data), 'ERROR:')
+
+    def test_vectors_reject_overflow_extra_tokens_and_partial_hex(self):
+        for kind, dim in CASES:
+            for name in ('q_input.hex', 'k_input.hex', 'v_input.hex', 'expected.hex'):
+                for fault in ('overflow', 'extra', 'junk', 'negative'):
+                    with self.subTest(kind=kind, dim=dim, file=name, fault=fault), tempfile.TemporaryDirectory() as temp:
+                        data = Path(temp) / 'data'
+                        shutil.copytree(fixture(dim), data)
+                        path = data / name
+                        words = path.read_text().splitlines()
+                        if fault == 'overflow':
+                            bits = 32 if name == 'expected.hex' else 8
+                            words[0] = f'{int(words[0], 16) + (1 << bits):X}'
+                        elif fault == 'extra':
+                            words.append('00')
+                        elif fault == 'junk':
+                            words[-1] += 'junk'
+                        else:
+                            words[0] = '-1'
+                        path.write_text('\n'.join(words) + '\n')
+                        self.assert_rejected(run_attention(kind, dim, data), 'ERROR:')
 
     def test_lut_low_and_high_value_corruption(self):
         for index in (0, 255):

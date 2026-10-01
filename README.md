@@ -94,6 +94,14 @@ running maximum, LUT exponential and running sum. Fused output update preserves
 the original 32-bit truncation/wrap semantics; final division truncates toward
 zero. Exact fixed-point equality does not imply FP32 attention equality.
 
+The numerical contract includes two deliberate precision limits. The PV operand
+caps exp(0) from 256 to 255, while the softmax denominator retains 256: uniform
+scores with V=1 and scale_v=256 therefore produce 255/256 (0.390625% low).
+Dequantizer saturation occurs before the sqrt(d) shift, so large distinct logits
+can become equal; this is not a full-range FP32 softmax. Dequantization rounds
+ties toward positive infinity, PV/rescale shifts round down, and final signed
+division truncates toward zero.
+
 ## Optimization evidence
 
 - Vector writes and conflict-free banked stripe reads eliminated byte-serial
@@ -231,16 +239,26 @@ make -C sim/verilator dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d6
 make -C sim/verilator core_banked_prefetch_causal_N64_d64 dma_banked_prefetch_causal_top_N64_d64
 make -C sim/verilator tb_dma_vec_axi_protocol tb_dma_banked_prefetch_contract
 make -C sim/verilator tb_oracle_checks
+make -C sim/verilator numerical_checks
 ```
 
 `regression` also runs the standalone 16×16 array-controller test, LUT sweep,
 runner failure-propagation checks, and `tb_oracle_checks`. The latter exercises
 the real optimized core/top binaries with mismatched geometry, missing/short
-vectors, invalid scales, and one-bit errors in the first/last expected output.
+vectors, overflowing hex values, extra/partial tokens, invalid scales, and
+one-bit errors in the first/last expected output.
 It also corrupts LUT entries and builds a temporary loader with `done` suppressed
 to verify that bad results and missing completion fail the test. All mutations
 stay in temporary directories. Optimized E2E test geometry is tied to the RTL
 build parameters, and all three scale values are required fixture inputs.
+
+`numerical_checks` is also part of regression. It checks 40 temporary fixtures
+across d16/d64 core and DMA top (160 transactions including latency 0/20/100),
+without importing the hardware golden model. Closed-form cases cover equal
+scores, saturation, signed/extreme V scales and causal prefix sums. Exact
+permutation checks cover Q rows, paired K/V rows within tiles, and feature
+columns across d64 chunk boundaries. Cross-tile K/V permutation is not asserted
+bit-identical because fixed-point online rescaling can depend on tile order.
 
 The licensed VCS four-state check is optional:
 `make -C sim/verilator vcs_output_buffer_init VCS=/path/to/vcs`. Its runner

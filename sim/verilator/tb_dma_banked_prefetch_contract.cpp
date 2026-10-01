@@ -29,38 +29,6 @@ void tick(Vtb_dma_banked_prefetch_harness* dut) {
     dut->eval();
 }
 
-bool load_i8(const std::string& path, std::vector<int8_t>& out, int count) {
-    FILE* f = std::fopen(path.c_str(), "r");
-    if (!f) return false;
-    out.resize(count);
-    for (int i = 0; i < count; i++) {
-        unsigned value;
-        if (std::fscanf(f, "%X", &value) != 1) {
-            std::fclose(f);
-            return false;
-        }
-        out[i] = static_cast<int8_t>(value & 0xff);
-    }
-    std::fclose(f);
-    return true;
-}
-
-bool load_i32(const std::string& path, std::vector<int32_t>& out, int count) {
-    FILE* f = std::fopen(path.c_str(), "r");
-    if (!f) return false;
-    out.resize(count);
-    for (int i = 0; i < count; i++) {
-        unsigned value;
-        if (std::fscanf(f, "%X", &value) != 1) {
-            std::fclose(f);
-            return false;
-        }
-        out[i] = static_cast<int32_t>(value);
-    }
-    std::fclose(f);
-    return true;
-}
-
 
 void pulse_start(Vtb_dma_banked_prefetch_harness* dut) {
     dut->start = 1;
@@ -135,10 +103,10 @@ int main(int argc, char** argv) {
 
     std::vector<int8_t> q, k, v;
     std::vector<int32_t> expected;
-    if (!load_i8(data + "/q_input.hex", q, MAT) ||
-        !load_i8(data + "/k_input.hex", k, MAT) ||
-        !load_i8(data + "/v_input.hex", v, MAT) ||
-        !load_i32(data + "/expected.hex", expected, MAT)) {
+    if (!load_hex_vector(data + "/q_input.hex", q, MAT) ||
+        !load_hex_vector(data + "/k_input.hex", k, MAT) ||
+        !load_hex_vector(data + "/v_input.hex", v, MAT) ||
+        !load_hex_vector(data + "/expected.hex", expected, MAT)) {
         std::printf("FAIL: unable to load canonical vectors\n");
         return 1;
     }

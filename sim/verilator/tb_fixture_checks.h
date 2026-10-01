@@ -5,6 +5,41 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
+
+// Hex files encode unsigned bit patterns, not signed text. Reject overflow,
+// partial tokens and extra entries instead of silently truncating the fixture.
+template <typename T>
+inline bool load_hex_vector(const std::string& path, std::vector<T>& out, int count) {
+    static_assert(sizeof(T) == 1 || sizeof(T) == 4, "Expected byte or INT32 fixture");
+    std::ifstream input(path);
+    std::string token;
+    out.clear();
+    if (!input || count <= 0) {
+        std::fprintf(stderr, "ERROR: cannot read vector %s\n", path.c_str());
+        return false;
+    }
+    while (input >> token) {
+        if (out.size() >= static_cast<size_t>(count) || token.size() > sizeof(T) * 2 ||
+            token.find_first_not_of("0123456789abcdefABCDEF") != std::string::npos) {
+            std::fprintf(stderr, "ERROR: invalid hex vector %s at entry %zu\n",
+                         path.c_str(), out.size());
+            return false;
+        }
+        const uint64_t bits = std::stoull(token, nullptr, 16);
+        const uint64_t modulus = uint64_t{1} << (sizeof(T) * 8);
+        const int64_t value = bits >= modulus / 2 ?
+            static_cast<int64_t>(bits) - static_cast<int64_t>(modulus) :
+            static_cast<int64_t>(bits);
+        out.push_back(static_cast<T>(value));
+    }
+    if (input.bad() || out.size() != static_cast<size_t>(count)) {
+        std::fprintf(stderr, "ERROR: wrong hex vector length in %s: got %zu, expected %d\n",
+                     path.c_str(), out.size(), count);
+        return false;
+    }
+    return true;
+}
 
 inline bool check_tb_geometry(int n, int d, int built_n, int built_d) {
     if (n != built_n || d != built_d || n <= 0 || d <= 0) {

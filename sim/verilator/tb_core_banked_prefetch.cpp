@@ -27,18 +27,6 @@ static void tick(Vflash_attn_core_banked_prefetch* dut) {
     dut->clk = 1; dut->eval();
 }
 
-static bool load_i8(const char* p, std::vector<int8_t>& o, int n) {
-    FILE* f = fopen(p, "r"); if (!f) { printf("ERR open %s\n", p); return false; }
-    o.resize(n);
-    for (int i = 0; i < n; i++) { unsigned v; if (fscanf(f, "%X", &v) != 1) { fclose(f); return false; } o[i] = (int8_t)(v & 0xFF); }
-    fclose(f); return true;
-}
-static bool load_i32(const char* p, std::vector<int32_t>& o, int n) {
-    FILE* f = fopen(p, "r"); if (!f) { printf("ERR open %s\n", p); return false; }
-    o.resize(n);
-    for (int i = 0; i < n; i++) { unsigned v; if (fscanf(f, "%X", &v) != 1) { fclose(f); return false; } o[i] = (int32_t)v; }
-    fclose(f); return true;
-}
 
 int main(int argc, char** argv) {
     int N = TB_SEQ_LEN, D = TB_HEAD_DIM; std::string data = "../../data/N64";
@@ -55,10 +43,10 @@ int main(int argc, char** argv) {
     const int MAT = N * D;
 
     std::vector<int8_t> q, k, v; std::vector<int32_t> exp;
-    if (!load_i8((data + "/q_input.hex").c_str(), q, MAT)) return 1;
-    if (!load_i8((data + "/k_input.hex").c_str(), k, MAT)) return 1;
-    if (!load_i8((data + "/v_input.hex").c_str(), v, MAT)) return 1;
-    if (!load_i32((data + "/expected.hex").c_str(), exp, MAT)) return 1;
+    if (!load_hex_vector((data + "/q_input.hex").c_str(), q, MAT)) return 1;
+    if (!load_hex_vector((data + "/k_input.hex").c_str(), k, MAT)) return 1;
+    if (!load_hex_vector((data + "/v_input.hex").c_str(), v, MAT)) return 1;
+    if (!load_hex_vector((data + "/expected.hex").c_str(), exp, MAT)) return 1;
     uint16_t sq = 0x100, sk = 0x100, sv = 0x100;
     if (!load_required_scales(data + "/scales.txt", sq, sk, sv)) return 1;
 

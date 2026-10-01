@@ -6,8 +6,8 @@ Simulates TRUE cross-tile online FlashAttention softmax (v4):
   Per Q-tile outer loop:
     Per KV-tile inner loop:
       1. QK^T matmul  (INT8×INT8→INT32)
-      2. Dequantize:  (QKT * sq_q88 * sk_q88 + 128) >> 8  → Q8.8
-      3. Scale 1/√d:  >> 2  (HEAD_DIM=16, 1/√16=0.25=2⁻²)
+      2. Dequantize:  (QKT * sq_q88 * sk_q88 + 128) >> 8, saturate to INT16
+      3. Scale 1/√d:  >> 2 for d=16; >> 3 for d=64
       4. Online softmax per Q-row:
            S_FIND_MAX:      tile_max = max(scores)
            S_RESCALE:       next_max = max(running_max, tile_max)
@@ -20,7 +20,7 @@ Simulates TRUE cross-tile online FlashAttention softmax (v4):
                             running_sum += sum(exp_vals)
       5. S_RESCALE_OUTPUT: output_accum *= rescale_q88 / 256  (per row, signed)
       6. P_uint8:          exp_flat capped at 0xFF; unsigned 8-bit PV operand
-      7. PV matmul:        P_int8 @ V_tile  → INT32
+      7. PV matmul:        P_uint8 @ V_tile  → INT32
       8. Scale PV:         (PV × sv_q88) >> 8
       9. Accumulate:       output_accum += PV_scaled
     End inner loop
@@ -40,19 +40,19 @@ Usage:
 import numpy as np
 import argparse
 import os
+import re
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 def load_int8_hex(path, n):
-    vals = []
     with open(path) as f:
-        for line in f:
-            v = int(line.strip(), 16)
-            if v >= 0x80:
-                v -= 0x100
-            vals.append(v)
-    return np.array(vals[:n], dtype=np.int8)
+        tokens = f.read().split()
+    if n <= 0 or len(tokens) != n or any(
+            re.fullmatch(r'[0-9a-fA-F]{1,2}', token) is None for token in tokens):
+        raise ValueError(f'{path}: expected exactly {n} unsigned byte hex tokens')
+    vals = [int(token, 16) for token in tokens]
+    return np.array([v - 256 if v >= 128 else v for v in vals], dtype=np.int8)
 
 
 def load_scales(path):
@@ -60,8 +60,13 @@ def load_scales(path):
     with open(path) as f:
         for line in f:
             if '=' in line:
-                k, v = line.split('=')
+                k, v = line.split('=', 1)
+                if k.strip() in scales:
+                    raise ValueError(f'{path}: duplicate key {k.strip()}')
                 scales[k.strip()] = v.strip()
+    for key in ('scale_q_q88', 'scale_k_q88', 'scale_v_q88'):
+        if re.fullmatch(r'0x[0-9a-fA-F]{1,4}', scales.get(key, '')) is None:
+            raise ValueError(f'{path}: missing or invalid {key}')
     sq_q88 = signed16(int(scales['scale_q_q88'], 16))
     sk_q88 = signed16(int(scales['scale_k_q88'], 16))
     sv_q88 = signed16(int(scales['scale_v_q88'], 16))
@@ -78,7 +83,7 @@ def load_exp_lut(path):
 def to_addr(score_q88, maxv_q88):
     """Exact replication of hardware to_addr() → LUT index for exp(score−maxv)."""
     diff   = int(score_q88) - int(maxv_q88)
-    numer  = diff * 255 + 523264          # 523264 = 255 * 2048
+    numer  = diff * 255 + 523264          # 255 * 2048 + 1024 (round half up)
     result = numer >> 11                  # arithmetic (Python int) right-shift
     if result > 255: return 255
     if result < 0:   return 0
@@ -234,6 +239,8 @@ def flash_attn_q_tile(Q_tile, K, V, sq_q88, sk_q88, sv_q88, lut, tile_size,
 def generate(data_dir, exp_lut_path, tile_size=16, causal=False):
     sq_q88, sk_q88, sv_q88, N, d = load_scales(
         os.path.join(data_dir, 'scales.txt'))
+    if tile_size != 16 or d not in (16, 64) or N <= 0 or N % tile_size:
+        raise ValueError('Expected tile_size=16, d=16/64 and positive tile-aligned N')
     lut = load_exp_lut(exp_lut_path)
 
     Q = load_int8_hex(os.path.join(data_dir, 'q_input.hex'), N * d).reshape(N, d)

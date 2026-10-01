@@ -185,6 +185,36 @@ for results and changed test-source hashes. These TB/Makefile changes do not
 replace the archived audit hashes. RTL, formal sources and synthesis inputs
 remain identical to the measured PPA snapshot; no new PPA run is implied.
 
+### September 30 data and arithmetic follow-up
+
+The 11 preserved single-head fixture sets (including legacy N128/N256 shapes)
+match the hardware reference exactly after strict byte-count/range validation.
+The 256 LUT entries match rounded exp(-8 + 8*i/255) in Q8.8; the Python address
+formula was checked over all 131,071 possible differences of signed INT16 scores.
+The remaining five multihead/GQA/decode datasets were regenerated in temporary
+directories; all 38 generated data/metadata files match their preserved copies.
+
+Independent [numerical RTL checks](../sim/verilator/test_attention_numerics.py)
+use closed-form equal-score/saturated-score results and data permutations, without
+importing the hardware golden. All 40 fixtures pass d16/d64 core and DMA-top
+checks: 160 transactions including top latency 0/20/100. They exercise causal
+prefix sums, signed/extreme V scales, Q-row mapping, paired K/V row ordering
+within tiles, and feature permutations across d64 chunks.
+
+These tests expose an intentional approximation: P clips exp(0) from 256 to 255,
+but the normalization sum retains 256. Equal scores with V=1, scale_v=256 yield
+255/256 rather than 1.0 (0.390625% low). Saturating dequantization before the
+sqrt(d) shift can also collapse large distinct logits. Neither behavior is an
+FP32-equivalence claim or a measured model-accuracy result.
+
+Malformed fixture values previously could be truncated or ignored by the
+optimized TB readers. Core, top and transaction-contract readers now reject
+overflow, extra entries and partial hex tokens; the negative-control suite adds
+64 such cases. The golden input reader is strict too, and generation rejects
+unsupported dimensions or incomplete tiles before writing expected output.
+The LUT-address comment now includes its rounding offset; its formula did not
+change. RTL, synthesis sources and checked-in data are unchanged by this follow-up.
+
 The optimization claims were checked individually:
 
 | Claim | Disposition |
