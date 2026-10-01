@@ -21,11 +21,11 @@ remain separate reference configurations.
 | `golden/` | Numerical references, fixture generators, and numerical checks |
 | `data/` | Versioned input fixtures, expected outputs, scales, and exponential LUT |
 | `syn/` | Synthesis scripts, filelists, and logical memory blackboxes; see the [flow guide](syn/README.md) |
-| `docs/` | Public results documentation and compact evidence in `evidence/2026-09-24/` |
+| `docs/` | [Documentation index](docs/README.md), current results and compact evidence; current run series: `evidence/2026-09-30/` |
 
 Generated simulator builds remain in ignored `sim/verilator/obj_*` directories;
 raw synthesis runs remain in ignored `syn/runs/`. Start with
-[results evidence](docs/RESULTS_EVIDENCE.md) for the measured synthesis baseline.
+[documentation index](docs/README.md) for current evidence and historical boundaries.
 
 ## Measured results and scope
 

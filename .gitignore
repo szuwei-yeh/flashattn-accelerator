@@ -16,6 +16,7 @@ __pycache__/
 *.md
 !/README.md
 !/syn/README.md
+!/docs/README.md
 !/docs/RESULTS_EVIDENCE.md
 
 # Synopsys Design Compiler generated runs. Each server run is isolated under

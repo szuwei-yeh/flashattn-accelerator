@@ -1,5 +1,8 @@
 # FlashAttention final results evidence — September 30 run series
 
+Navigation: [documentation index](README.md). The evidence directory below is the
+current baseline; September 24 reports are retained as historical evidence.
+
 The final N64/d16 core and DMA-integrated top were mapped from the same clean
 commit **`d2bb2044d7a70ef53ac2aa64fe95e732a2abf153`**, including the source/destination address-range guards.
 These are pre-layout logical-synthesis results with uncharacterized SRAM/ROM
