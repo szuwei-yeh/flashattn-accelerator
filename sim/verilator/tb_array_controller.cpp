@@ -22,6 +22,12 @@ static constexpr int SIZE    = 16;
 static constexpr int TIMEOUT = 500;   // max ticks before declaring hang
 
 static Varray_controller* top;
+static_assert(sizeof(top->a_flat) / sizeof(top->a_flat[0]) == SIZE * SIZE,
+              "RTL SIZE must match the testbench geometry");
+static_assert(sizeof(top->b_flat) / sizeof(top->b_flat[0]) == SIZE * SIZE,
+              "RTL SIZE must match the testbench geometry");
+static_assert(sizeof(top->acc) / sizeof(top->acc[0]) == SIZE * SIZE,
+              "RTL SIZE must match the testbench geometry");
 static vluint64_t sim_time = 0;
 
 static void tick() {
@@ -39,6 +45,8 @@ static bool run_test(const char*    name,
 
     // ---- reset -------------------------------------------------------
     top->rst_n = 0; top->start = 0;
+    top->no_clear = 0;
+    top->a_unsigned = 0;
     for (int i = 0; i < SIZE * SIZE; i++) { top->a_flat[i] = 0; top->b_flat[i] = 0; }
     tick(); tick();
     top->rst_n = 1;

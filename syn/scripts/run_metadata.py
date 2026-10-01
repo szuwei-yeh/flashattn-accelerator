@@ -20,10 +20,10 @@ def parameters(profile, override):
                 raise ValueError(f'Unsupported parameter: {key}')
             values[key] = int(value.strip(), 10)
     t, d, n, depth = (values[k] for k in ('TILE_SIZE','HEAD_DIM','SEQ_LEN','SRAM_DEPTH'))
+    if depth != 4096:
+        raise ValueError('Supported SRAM_DEPTH is 4096 for fixed 12-bit internal interfaces')
     if t != 16 or d not in (16,64) or n <= 0 or n % 16 or n*d > depth:
         raise ValueError('Require TILE_SIZE=16, HEAD_DIM=16/64, aligned nonzero N and N*d <= SRAM_DEPTH')
-    if depth <= 0 or depth > 4096 or depth % 16 or depth & (depth-1):
-        raise ValueError('SRAM_DEPTH must be a power of two in 16..4096 for fixed address interfaces')
     if values.get('AXI_ADDR_W',32) != 32 or values.get('AXI_DATA_W',64) != 64:
         raise ValueError('Supported AXI widths are 32/64')
     return ','.join(f'{k}={v}' for k,v in values.items())

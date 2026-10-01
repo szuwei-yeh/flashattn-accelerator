@@ -15,6 +15,14 @@ class SynthesisGeometry(unittest.TestCase):
         self.assertEqual(core,{k:top[k] for k in core})
     def test_override_keeps_geometry(self):
         self.assertIn('SEQ_LEN=64',parameters('core','HEAD_DIM=64'))
+    def test_fixed_sram_depth_contract(self):
+        for profile in ('core', 'top', 'core_rtl', 'top_rtl'):
+            with self.subTest(profile=profile):
+                self.assertIn('SRAM_DEPTH=4096', parameters(profile, 'SEQ_LEN=16'))
+            for depth in (0, 256, 384, 1024, 2048, 8192):
+                with self.subTest(profile=profile, depth=depth):
+                    with self.assertRaisesRegex(ValueError, 'SRAM_DEPTH is 4096'):
+                        parameters(profile, f'SEQ_LEN=16,SRAM_DEPTH={depth}')
     def test_invalid_synthesis_configuration_fails_before_dc(self):
         for bad in ['HEAD_DIM=32','SEQ_LEN=0','SEQ_LEN=63','HEAD_DIM=64,SEQ_LEN=128',
                     'SRAM_DEPTH=384','SEQ_LEN=64,typo=1','TILE_SIZE=8']:

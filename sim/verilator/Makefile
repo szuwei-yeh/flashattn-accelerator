@@ -4,7 +4,7 @@ SIM_DIR     := obj_dir
 
 SIM_BIN     := $(SIM_DIR)/Vsystolic_array
 
-.PHONY: all run clean lint cleanup_directed
+.PHONY: all run clean lint cleanup_directed tb_array_ctrl test_runners
 
 all: $(SIM_BIN)
 
@@ -27,7 +27,7 @@ tb_array_ctrl:
 	    -Wall \
 	    --Mdir obj_array_ctrl \
 	    --top-module array_controller \
-	    -GSIZE=4 \
+	    -GSIZE=16 \
 	    $(RTL_DIR)/pe.sv \
 	    $(RTL_DIR)/systolic_array.sv \
 	    $(RTL_DIR)/array_controller.sv \
@@ -839,7 +839,7 @@ week6_all: tb_kv_cache tb_kv_decode tb_kv_decode_d64
 	@echo "=== All Week 6 tests passed ==="
 
 # ── Full regression (Week 1–7: all configs including GQA) ────────────────────
-regression: tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
+regression: test_runners tb_array_ctrl tb_dequantizer_combined tb_transaction_scale tb_top_all tb_top_N64_d64 tb_top_N128_d64 tb_top_N256_d64 \
             tb_top_causal_N64 tb_top_causal_N256 \
             tb_top_causal_N64_d64 tb_top_causal_N256_d64 \
             axi_all week6_all tb_dma_unit tb_dma_vec_axi_protocol tb_dma_write_unit wb_drain_bench dma_top_N64 dma_top_N64_d64 \
@@ -897,9 +897,16 @@ audit_fixes: tb_output_buffer_init tb_dma_vec_axi_protocol tb_dma_banked_prefetc
 
 # Same four-state test under VCS; set VCS to the licensed executable path.
 VCS ?= vcs
+PYTHON ?= python3
 .PHONY: vcs_output_buffer_init
 vcs_output_buffer_init:
 	mkdir -p obj_output_buffer_vcs
 	cd obj_output_buffer_vcs && $(VCS) -full64 -sverilog -top tb_output_buffer_init \
 	    ../../../rtl/memory/sram_1r1w.sv ../../../rtl/memory/output_buffer.sv \
-	    ../../icarus/tb_output_buffer_init.sv -o simv -l compile.log && ./simv -no_save -l run.log
+	    ../../icarus/tb_output_buffer_init.sv -o simv -l compile.log
+	cd obj_output_buffer_vcs && $(PYTHON) ../run_vcs_test.py
+
+# No VCS license required: exercise the actual make recipe with fake tools.
+test_runners:
+	$(PYTHON) test_regression_reporting.py
+	$(PYTHON) test_vcs_runner.py

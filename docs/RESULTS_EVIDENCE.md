@@ -37,6 +37,12 @@ the union of both run source manifests (`json.dumps(..., sort_keys=True,
 separators=(',', ':'))`, UTF-8). The linked JSON contains every source hash;
 this identity remains valid when documentation is committed later.
 
+Post-baseline maintenance restricts the optimized path to `SRAM_DEPTH=4096` in
+the RTL parameter guards and synthesis validator, and repairs test runners.
+The datapath and synthesis constraints are unchanged, but these edited files
+have new source hashes. The archived metrics and fingerprints above continue
+to identify the measured baseline; they are not a new mapped run of the cleanup.
+
 Both runs explicitly use `TILE_SIZE=16, HEAD_DIM=16, SEQ_LEN=64, SRAM_DEPTH=4096`.
 Top additionally uses `AXI_ADDR_W=32, AXI_DATA_W=64`.
 Generated hierarchy reports and mapped module declarations independently show:

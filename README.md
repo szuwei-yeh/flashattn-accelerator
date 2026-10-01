@@ -177,7 +177,9 @@ formal proofs.
 
 - Optimized single-head prefill: `TILE_SIZE=16`, `HEAD_DIM` in `{16,64}`.
 - Compile-time nonzero tile-aligned `SEQ_LEN`; runtime `cfg_seq_len` must equal it.
-- `SEQ_LEN * HEAD_DIM <= SRAM_DEPTH`; fixed 12-bit memory interfaces, depth ≤4096.
+- `SRAM_DEPTH=4096` only, with `SEQ_LEN * HEAD_DIM <= 4096`. The optimized
+  path uses fixed 12-bit internal interfaces; smaller depths are unsupported
+  and rejected by the RTL guards and synthesis parameter validator.
 - AXI 32-bit addresses, 64-bit data; Q/K/V bases 16-byte aligned.
 - One shared clock and one outstanding AXI read burst.
 - Behavioral external memory models fixed first-beat latency, not a DDR/HBM
@@ -199,7 +201,7 @@ python3 golden/test_hw_reference.py
 # Uses the d16/d64 core binaries built by regression; generates only temp files.
 python3 golden/check_rtl_corners.py
 python3 syn/scripts/test_run_metadata.py
-python3 sim/verilator/test_regression_reporting.py
+make -C sim/verilator test_runners
 make -C formal all
 ```
 
@@ -212,6 +214,12 @@ make -C sim/verilator dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d6
 make -C sim/verilator core_banked_prefetch_causal_N64_d64 dma_banked_prefetch_causal_top_N64_d64
 make -C sim/verilator tb_dma_vec_axi_protocol tb_dma_banked_prefetch_contract
 ```
+
+`regression` also runs the standalone 16×16 array-controller test and the
+runner failure-propagation checks. The licensed VCS four-state check is optional:
+`make -C sim/verilator vcs_output_buffer_init VCS=/path/to/vcs`. Its runner
+requires a fresh explicit PASS, a zero exit status, and no failure diagnostics;
+VCS process status alone is insufficient after `$fatal`.
 
 `make coverage` is a compatibility entry point for scenario tests. It builds and
 runs its listed test targets, propagates failures, and prints a success summary

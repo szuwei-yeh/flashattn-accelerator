@@ -21,6 +21,10 @@ partial overrides, expanded by `run_metadata.py`. Unsupported geometry is reject
 before invoking DC. The standalone RTL module's default N16 is **not** the flow's
 canonical setting.
 
+The optimized core/top profiles require `SRAM_DEPTH=4096`, matching their fixed
+12-bit internal interfaces and RTL guards. Smaller depths are not supported;
+overrides are rejected before DC, even when `SEQ_LEN*HEAD_DIM` would fit.
+
 Macro filelists substitute `syn/blackboxes/sram_1r1w_bb.sv` and `exp_lut_bb.sv` for
 behavioral memories. These stubs have no characterized area, access timing or
 power. Avoid behavioral full-memory mapping as a substitute for real memory macros.

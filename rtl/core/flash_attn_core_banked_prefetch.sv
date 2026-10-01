@@ -110,10 +110,8 @@ module flash_attn_core_banked_prefetch #(
             $fatal(1, "flash_attn_core_banked_prefetch: SEQ_LEN must be a non-zero TILE_SIZE multiple");
         if ((SEQ_LEN * HEAD_DIM) > SRAM_DEPTH)
             $fatal(1, "flash_attn_core_banked_prefetch: SEQ_LEN*HEAD_DIM exceeds SRAM_DEPTH");
-        if ((SRAM_DEPTH % NUM_BANKS) != 0)
-            $fatal(1, "flash_attn_core_banked_prefetch: SRAM_DEPTH must be divisible by NUM_BANKS");
-        if ((SRAM_DEPTH == 0) || (SRAM_DEPTH > 4096))
-            $fatal(1, "flash_attn_core_banked_prefetch: fixed 12-bit ports support SRAM_DEPTH 1..4096");
+        if (SRAM_DEPTH != 4096)
+            $fatal(1, "flash_attn_core_banked_prefetch: supported SRAM_DEPTH is 4096 (fixed 12-bit internal interfaces)");
     end
 
     // =========================================================
