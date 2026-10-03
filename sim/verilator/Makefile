@@ -917,7 +917,7 @@ test_runners:
 
 # Shared dequantizer arithmetic, complete-tile publication and reset recovery.
 DEQUANT_LANES ?= 32
-.PHONY: tb_dequantizer_tile
+.PHONY: tb_dequantizer_tile tb_dequantizer_tile_init tb_dequantizer_contract
 tb_dequantizer_tile:
 	$(VERILATOR) --sv --cc --exe --build -j 2 -Wall \
 	    --top-module dequantizer_tile -GLANES=$(DEQUANT_LANES) \
@@ -925,6 +925,15 @@ tb_dequantizer_tile:
 	    ../../rtl/quantization/dequantizer.sv ../../rtl/quantization/dequantizer_tile.sv \
 	    tb_dequantizer_tile.cpp -o sim_dequant_unit
 	./obj_dequant_unit_l$(DEQUANT_LANES)/sim_dequant_unit
+
+tb_dequantizer_tile_init:
+	mkdir -p obj_dequant_init_l$(DEQUANT_LANES)
+	$(IVERILOG) -g2012 -s tb_dequantizer_tile_init \
+	    -Ptb_dequantizer_tile_init.LANES=$(DEQUANT_LANES) \
+	    -o obj_dequant_init_l$(DEQUANT_LANES)/sim.out \
+	    ../../rtl/quantization/dequantizer.sv ../../rtl/quantization/dequantizer_tile.sv \
+	    ../icarus/tb_dequantizer_tile_init.sv
+	$(VVP) obj_dequant_init_l$(DEQUANT_LANES)/sim.out
 
 # Negative controls run the real binaries on corrupt fixtures and a temporary
 # missing-done loader mutant. No checked-in fixture or RTL file is modified.
@@ -939,3 +948,16 @@ tb_oracle_checks: core_banked_prefetch_N64 core_banked_prefetch_N64_d64 \
 numerical_checks: core_banked_prefetch_N64 core_banked_prefetch_N64_d64 \
                   dma_banked_prefetch_top_N64 dma_banked_prefetch_top_N64_d64
 	$(PYTHON) test_attention_numerics.py
+
+# Accepted configuration, hostile busy-time inputs and DMA errors with sharing.
+tb_dequantizer_contract: ../../data/N64/expected.hex
+	$(VERILATOR) --sv --cc --exe --build -j 2 -Wall \
+	    --top-module tb_dma_banked_prefetch_harness \
+	    --Mdir obj_dequant_contract_l$(DEQUANT_LANES) \
+	    -GSEQ_LEN=64 -GHEAD_DIM=16 -GDEQUANT_LANES=$(DEQUANT_LANES) \
+	    ../../rtl/interface/dma_engine_vec.sv ../../rtl/interface/axi_mem_model.sv \
+	    $(RTL_CORE_BANKED_PREFETCH_SRCS) \
+	    ../../rtl/top/flash_attn_top_dma_banked_prefetch.sv \
+	    tb_dma_banked_prefetch_harness.sv tb_dma_banked_prefetch_contract.cpp \
+	    -o sim_dequant_contract
+	./obj_dequant_contract_l$(DEQUANT_LANES)/sim_dequant_contract

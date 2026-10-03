@@ -2,10 +2,15 @@
 
 [Home](../README.md) · [Design](DESIGN.md) · [Results and evidence](RESULTS_EVIDENCE.md)
 
-The recorded completed run is tied to RTL `dfbd28e`. See the
+The preserved mapped baseline is tied to RTL `dfbd28e`. See the
 [verification record](evidence/2026-09-30/verification.txt) for its scope and
 [provenance](evidence/2026-09-30/provenance.json) for hashes. The commands below
-are reproduction entry points; documentation updates do not imply new test runs.
+are reproduction entry points. The newer shared-dequantizer implementation has a
+[separate completed behavioral record](analysis/2026-10-03/verification.json):
+312 exact invocations / 624 transactions across 256/32/16 lanes and d16/d64,
+plus a full default regression, six core corner cases, shared top contract tests,
+unit-level four-state tests and bounded controller formal. Its measured source
+identity is recorded separately from the earlier mapped PPA.
 
 ## Functional and protocol checks
 
@@ -56,10 +61,13 @@ formal proofs.
 [GitHub Actions](../.github/workflows/ci.yml) runs Python reference/accuracy,
 synthesis-parameter and runner checks; canonical noncausal/causal core/top smoke
 tests for all six d16/d64 × 256/32/16-lane configurations; default-path AXI/control
-and four-state output checks; and shared-dequantizer unit checks. Top smoke tests
+and four-state output checks; and shared-dequantizer arithmetic, four-state
+initialization and top configuration/error contract checks. Top smoke tests
 include read latencies 0/20/100. Logs and a fresh accuracy report are artifacts.
 CI is a subset of the full commands below; it does not run licensed synthesis,
 VCS or bounded formal. Its badge is live, while historical tables are recorded.
+CI builds and caches Verilator 5.046 from a pinned source commit; Ubuntu 24.04's
+packaged 5.020 cannot elaborate the existing nonblocking array loops.
 
 The optional variants have a [separate sweep](DEQUANT_EXPERIMENT.md) that checks
 all generated numerical-analysis cases against the RTL. The [accuracy guide](NUMERICAL_ACCURACY.md)
@@ -67,6 +75,7 @@ defines the floating-point comparison and its limits.
 
 Install Verilator, a C++ compiler, Python 3 with NumPy, and Icarus Verilog for the
 four-state check. Formal additionally needs Yosys, Z3 and SymbiYosys.
+The current RTL is tested with Verilator 5.046. Use a checkout path without spaces.
 
 ```bash
 make -C sim/verilator regression

@@ -13,6 +13,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  simulator:
+    name: Verilator 5.046 toolchain
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        id: verilator-cache
+        with:
+          path: ~/.cache/flashattn/verilator-5.046
+          key: verilator-5.046-24b2ac24-ubuntu-24.04-v1
+      - name: Build verified simulator version
+        if: steps.verilator-cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf flex bison help2man libfl-dev zlib1g-dev g++ make
+          git clone --depth 1 --branch v5.046 https://github.com/verilator/verilator.git "$RUNNER_TEMP/verilator-src"
+          cd "$RUNNER_TEMP/verilator-src"
+          test "$(git rev-parse HEAD)" = 24b2ac24c721fdad89bba75a492e02c6aa63f32e
+          autoconf
+          ./configure --prefix="$HOME/.cache/flashattn/verilator-5.046"
+          make -j2
+          make install
+      - name: Package toolchain with executable permissions
+        run: |
+          "$HOME/.cache/flashattn/verilator-5.046/bin/verilator" --version
+          tar -C "$HOME/.cache/flashattn/verilator-5.046" -czf "$RUNNER_TEMP/verilator.tar.gz" .
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: verilator-toolchain
+          path: ${{ runner.temp }}/verilator.tar.gz
+
   python:
     name: Reference and accuracy
     runs-on: ubuntu-24.04
@@ -39,6 +70,7 @@ jobs:
   rtl:
     name: RTL d${{ matrix.dim }} / ${{ matrix.lanes }} dequantizers
     runs-on: ubuntu-24.04
+    needs: simulator
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -53,9 +85,19 @@ jobs:
       - name: Install simulator and compiler
         run: |
           sudo apt-get update
-          sudo apt-get install -y verilator iverilog g++ make
+          sudo apt-get install -y iverilog g++ make
           python -m pip install numpy==2.2.6
-          verilator --version
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: verilator-toolchain
+          path: ${{ runner.temp }}/verilator-package
+      - name: Activate verified simulator
+        run: |
+          mkdir -p "$RUNNER_TEMP/verilator"
+          tar -xzf "$RUNNER_TEMP/verilator-package/verilator.tar.gz" -C "$RUNNER_TEMP/verilator"
+          echo "$RUNNER_TEMP/verilator/bin" >> "$GITHUB_PATH"
+          echo "VERILATOR_ROOT=$RUNNER_TEMP/verilator/share/verilator" >> "$GITHUB_ENV"
+          VERILATOR_ROOT="$RUNNER_TEMP/verilator/share/verilator" "$RUNNER_TEMP/verilator/bin/verilator" --version
       - name: Exact core/top noncausal and causal smoke tests
         run: python sim/verilator/run_dequant_sweep.py --lanes ${{ matrix.lanes }} --dim ${{ matrix.dim }} --smoke
       - name: Protocol and four-state output checks
@@ -63,7 +105,7 @@ jobs:
         run: make -C sim/verilator audit_fixes
       - name: Shared dequantizer unit checks
         if: matrix.lanes != 256 && matrix.dim == 16
-        run: make -C sim/verilator tb_dequantizer_tile DEQUANT_LANES=${{ matrix.lanes }}
+        run: make -C sim/verilator tb_dequantizer_tile tb_dequantizer_tile_init tb_dequantizer_contract DEQUANT_LANES=${{ matrix.lanes }}
       - name: Preserve simulator logs and counts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

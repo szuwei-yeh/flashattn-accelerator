@@ -1,0 +1,147 @@
+{
+  "canonical_cycles": "cycles.csv",
+  "ci": {
+    "commit": "f31a274",
+    "run": 37156716731,
+    "status": "success",
+    "url": "https://github.com/szuwei-yeh/flashattn-accelerator/actions/runs/37156716731"
+  },
+  "date_utc": "2026-10-03",
+  "exact_invocations": 312,
+  "exact_transactions": 624,
+  "fixture_definition": "Per lane/dimension: core and top each use 2 canonical plus 24 generated cases (12 per causal mode). Top uses read latencies 0/20/100.",
+  "formal": {
+    "cover_steps": [
+      19,
+      27,
+      41
+    ],
+    "datapath": "abstracted",
+    "depth": 48,
+    "safety": "bounded BMC PASS"
+  },
+  "full_shared_sweeps": [
+    {
+      "core_transactions": 26,
+      "dim": 16,
+      "invocations": 52,
+      "lanes": 256,
+      "report_sha256": "e5b23055df1457143cc8738cd24f00e22baf7dfa607a97d63e13d24e1e787c01",
+      "top_transactions": 78,
+      "verilator": "Verilator 5.046 2026-02-28 rev vUNKNOWN-built20260228"
+    },
+    {
+      "core_transactions": 26,
+      "dim": 64,
+      "invocations": 52,
+      "lanes": 256,
+      "report_sha256": "e333a7bc4dc64120a52ab1ae78e15b5efeb7c3fac5b16292f05cebec45cf1f85",
+      "top_transactions": 78,
+      "verilator": "Verilator 5.046 2026-02-28 rev vUNKNOWN-built20260228"
+    },
+    {
+      "core_transactions": 26,
+      "dim": 16,
+      "invocations": 52,
+      "lanes": 32,
+      "report_sha256": "c16c615109f27601f2092d40ecdb3132f1b99653ab40025e7a8e736839c084a5",
+      "top_transactions": 78,
+      "verilator": "Verilator 5.046 2026-02-28 rev vUNKNOWN-built20260228"
+    },
+    {
+      "core_transactions": 26,
+      "dim": 64,
+      "invocations": 52,
+      "lanes": 32,
+      "report_sha256": "cdbfd539b28db111482752c7eea44064061621cd7701b91c21c22929ba9d661d",
+      "top_transactions": 78,
+      "verilator": "Verilator 5.046 2026-02-28 rev vUNKNOWN-built20260228"
+    },
+    {
+      "core_transactions": 26,
+      "dim": 16,
+      "invocations": 52,
+      "lanes": 16,
+      "report_sha256": "38cb9be8cc1d86e27b1ee090346607f35d905ba2ad56f2e85a3e982f235c3a3b",
+      "top_transactions": 78,
+      "verilator": "Verilator 5.046 2026-02-28 rev vUNKNOWN-built20260228"
+    },
+    {
+      "core_transactions": 26,
+      "dim": 64,
+      "invocations": 52,
+      "lanes": 16,
+      "report_sha256": "ac52b9bd7e88b281b39f27ee3476347c911b3acc3369dd2482a7ff1996d28d2e",
+      "top_transactions": 78,
+      "verilator": "Verilator 5.046 2026-02-28 rev vUNKNOWN-built20260228"
+    }
+  ],
+  "other_checks": {
+    "controller_bmc48_and_covers": {
+      "log_sha256": "efddd4a25725eba85ef72860461a6be2d1b7cc378351a0ded9f93825198f7c38",
+      "status": "PASS"
+    },
+    "default_axi_control_four_state": {
+      "log_sha256": "6e0ae71318058169dae2dc95e1761a636c72b3a5f0a424ea8af74ed9bcb447d2",
+      "status": "PASS"
+    },
+    "full_regression": {
+      "log_sha256": "24c9a23c06d0cc188df5cd9ea616ecb90ae7cb062f3da2f981ff39aed18c9333",
+      "status": "PASS"
+    },
+    "python_17_methods": {
+      "log_sha256": "71655c68601edbb4b72528b4910363c20daa0c80d36acf99f5e01c4c12aa2a1e",
+      "status": "PASS"
+    },
+    "shared_arithmetic_200_tiles_l16": {
+      "log_sha256": "8be2659e48f12117b7767e0e228ebac55d23d2043aa998eaa471b323efc196e8",
+      "status": "PASS"
+    },
+    "shared_arithmetic_200_tiles_l32": {
+      "log_sha256": "cf88318667255d6eaa1685f29c48d5226dd460fb4c385b95854b05b8a5a217b0",
+      "status": "PASS"
+    },
+    "shared_four_state_l16": {
+      "log_sha256": "76966251fa60ae070ad39aca0ff96333385cb1f9db9d89e6af5bc0676f2b575a",
+      "status": "PASS"
+    },
+    "shared_four_state_l32": {
+      "log_sha256": "9f09b03d9d7eb797be684740b55e19fbe06159a811e2592c2ded67b6eb7476ef",
+      "status": "PASS"
+    },
+    "shared_top_contract_l16": {
+      "log_sha256": "761a8ef2611a8492581619fbe6344976e0f58c71bcdcf551a5e228113303eeb2",
+      "status": "PASS"
+    },
+    "shared_top_contract_l32": {
+      "log_sha256": "8bd548f78390c241a3feadee5cab531d8be2c329b816bbfbfc7bcb0f2c6cff80",
+      "status": "PASS"
+    },
+    "six_core_corner_cases": {
+      "log_sha256": "09968778a2c668b7bde109137df7843f63ee1e4471d77beaf4dbc6989609a0f0",
+      "status": "PASS"
+    }
+  },
+  "rtl_source_commit": "d5f9123fbbf73154073b28d683ea4bb88b9e3571",
+  "schema": 1,
+  "scope": "Behavioral RTL; one transaction per common reset. No mapped equivalence, gate-level, full-top four-state, or unbounded formal claim.",
+  "source_sha256": {
+    "rtl/core/flash_attn_core_banked_prefetch.sv": "a88e60b537f75fe7ac4ef1221cc038ed7aa37ec9be3bfca0df08c31b862bbea0",
+    "rtl/ctrl/addr_gen.sv": "192c6a77fc1d82289605db80e828622cb9ba556bf8768bf5c0cc2286d78d7383",
+    "rtl/ctrl/tile_controller_banked_prefetch.sv": "a0bdaf77662a8c0ea917ead9ffee0d3dedd6fa3a4944ba4dfffbabf214d7a555",
+    "rtl/interface/dma_engine_vec.sv": "db2c446b7edd8decaa4d0399eb736226c04248d4ed9856235f56d488de57870d",
+    "rtl/memory/banked_scratchpad.sv": "90fa93cab878043847df0a4839dca410d6146609dd02f0b4f8e24a205cf56c0f",
+    "rtl/memory/banked_tile_loader.sv": "d9f60df133664df2d293ee22ecea0e639297261604666e65b89f5241f04a73db",
+    "rtl/memory/output_buffer.sv": "e784cce001ca734f3ab53f56ba4eccc7c2835569a626b1009e388cba87e31daa",
+    "rtl/memory/sram_1r1w.sv": "c958106159d57ad7294753b085a9b339c373d2a96244042831f1e4baa9af4fd5",
+    "rtl/quantization/dequantizer.sv": "6ec665292432d32ea31d57df4065da58a6cf0e2de724e92fd9d3d0449cbc9f97",
+    "rtl/quantization/dequantizer_tile.sv": "07cd945cce2007753fbb7b57120a4470fd14508302bedce71276b718efdbb765",
+    "rtl/softmax/exp_lut.sv": "1f8f1d5ae96de4113501293ef464de14a9f15ced34ad64b6470e6d2fd608d411",
+    "rtl/softmax/online_softmax.sv": "4950cf080084a9a7f2101c37ead2d2cf0b7aed61ac84522598cf4fea56768a13",
+    "rtl/systolic/array_controller.sv": "0cf0cf337efdba71308037dd60d6e383104ef9242cd0e8ed0b9f2435da2a57bc",
+    "rtl/systolic/pe.sv": "40cd1bdee315ee16ffeaf46ecac35b8f6fc2d0f6e8e25ce1ba8fa92ff45e42eb",
+    "rtl/systolic/systolic_array.sv": "d86f54408d10e33e6786bfebdf602fc4a216e670ae39e221c2a469a8f04d339d",
+    "rtl/top/flash_attn_top_dma_banked_prefetch.sv": "067a29007c24c542307f41c294a1a0a985c9c9439efb3169494d81021dbd3a42"
+  },
+  "status": "PASS"
+}

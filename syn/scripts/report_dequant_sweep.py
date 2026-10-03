@@ -1,0 +1,102 @@
+"""Publish portable evidence for completed, matched 256/32/16-lane DC runs."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def number(text,label):
+    match=re.search(r'^\s*'+re.escape(label)+r'\s*:?\s*([-+0-9.eE]+)\s*$',text,re.M)
+    if not match:
+        raise ValueError(f'Missing metric: {label}')
+    return float(match[1])
+
+
+def collect(directory,lanes):
+    if not (directory/'SUCCESS').exists():
+        raise ValueError(f'Run not accepted: {directory}')
+    raw=dict(line.split('=',1) for line in (directory/'manifest.txt').read_text().splitlines() if '=' in line)
+    params=dict(item.split('=',1) for item in raw['elaboration_parameters'].split(','))
+    expected=dict(SEQ_LEN='64',HEAD_DIM='16',TILE_SIZE='16',SRAM_DEPTH='4096',
+                  DEQUANT_LANES=str(lanes),AXI_ADDR_W='32',AXI_DATA_W='64')
+    if (params!=expected or raw['git_dirty']!='no' or raw['run_mode']!='compile'
+            or raw['profile']!='top' or raw['top_module']!='flash_attn_top_dma_banked_prefetch'):
+        raise ValueError('Require clean N64/d16 top, selected lanes and compile flow')
+    reports=directory/'reports'
+    qor=(reports/'qor.rpt').read_text()
+    area=(reports/'area.rpt').read_text()
+    timing=(reports/'timing_setup.rpt').read_text()
+    power=(reports/'power.rpt').read_text()
+    netlist=(directory/'artifacts/mapped.v').read_text()
+    # Count actual mapped leaf instances, excluding the tile adapter itself.
+    leaves=re.findall(r'^\s*dequantizer(?:_OUT_WIDTH16_FRAC_BITS8)?(?:_\d+)?\s+\S+\s*\(',netlist,re.M)
+    if len(leaves)!=lanes:
+        raise ValueError(f'Mapped lane count {len(leaves)} != requested {lanes}')
+    hierarchy=(reports/'hierarchy.rpt').read_text()
+    if not re.search(r'flash_attn_core_banked_prefetch_\S*HEAD_DIM16_\S*SEQ_LEN64_\S*DEQUANT_LANES'+str(lanes),hierarchy):
+        raise ValueError('Missing mapped core parameter proof')
+    mapped_core=re.search(r'^module\s+(flash_attn_core_banked_prefetch_\S*HEAD_DIM16_\S*SEQ_LEN64_\S*DEQUANT_LANES'+str(lanes)+r')\s*\(',netlist,re.M)
+    if not mapped_core:
+        raise ValueError('Missing mapped core module declaration')
+    source=json.loads((directory/'source_sha256.json').read_text())
+    metrics=dict(cell_area=number(area,'Total cell area:'),
+                 critical_path_ns=number(qor,'Critical Path Length:'),
+                 worst_setup_slack_ns=number(qor,'Critical Path Slack:'),
+                 setup_tns_ns=number(qor,'Total Negative Slack:'),
+                 setup_violating_paths=int(number(qor,'No. of Violating Paths:')),
+                 max_cap_violations=int(number(qor,'Max Cap Violations:')),
+                 macro_blackbox_area=number(area,'Macro/Black Box area:'))
+    for label,key in (('Startpoint','startpoint'),('Endpoint','endpoint')):
+        match=re.search(r'^\s*'+label+r':\s*(\S+)',timing,re.M)
+        if not match: raise ValueError(f'Missing {label}')
+        metrics[key]=match[1]
+    for label,key in (('Total Dynamic Power','vectorless_dynamic_power_w'),('Cell Leakage Power','vectorless_leakage_power_w')):
+        match=re.search(re.escape(label)+r'\s*=\s*([0-9.eE+-]+)\s+(mW|uW|nW|W)',power)
+        if not match:raise ValueError(f'Missing {label}')
+        metrics[key]=float(match[1])*dict(W=1,mW=1e-3,uW=1e-6,nW=1e-9)[match[2]]
+    manifest=dict(raw)
+    manifest['target_library']=Path(raw['target_library']).name
+    result=dict(manifest=manifest,lanes=lanes,mapped_dequantizer_instances=len(leaves),
+                library_sha256=digest(Path(raw['target_library'])),source_sha256=source,metrics=metrics,
+                mapped_core_module=mapped_core[1],
+                report_sha256={str(p.relative_to(directory)):digest(p) for p in sorted(reports.glob('*.rpt'))},
+                artifact_sha256={str(p.relative_to(directory)):digest(p) for p in sorted((directory/'artifacts').iterdir()) if p.is_file()})
+    clock=qor[qor.index("Timing Path Group 'clk'"):qor.index('Cell Count')].strip()
+    area_lines='\n'.join(line for line in area.splitlines() if re.match(r'^(Combinational area|Buf/Inv area|Noncombinational area|Macro/Black Box area|Net Interconnect area|Total cell area|Total area)',line))
+    excerpt=f"Run: {raw['run_tag']}/top\nMeasured commit: {raw['git_commit']} (clean)\nElaboration: {raw['elaboration_parameters']}\nMapped dequantizer instances: {len(leaves)}\nUnits: library cell-area units; timing in ns. Logical SRAM/ROM blackboxes.\n\n[qor.rpt — clock group]\n{clock}\n\n[area.rpt — totals]\n{area_lines}\n\n[timing_setup.rpt — worst path]\nStartpoint: {metrics['startpoint']}\nEndpoint: {metrics['endpoint']}\n\n[Derived metrics]\n{json.dumps(metrics,indent=2)}\n\nPower is DC vectorless estimation with unannotated activity; not workload or system power.\nMax-cap violations are retained; no physical/electrical signoff is claimed.\n"
+    return result,excerpt
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--runs-root',type=Path,required=True)
+    parser.add_argument('--run-prefix',default='dequant_20261003')
+    parser.add_argument('--output-dir',type=Path,required=True)
+    args=parser.parse_args()
+    runs,excerpts={},{}
+    for lanes in (256,32,16):
+        directory=args.runs_root/f'{args.run_prefix}_l{lanes}_n64d16'/'top'
+        runs[str(lanes)],excerpts[str(lanes)]=collect(directory,lanes)
+    baseline=runs['256']
+    for run in runs.values():
+        if run['source_sha256']!=baseline['source_sha256'] or run['library_sha256']!=baseline['library_sha256']:
+            raise ValueError('Runs must use identical sources and library')
+        for key in ('git_commit','clock_period_ns','io_delay_ns','run_mode'):
+            if run['manifest'][key]!=baseline['manifest'][key]:
+                raise ValueError(f'Matched-run mismatch: {key}')
+        run['area_reduction_percent']=100*(1-run['metrics']['cell_area']/baseline['metrics']['cell_area'])
+    result=dict(schema=1,measured_commit=baseline['manifest']['git_commit'],runs=runs,
+                scope='Matched N64/d16 integrated top; DC compile; logical SRAM/ROM blackboxes. No d64 PPA, physical signoff, gate-level simulation or mapped equivalence claim.')
+    args.output_dir.mkdir(parents=True,exist_ok=True)
+    (args.output_dir/'provenance.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+    for lanes,excerpt in excerpts.items():
+        (args.output_dir/f'top_l{lanes}.txt').write_text(excerpt)
+    print(json.dumps({lanes:run['metrics'] for lanes,run in runs.items()},indent=2))
+
+
+if __name__=='__main__':main()

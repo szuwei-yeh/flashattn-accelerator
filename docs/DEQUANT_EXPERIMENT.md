@@ -14,6 +14,23 @@ has been stored. QK accumulators and the accepted Q/K scale remain stable until
 completion; PV does not launch until softmax consumes the complete score tile.
 The controller FSM and active/shadow loader arbitration are unchanged.
 
+The [recorded behavioral sweep](analysis/2026-10-03/verification.json) completed
+**312 invocations / 624 transactions**, with exact outputs for all six lane/dimension
+combinations. The original full regression, six full-core corner cases, Python
+checks, and bounded controller formal also passed. Complete canonical latency
+and causal counts are in [cycles.csv](analysis/2026-10-03/cycles.csv).
+
+| Lanes | d16 core | d16 DMA top | d64 core | d64 DMA top |
+|---|---:|---:|---:|---:|
+| 256 | 7,589 | 7,800 | 28,337 | 29,160 |
+| 32 | 7,717 | 7,928 | 28,465 | 29,288 |
+| 16 | 7,845 | 8,056 | 28,593 | 29,416 |
+
+These are noncausal N64 counts at zero modeled read latency. Top counts are
+`start → done`; they exclude host initialization and output readout. The d16 top
+adds **1.64% / 3.28%** latency for 32/16 lanes. Causal operation processes fewer
+score tiles; its counts are reported separately in the CSV.
+
 These are optional architecture experiments. The preserved N64/d16 PPA evidence
 at `dfbd28e` describes the earlier 256-lane source; it does not measure the new
 shared variants. A matched 256/32/16-lane integrated-top synthesis comparison is
@@ -22,8 +39,8 @@ required before claiming area or timing improvement.
 Run a sweep from a checkout path **without spaces** (a Verilator build requirement):
 
 ```bash
-make -C sim/verilator tb_dequantizer_tile DEQUANT_LANES=32
-make -C sim/verilator tb_dequantizer_tile DEQUANT_LANES=16
+make -C sim/verilator tb_dequantizer_tile tb_dequantizer_tile_init tb_dequantizer_contract DEQUANT_LANES=32
+make -C sim/verilator tb_dequantizer_tile tb_dequantizer_tile_init tb_dequantizer_contract DEQUANT_LANES=16
 python3 sim/verilator/run_dequant_sweep.py --lanes 32 --dim 16
 python3 sim/verilator/run_dequant_sweep.py --lanes 16 --dim 64
 ```
@@ -37,6 +54,10 @@ prevent binaries from different configurations overwriting each other.
 
 The unit test checks 200 tiles per shared lane count, including signed extremes,
 rounding, saturation, repeated score tiles and reset during partial assembly.
+The Icarus test starts with unknown score storage and checks complete publication,
+ready retention and reset during partial assembly. The shared top contract test
+checks accepted configuration locking, hostile busy-time inputs, rejected
+configurations and DMA error/reset recovery.
 Repeated unit-level score tiles do not change the top's one-transaction-per-reset
 contract. The full sweep preserves canonical data and uses exact comparisons.
 
