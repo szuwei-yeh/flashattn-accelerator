@@ -8,8 +8,8 @@ provenance and report excerpts are the underlying evidence.
 
 | Item | Authoritative location / identity |
 |---|---|
-| Measured and verified RTL | `d2bb2044d7a70ef53ac2aa64fe95e732a2abf153` |
-| Initial publication of this evidence | `c1902ba`; subsequent documentation commits may have a newer HEAD |
+| Measured and verified RTL | `dfbd28e6262f9c40b5ff840557a4c9d1957b7606` |
+| Initial publication of this evidence | `cd99a09`; subsequent documentation commits may have a newer HEAD |
 | Current results and limitations | [RESULTS_EVIDENCE.md](RESULTS_EVIDENCE.md) |
 | Source, library, report, netlist and verification hashes | [2026-09-30/provenance.json](evidence/2026-09-30/provenance.json) |
 | Accepted mapped reports | [Core](evidence/2026-09-30/core.txt), [DMA top](evidence/2026-09-30/top.txt) |
@@ -18,6 +18,9 @@ provenance and report excerpts are the underlying evidence.
 | Architecture, arithmetic and configuration | [Design guide](DESIGN.md) |
 | Operating contracts and simulation/formal commands | [Verification guide](VERIFICATION.md) |
 | Synthesis settings and reproduction | [Synthesis guide](../syn/README.md) |
+
+The commit IDs shown here were translated after repository history cleanup.
+The measured source, library and report hashes are unchanged.
 
 `2026-09-30` names the final run series. It includes the DMA address-range guards.
 Accepted runs are `final_20260930_n64d16/core` and

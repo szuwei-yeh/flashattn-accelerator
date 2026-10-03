@@ -1,6 +1,7 @@
 {
   "schema": 2,
-  "measured_commit": "d2bb2044d7a70ef53ac2aa64fe95e732a2abf153",
+  "commit_id_note": "Public commit IDs were translated after history cleanup; source/report hashes and measured values are unchanged.",
+  "measured_commit": "dfbd28e6262f9c40b5ff840557a4c9d1957b7606",
   "library_sha256": "4968d1dba7ff9911cc51dfac7d8ea8b94fbab59d2f862f0531d7c774fb0a5791",
   "revision_description": "Clean same-commit core/top mapping after DMA address-range guards",
   "execution_note": "Initial parallel top process was OOM-killed (exit 137); accepted top rerun executed after core completion with identical sources and synthesis settings. Failed run excluded.",
@@ -16,7 +17,7 @@
         "run_mode": "compile",
         "clock_period_ns": "10.0",
         "io_delay_ns": "1.0",
-        "git_commit": "d2bb2044d7a70ef53ac2aa64fe95e732a2abf153",
+        "git_commit": "dfbd28e6262f9c40b5ff840557a4c9d1957b7606",
         "git_dirty": "no",
         "elaboration_parameters": "TILE_SIZE=16,HEAD_DIM=16,SEQ_LEN=64,SRAM_DEPTH=4096",
         "source_hashes": "source_sha256.json",
@@ -172,7 +173,7 @@
         "run_mode": "compile",
         "clock_period_ns": "10.0",
         "io_delay_ns": "1.0",
-        "git_commit": "d2bb2044d7a70ef53ac2aa64fe95e732a2abf153",
+        "git_commit": "dfbd28e6262f9c40b5ff840557a4c9d1957b7606",
         "git_dirty": "no",
         "elaboration_parameters": "TILE_SIZE=16,HEAD_DIM=16,SEQ_LEN=64,SRAM_DEPTH=4096,AXI_ADDR_W=32,AXI_DATA_W=64",
         "source_hashes": "source_sha256.json",
@@ -331,7 +332,7 @@
   "integration_delta_percent": 0.2602997744034487,
   "historical_shared_scale_evidence": "../2026-09-24/historical_shared_scale.txt",
   "verification": {
-    "commit": "d2bb2044d7a70ef53ac2aa64fe95e732a2abf153",
+    "commit": "dfbd28e6262f9c40b5ff840557a4c9d1957b7606",
     "source_sha256": {
       "data/N128/expected.hex": "54d9639dfb995a3f97763b09907546a99775e42d9a856e1230c2937820dca5e9",
       "data/N128/k_input.hex": "91634ba60b776a98aea4f0979e9d8cc3dbe86e7c61691bb02b9e3c2d3d0f929f",
@@ -545,6 +546,7 @@
       "syn/scripts/test_run_metadata.py": "b9299956f83d5580cabe829f05d97a9ab2f1286145a4ca81f16c396411c764f3"
     },
     "source_bundle_sha256": "58a0505a655d10774541363911d89296c8c1a6301f651e2473b228603550bb30",
+    "log_key_note": "Public log labels; SHA-256 and pass markers are unchanged from the retained raw logs.",
     "logs": {
       "clean_regression.log": {
         "sha256": "6cf6d1dc832894933a9aaf1fb0b41e4084f7f187955266409ef38982901cc045",

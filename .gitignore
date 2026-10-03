@@ -13,14 +13,6 @@ __pycache__/
 *.pyo
 .pytest_cache/
 
-*.md
-!/README.md
-!/syn/README.md
-!/docs/README.md
-!/docs/RESULTS_EVIDENCE.md
-!/docs/DESIGN.md
-!/docs/VERIFICATION.md
-
 # Synopsys Design Compiler generated runs. Each server run is isolated under
 # syn/runs/<run-tag>/<profile>/ and synced separately from source control.
 syn/runs/*

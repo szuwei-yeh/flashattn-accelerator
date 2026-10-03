@@ -2,7 +2,7 @@
 
 [Home](../README.md) · [Design](DESIGN.md) · [Results and evidence](RESULTS_EVIDENCE.md)
 
-The recorded completed run is tied to RTL `d2bb204`. See the
+The recorded completed run is tied to RTL `dfbd28e`. See the
 [verification record](evidence/2026-09-30/verification.txt) for its scope and
 [provenance](evidence/2026-09-30/provenance.json) for hashes. The commands below
 are reproduction entry points; documentation updates do not imply new test runs.
@@ -106,6 +106,6 @@ VCS process status alone is insufficient after `$fatal`.
 runs its listed test targets, propagates failures, and prints a success summary
 only when all prerequisites succeed; it does not report measured code/functional
 coverage or a fabricated aggregate case count. Four-state, Python checks and
-formal remain separate commands above. Historical full reports and development
-notes stay local; public tables state the run/configuration boundaries needed
+formal remain separate commands above. Full raw reports stay outside the repository;
+public tables state the run/configuration boundaries needed
 to interpret claims.

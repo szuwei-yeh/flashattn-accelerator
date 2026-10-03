@@ -1,5 +1,5 @@
 Verification follow-up: scenario reporting, causal d64, mid-output reset
-Base release: a121d7cda131a3279d2d32eff92c5dd7123b4641 plus test/documentation changes.
+Base release: 0025b8dced20449849d3806a8c7c3a3da0f68e9d plus test/documentation changes.
 At validation time this follow-up was uncommitted; source hashes identify the tested bytes.
 Simulator: Verilator 5.046. No waveform or mapped synthesis run performed.
 RTL, formal, golden, checked-in data and synthesis flow: unchanged from base.

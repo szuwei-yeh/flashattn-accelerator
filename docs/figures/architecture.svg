@@ -1,61 +1,90 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="830" viewBox="0 0 1400 830" role="img" aria-labelledby="title desc">
-<title id="title">Current single-head FlashAttention architecture</title>
-<desc id="desc">64-bit AXI vector DMA fills 16-bank Q/K/V scratchpads. A tile loader stages Q and active/shadow K/V registers. One 16 by 16 array performs QK and PV. QK goes through 256 dequantizers and 16 online-softmax lanes; exponential weights return to the array for PV. Fused output update rescales and accumulates PV results, then normalizes to an output read port. Simplified logical dataflow; control wires and operand muxes are omitted.</desc>
-<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#087e87"/></marker></defs>
-<rect width="1400" height="830" rx="20" fill="#ffffff"/>
-<style>text {font-family:Arial,Helvetica,sans-serif;fill:#152b4b} .label {font-size:23px;fill:#52647a} .edge {fill:none;stroke:#087e87;stroke-width:3;marker-end:url(#arrow);stroke-linejoin:round}</style>
-<text x="40" y="55" font-size="36" font-weight="bold" style="fill:#152b4b">Tiled attention. Shared compute. Overlapped memory.</text>
-<text x="40" y="95" font-size="24" font-weight="normal" style="fill:#52647a">Current single-head path  ·  INT8 operands / INT32 accumulation  ·  N64, d16 / d64</text>
-<rect x="40" y="125" width="1320" height="65" rx="12" fill="#152b4b"/>
-<text x="60" y="166" font-size="25" font-weight="normal" style="fill:#ffffff">CONTROL  ·  Accepted configuration  ·  DMA residency  ·  loader interlock  ·  valid shadow promotion</text>
-<text x="40" y="237" font-size="23" font-weight="normal" style="fill:#087e87">External memory → AXI read</text>
-<rect x="40" y="260" width="245" height="150" rx="14" fill="#f2f5f9" stroke="#c6d6df" stroke-width="1.5"/>
-<text x="60" y="297" font-size="26" font-weight="bold" style="fill:#152b4b">Vector DMA</text>
-<text x="60" y="333" font-size="23" font-weight="normal" style="fill:#52647a">64-bit AXI</text>
-<text x="60" y="363" font-size="23" font-weight="normal" style="fill:#52647a">2 beats → 16 B stripe</text>
-<rect x="330" y="260" width="270" height="150" rx="14" fill="#f2f5f9" stroke="#c6d6df" stroke-width="1.5"/>
-<text x="350" y="297" font-size="26" font-weight="bold" style="fill:#152b4b">Q / K / V SRAM</text>
-<text x="350" y="333" font-size="23" font-weight="normal" style="fill:#52647a">16 banks × 1 byte</text>
-<text x="350" y="363" font-size="23" font-weight="normal" style="fill:#52647a">4 KB per scratchpad</text>
-<rect x="645" y="260" width="290" height="150" rx="14" fill="#f2f5f9" stroke="#c6d6df" stroke-width="1.5"/>
-<text x="665" y="297" font-size="26" font-weight="bold" style="fill:#152b4b">Tile loader + registers</text>
-<text x="665" y="333" font-size="23" font-weight="normal" style="fill:#52647a">Q registers</text>
-<text x="665" y="363" font-size="23" font-weight="normal" style="fill:#52647a">K/V active + shadow</text>
-<rect x="980" y="260" width="380" height="150" rx="14" fill="#eaf7f6" stroke="#c6d6df" stroke-width="1.5"/>
-<text x="1000" y="297" font-size="26" font-weight="bold" style="fill:#152b4b">Shared 16 × 16 array</text>
-<text x="1000" y="333" font-size="23" font-weight="normal" style="fill:#52647a">One array for QKᵀ and PV</text>
-<text x="1000" y="363" font-size="23" font-weight="normal" style="fill:#52647a">Signed INT32 partial sums</text>
-<path class="edge" d="M285 335 H330"/>
-<path class="edge" d="M600 335 H645"/>
-<path class="edge" d="M935 335 H980"/>
-<rect x="980" y="490" width="380" height="105" rx="14" fill="#f2f5f9" stroke="#c6d6df" stroke-width="1.5"/>
-<text x="1000" y="527" font-size="26" font-weight="bold" style="fill:#152b4b">256 dequantizers</text>
-<text x="1000" y="563" font-size="23" font-weight="normal" style="fill:#52647a">Shared Q/K scale + 1/√d</text>
-<rect x="565" y="490" width="330" height="105" rx="14" fill="#eaf7f6" stroke="#c6d6df" stroke-width="1.5"/>
-<text x="585" y="527" font-size="26" font-weight="bold" style="fill:#152b4b">16 online-softmax lanes</text>
-<text x="585" y="563" font-size="23" font-weight="normal" style="fill:#52647a">Running max / sum + LUT</text>
-<path class="edge" d="M1270 410 V490"/>
-<text x="1283" y="456" font-size="23" font-weight="normal" style="fill:#087e87">QKᵀ</text>
-<path class="edge" d="M980 542 H895"/>
-<text x="903" y="523" font-size="20" font-weight="normal" style="fill:#087e87">scores</text>
-<path class="edge" d="M800 490 V450 H1050 V410"/>
-<text x="820" y="440" font-size="22" font-weight="normal" style="fill:#087e87">P weights → PV</text>
-<rect x="565" y="690" width="500" height="100" rx="14" fill="#eaf7f6" stroke="#c6d6df" stroke-width="1.5"/>
-<text x="585" y="727" font-size="26" font-weight="bold" style="fill:#152b4b">Fused output update + SRAM</text>
-<text x="585" y="763" font-size="23" font-weight="normal" style="fill:#52647a">Rescale + accumulate; final normalization</text>
-<rect x="1120" y="690" width="240" height="100" rx="14" fill="#f2f5f9" stroke="#c6d6df" stroke-width="1.5"/>
-<text x="1140" y="727" font-size="26" font-weight="bold" style="fill:#152b4b">Output read port</text>
-<text x="1140" y="763" font-size="23" font-weight="normal" style="fill:#52647a">Normalized INT32</text>
-<path class="edge" d="M1065 740 H1120"/>
-<path class="edge" d="M730 595 V690"/>
-<text x="749" y="632" font-size="22" font-weight="normal" style="fill:#087e87">Rescale factors</text>
-<text x="749" y="660" font-size="22" font-weight="normal" style="fill:#087e87">and running sum</text>
-<path class="edge" d="M1360 335 H1380 V647 H1020 V690"/>
-<text x="1130" y="632" font-size="23" font-weight="normal" style="fill:#087e87">PV × scale_v</text>
-<text x="40" y="525" font-size="23" font-weight="bold" style="fill:#087e87">WHY THIS ORGANIZATION</text>
-<text x="40" y="572" font-size="26" font-weight="normal" style="fill:#152b4b">Keep score tiles on chip.</text>
-<text x="40" y="617" font-size="26" font-weight="normal" style="fill:#152b4b">Reuse the array for both products.</text>
-<text x="40" y="662" font-size="26" font-weight="normal" style="fill:#152b4b">Stage the next resident K/V tile.</text>
-<text x="40" y="707" font-size="26" font-weight="normal" style="fill:#152b4b">Fuse two output-buffer passes.</text>
-<text x="40" y="807" font-size="20" font-weight="normal" style="fill:#52647a">Logical dataflow; operand muxes and control wires omitted. Output readout is outside measured start → done.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="950" viewBox="0 0 1680 950" role="img" aria-labelledby="title desc">
+<title id="title">FlashAttention accelerator architecture and simulation boundary</title>
+<desc id="desc">A simulation-only behavioral AXI memory model and testbench are outside the synthesizable DUT. Vector DMA fills 16-bank Q/K/V scratchpads; a shared loader fills active Q/K/V or prefetches the next resident K/V tile into shadow registers. Shadow is copied to active before use. Only active registers supply operands to the shared 16 by 16 array. QK scores pass through 256 dequantizers and masking into 16 online-softmax lanes; unnormalized P returns for PV on the same array. Rescale factors and running sums feed fused output update and final normalization. Output is read after done, with no AXI writeback. Data movement and tiled compute are functional groupings, not module or physical boundaries. Teal arrows are data, gray dashed arrows are control; individual ports and interlocks are summarized.</desc>
+<defs>
+<marker id="data-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#00999c"/></marker>
+<marker id="control-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#445f7b"/></marker>
+</defs>
+<rect width="1680" height="950" fill="white"/>
+<style>text {font-family:Arial,Helvetica,sans-serif;fill:#081d4f} .data {fill:none;stroke:#00999c;stroke-width:3.5;marker-end:url(#data-arrow);stroke-linejoin:round} .control {fill:none;stroke:#445f7b;stroke-width:2.5;stroke-dasharray:7 6;marker-end:url(#control-arrow);stroke-linejoin:round}</style>
+<text x="40" y="58" font-size="52" font-weight="bold" style="fill:#081d4f">FlashAttention Accelerator</text>
+<text x="40" y="98" font-size="30" font-weight="normal" style="fill:#445f7b">Single-head prefill · N = 64 · d = 16 / 64</text>
+<rect x="24" y="130" width="1632" height="115" rx="12" fill="#f3f6fb" stroke="#8fa4bf" stroke-width="1.7"/>
+<text x="45" y="176" font-size="31" font-weight="bold" style="fill:#081d4f">Simulation</text>
+<text x="45" y="211" font-size="31" font-weight="bold" style="fill:#081d4f">environment</text>
+<rect x="385" y="147" width="380" height="80" rx="12" fill="#f5f7fc" stroke="#081d4f" stroke-width="1.7"/>
+<text x="575.0" y="182" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">AXI memory model</text>
+<text x="575.0" y="211" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">Behavioral model only</text>
+<rect x="1095" y="147" width="345" height="80" rx="12" fill="#f5f7fc" stroke="#081d4f" stroke-width="1.7"/>
+<text x="1267.5" y="182" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Testbench</text>
+<text x="1267.5" y="211" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">Configure · start · check</text>
+<rect x="24" y="279" width="1632" height="605" rx="12" fill="#ffffff" stroke="#081d4f" stroke-width="2.4"/>
+<text x="45" y="317" font-size="34" font-weight="bold" style="fill:#081d4f">Synthesizable DUT</text>
+<rect x="40" y="334" width="1600" height="251" rx="12" fill="#fbfcff" stroke="#a7c5d7" stroke-width="1.7"/>
+<text x="56" y="373" font-size="30" font-weight="bold" style="fill:#081d4f">Data movement</text>
+<rect x="40" y="602" width="1600" height="267" rx="12" fill="#f0fbfa" stroke="#97d6d9" stroke-width="1.7"/>
+<text x="56" y="640" font-size="30" font-weight="bold" style="fill:#081d4f">Tiled compute</text>
+<rect x="297" y="364" width="283" height="75" rx="12" fill="#f5f7fc" stroke="#081d4f" stroke-width="1.7"/>
+<text x="438.5" y="399" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Vector DMA</text>
+<text x="438.5" y="428" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">64-bit AXI → 16 B stripes</text>
+<rect x="632" y="364" width="285" height="75" rx="12" fill="#f5f7fc" stroke="#081d4f" stroke-width="1.7"/>
+<text x="774.5" y="399" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Q / K / V scratchpads</text>
+<text x="774.5" y="428" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">16 banks per scratchpad</text>
+<rect x="970" y="364" width="280" height="75" rx="12" fill="#f5f7fc" stroke="#081d4f" stroke-width="1.7"/>
+<text x="1110.0" y="399" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Shared tile loader</text>
+<text x="1110.0" y="428" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">Load + prefetch</text>
+<rect x="1308" y="364" width="302" height="75" rx="12" fill="#f5f7fc" stroke="#081d4f" stroke-width="1.7"/>
+<text x="1459.0" y="399" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Active Q / K / V</text>
+<text x="1459.0" y="428" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">Current tile</text>
+<rect x="1340" y="489" width="270" height="75" rx="12" fill="#f5f7fc" stroke="#081d4f" stroke-width="1.7"/>
+<text x="1475.0" y="524" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Shadow K / V</text>
+<text x="1475.0" y="553" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">Next resident tile</text>
+<rect x="540" y="485" width="416" height="80" rx="12" fill="#e9eef3" stroke="#081d4f" stroke-width="1.7"/>
+<text x="748.0" y="520" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Run control + DMA scheduler</text>
+<text x="748.0" y="549" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">Q first; then K/V tiles</text>
+<path class="data" d="M500 227 V364"/>
+<text x="515" y="267" font-size="23" font-weight="bold" style="fill:#00999c">AXI read</text>
+<path class="control" d="M1268 227 V261 H893 V279"/>
+<text x="1280" y="269" font-size="21" font-weight="normal" style="fill:#445f7b">control / start</text>
+<path class="data" d="M580 402 H632"/>
+<path class="data" d="M917 402 H970"/>
+<path class="data" d="M1250 402 H1308"/>
+<path class="data" d="M1195 439 V527 H1340"/>
+<text x="1210" y="510" font-size="22" font-weight="normal" style="fill:#00999c">prefetch</text>
+<path class="data" d="M1467 489 V439"/>
+<text x="1490" y="474" font-size="22" font-weight="normal" style="fill:#00999c">copy</text>
+<path class="control" d="M540 525 H439 V439"/>
+<path class="control" d="M956 525 H1057 V439"/>
+<path class="data" d="M1610 402 H1625 V622 H1025 V658"/>
+<text x="1240" y="615" font-size="20" font-weight="normal" style="fill:#00999c">Active operands</text>
+<rect x="60" y="658" width="235" height="85" rx="12" fill="#e7f7f6" stroke="#138391" stroke-width="1.7"/>
+<text x="177.5" y="693" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Output read port</text>
+<text x="177.5" y="722" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">Read after done</text>
+<rect x="365" y="658" width="330" height="85" rx="12" fill="#e7f7f6" stroke="#138391" stroke-width="1.7"/>
+<text x="530.0" y="693" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Output update + SRAM</text>
+<text x="530.0" y="722" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">Rescale · accumulate · normalize</text>
+<rect x="850" y="658" width="350" height="85" rx="12" fill="#e7f7f6" stroke="#138391" stroke-width="1.7"/>
+<text x="1025.0" y="693" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Shared 16 × 16 array</text>
+<text x="1025.0" y="722" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">QKᵀ and PV reuse the same array</text>
+<rect x="1362" y="658" width="260" height="85" rx="12" fill="#e7f7f6" stroke="#138391" stroke-width="1.7"/>
+<text x="1492.0" y="693" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Dequantize + mask</text>
+<text x="1492.0" y="722" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">256 dequantizers</text>
+<rect x="850" y="792" width="350" height="60" rx="12" fill="#e7f7f6" stroke="#138391" stroke-width="1.7"/>
+<text x="1025.0" y="831.0" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">16 online-softmax lanes</text>
+<path class="data" d="M365 700 H295"/>
+<path class="data" d="M850 700 H695"/>
+<text x="708" y="683" font-size="20" font-weight="normal" style="fill:#00999c">PV × scale_v</text>
+<path class="data" d="M1200 700 H1362"/>
+<text x="1218" y="683" font-size="22" font-weight="normal" style="fill:#00999c">QKᵀ scores</text>
+<path class="data" d="M1492 743 V822 H1200"/>
+<path class="data" d="M1025 792 V743"/>
+<text x="1052" y="774" font-size="22" font-weight="normal" style="fill:#00999c">P for PV</text>
+<path class="data" d="M850 822 H545 V743"/>
+<text x="615" y="803" font-size="22" font-weight="normal" style="fill:#00999c">Rescale + row sum</text>
+<path class="data" d="M40 919 H103"/>
+<text x="120" y="926" font-size="22" font-weight="normal" style="fill:#00999c">Data</text>
+<path class="control" d="M208 919 H275"/>
+<text x="292" y="926" font-size="22" font-weight="normal" style="fill:#445f7b">Control</text>
+<text x="615" y="925" font-size="20" font-weight="normal" style="fill:#445f7b">d = 64: four chunks on the same array</text>
+<text x="1000" y="925" font-size="20" font-weight="normal" style="fill:#445f7b">External memory is simulation-only · Read port, no AXI writeback</text>
 </svg>

@@ -4,8 +4,9 @@ Navigation: [documentation index](README.md). The evidence directory below is th
 current baseline; September 24 reports are retained as historical evidence.
 
 The final N64/d16 core and DMA-integrated top were mapped from the same clean
-commit **`d2bb2044d7a70ef53ac2aa64fe95e732a2abf153`**, including the source/destination address-range guards.
-These are pre-layout logical-synthesis results with uncharacterized SRAM/ROM
+commit **`dfbd28e6262f9c40b5ff840557a4c9d1957b7606`**, including the source/destination address-range guards.
+The commit ID was translated after repository history cleanup; the recorded
+source hashes identify the same tested bytes. These are pre-layout logical-synthesis results with uncharacterized SRAM/ROM
 blackboxes, not physical signoff.
 
 | Final mapped result | Standalone core | DMA-integrated top |
@@ -110,7 +111,7 @@ whole-top PPA. Older source manifests and results have not been overwritten.
 
 ## Verification of the final revision
 
-Verification ran from a fresh checkout of `d2bb204`. Source hashes identify
+Verification ran from a fresh checkout of `dfbd28e`. Source hashes identify
 the RTL, tests, data, golden models and synthesis inputs; tracked files stayed
 unchanged through the run. See [verification summary](evidence/2026-09-30/verification.txt).
 
@@ -152,7 +153,7 @@ collapse large distinct logits. These behaviors are covered and documented.
 | 256 unused softmax dividers removed | Structural result; do not attribute the shared-scale area delta to this change |
 | 100 MHz, +3.94 ns top setup slack | Final guarded N64/d16 revision, pre-layout logical synthesis with memory blackboxes |
 
-The shared-scale pair `4aa075f` → `bacdec6` measured
+The shared-scale pair `558f6a2` → `f4bccfa` measured
 5,463,487.889260 → 5,061,648.809908, a 7.354991674% reduction, rounded directly
 to **7.35%**. Both endpoints predate later correctness fixes. Their retained
 manifests, geometry and reports support that historical comparison; they do not
@@ -167,8 +168,8 @@ Use `syn/scripts/run_server.sh core <fresh-tag> compile` and the corresponding
 `top` command, with `HEAD_DIM=16,SEQ_LEN=64`, 10 ns clock, 1 ns I/O delays,
 the recorded library and exact source hashes. Never overwrite an older run tag.
 [Synthesis instructions](../syn/README.md) describe the environment and constraints.
-README verification commands cover the public checks; supplemental four-state
-bench sources and logs are retained with the local final-run bundle.
+README verification commands cover the public checks. Supplemental four-state
+results have pass markers and log hashes in the public provenance record.
 
 Public evidence contains portable report excerpts and hashes. Full logs, reports,
 DDC, mapped Verilog, SDC and the frozen source checkout are retained outside the

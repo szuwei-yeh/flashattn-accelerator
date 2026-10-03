@@ -25,7 +25,10 @@ optimization comparison below names its own baseline.
 
 ## Architecture at a glance
 
-![Current single-head architecture: vector DMA, banked scratchpads, one shared array, online softmax and fused output update](docs/figures/architecture.svg)
+![FlashAttention architecture: simulation environment outside the DUT, data movement through active/shadow staging, shared QK/PV compute and fused output update](docs/figures/architecture.svg)
+
+[Architecture details and simulation boundary](docs/DESIGN.md#detailed-architecture-and-simulation-boundary)
+explains the behavioral AXI memory and active/shadow tile paths.
 
 DMA fills Q, then K/V tile pairs. Compute begins when the first pair is resident;
 subsequent transfers and local shadow-tile prefetch overlap compute. One array
@@ -33,7 +36,7 @@ is reused for QKᵀ and PV. The output path fuses rescaling and accumulation int
 one buffer traversal per tile/chunk, then normalizes using the running sum.
 
 The **256 dequantizers remain**. The removed logic was an unused normalized
-softmax divider path. See [design guide](docs/DESIGN.md)
+softmax divider path. See the [design guide](docs/DESIGN.md)
 for arithmetic, ownership/interlocks and supported configurations.
 
 ## Measured optimization milestones
@@ -48,7 +51,7 @@ for arithmetic, ownership/interlocks and supported configurations.
 | Incremental K/V prefetch | 12,140 / 46,412 | **11,912 / 45,608** | Same historical memory stage; −1.878% / −1.732% |
 | Fused output update | 11,912 / 45,608 | **7,800 / 29,160** | N64, d16/d64 prefetch top; −34.52% / −36.06% |
 | Shared Q/K scale | 5,463,487.889 area units | **5,061,648.810 (−7.35%)** | Historical N64/d16 core, identical library/constraints |
-| Final DMA-integrated timing | 10 ns target | **+3.94 ns setup slack** | Final N64/d16, `d2bb204`; mapped DC, memory blackboxes |
+| Final DMA-integrated timing | 10 ns target | **+3.94 ns setup slack** | Final N64/d16, `dfbd28e`; mapped DC, memory blackboxes |
 
 E2E counts are testbench `start → done`, with zero modeled read latency unless
 stated otherwise. They exclude host initialization, output readout, and AXI
@@ -58,13 +61,13 @@ one cycle earlier than the testbench count.
 
 Final regression of the guarded RTL preserves the canonical core and full-top
 cycle counts. Both **N64/d16** profiles now have matched mapped-synthesis
-evidence from clean commit `d2bb204`. See the public
+evidence from clean commit `dfbd28e`. See the public
 [results evidence](docs/RESULTS_EVIDENCE.md) for source identity, parameter proof,
 report excerpts, metric definitions and the disposition of older claims.
 
 ## Final N64/d16 logical-synthesis PPA
 
-Both profiles were mapped from clean commit `d2bb204` after the DMA
+Both profiles were mapped from clean commit `dfbd28e` after the DMA
 address-range fix, using Design Compiler R-2020.09-SP4, typical `gscl45nm.db`,
 10 ns clock, 1 ns input/output delays and the unchanged `compile` flow.
 SRAM/ROM remain logical blackboxes. Actual hierarchy and mapped declarations
@@ -94,14 +97,14 @@ warnings; they are not workload or measured system power. No physical signoff
 or independently measured Fmax is claimed.
 
 The **7.35% shared-scale area reduction** remains the separate historical
-N64/d16 comparison `4aa075f` → `bacdec6`, 5,463,487.889 → 5,061,648.810.
+N64/d16 comparison `558f6a2` → `f4bccfa`, 5,463,487.889 → 5,061,648.810.
 Its exact reduction is 7.3549917%; this release does not replace either endpoint
 or attribute that delta to divider removal. The prior September 24 mapping is
 retained as [archival evidence](docs/evidence/2026-09-24/provenance.json).
 
 ## Verification evidence
 
-These are recorded results for RTL **`d2bb204`**, not a live CI status badge.
+These are recorded results for RTL **`dfbd28e`**, not a live CI status badge.
 
 | Layer | Recorded scope |
 |---|---|
@@ -157,7 +160,7 @@ the [synthesis guide](syn/README.md).
 | `docs/` | [Documentation index](docs/README.md), current results and compact evidence; current run series: `evidence/2026-09-30/` |
 
 Generated simulator builds remain in ignored `sim/verilator/obj_*` directories;
-raw synthesis runs remain in ignored `syn/runs/`. Start with
+raw synthesis runs remain in ignored `syn/runs/`. Start with the
 [documentation index](docs/README.md) for current evidence and historical boundaries.
 
 ## Source organization

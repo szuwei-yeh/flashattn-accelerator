@@ -1,4 +1,4 @@
-Final RTL revision: d2bb2044d7a70ef53ac2aa64fe95e732a2abf153
+Final RTL revision: dfbd28e6262f9c40b5ff840557a4c9d1957b7606
 Fresh clean checkout; verification inputs unchanged throughout the run.
 
 PASS: make -j2 -C sim/verilator regression coverage audit_fixes lint

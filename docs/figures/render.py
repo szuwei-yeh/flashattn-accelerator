@@ -14,60 +14,97 @@ MUTED = '#52647a'
 
 
 def architecture():
-    parts = [f'''<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="830" viewBox="0 0 1400 830" role="img" aria-labelledby="title desc">
-<title id="title">Current single-head FlashAttention architecture</title>
-<desc id="desc">64-bit AXI vector DMA fills 16-bank Q/K/V scratchpads. A tile loader stages Q and active/shadow K/V registers. One 16 by 16 array performs QK and PV. QK goes through 256 dequantizers and 16 online-softmax lanes; exponential weights return to the array for PV. Fused output update rescales and accumulates PV results, then normalizes to an output read port. Simplified logical dataflow; control wires and operand muxes are omitted.</desc>
-<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="{TEAL}"/></marker></defs>
-<rect width="1400" height="830" rx="20" fill="#ffffff"/>
-<style>text {{font-family:Arial,Helvetica,sans-serif;fill:{NAVY}}} .label {{font-size:23px;fill:{MUTED}}} .edge {{fill:none;stroke:{TEAL};stroke-width:3;marker-end:url(#arrow);stroke-linejoin:round}}</style>''']
+    # Functional groups follow the portfolio diagram; they are not module boundaries.
+    navy, teal, muted = '#081d4f', '#00999c', '#445f7b'
+    parts = [f'''<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="950" viewBox="0 0 1680 950" role="img" aria-labelledby="title desc">
+<title id="title">FlashAttention accelerator architecture and simulation boundary</title>
+<desc id="desc">A simulation-only behavioral AXI memory model and testbench are outside the synthesizable DUT. Vector DMA fills 16-bank Q/K/V scratchpads; a shared loader fills active Q/K/V or prefetches the next resident K/V tile into shadow registers. Shadow is copied to active before use. Only active registers supply operands to the shared 16 by 16 array. QK scores pass through 256 dequantizers and masking into 16 online-softmax lanes; unnormalized P returns for PV on the same array. Rescale factors and running sums feed fused output update and final normalization. Output is read after done, with no AXI writeback. Data movement and tiled compute are functional groupings, not module or physical boundaries. Teal arrows are data, gray dashed arrows are control; individual ports and interlocks are summarized.</desc>
+<defs>
+<marker id="data-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="{teal}"/></marker>
+<marker id="control-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="{muted}"/></marker>
+</defs>
+<rect width="1680" height="950" fill="white"/>
+<style>text {{font-family:Arial,Helvetica,sans-serif;fill:{navy}}} .data {{fill:none;stroke:{teal};stroke-width:3.5;marker-end:url(#data-arrow);stroke-linejoin:round}} .control {{fill:none;stroke:{muted};stroke-width:2.5;stroke-dasharray:7 6;marker-end:url(#control-arrow);stroke-linejoin:round}}</style>''']
 
-    def text(x, y, value, size=26, weight='normal', color=NAVY):
-        parts.append(f'<text x="{x}" y="{y}" font-size="{size}" font-weight="{weight}" style="fill:{color}">{escape(value)}</text>')
+    def text(x, y, value, size=24, weight='normal', color=navy, center=False):
+        anchor = ' text-anchor="middle"' if center else ''
+        parts.append(f'<text x="{x}" y="{y}"{anchor} font-size="{size}" font-weight="{weight}" style="fill:{color}">{escape(value)}</text>')
 
-    def box(x, y, w, h, title, lines, accent=False):
-        fill = '#eaf7f6' if accent else '#f2f5f9'
-        parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="14" fill="{fill}" stroke="#c6d6df" stroke-width="1.5"/>')
-        text(x+20,y+37,title,26,'bold')
-        for i,line in enumerate(lines):
-            text(x+20,y+73+i*30,line,23,color=MUTED)
+    def panel(x, y, w, h, fill, stroke, width=1.7):
+        parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" fill="{fill}" stroke="{stroke}" stroke-width="{width}"/>')
 
-    def arrow(points):
-        parts.append(f'<path class="edge" d="{points}"/>')
+    def box(x, y, w, h, title, subtitle=None, accent=False, control=False):
+        fill = '#e7f7f6' if accent else '#e9eef3' if control else '#f5f7fc'
+        panel(x, y, w, h, fill, '#138391' if accent else navy)
+        text(x+w/2,y+(35 if subtitle else h/2+9),title,25,'bold',center=True)
+        if subtitle:
+            text(x+w/2,y+64,subtitle,21,color=muted,center=True)
 
-    text(40,55,'Tiled attention. Shared compute. Overlapped memory.',36,'bold')
-    text(40,95,'Current single-head path  ·  INT8 operands / INT32 accumulation  ·  N64, d16 / d64',24,color=MUTED)
-    parts.append('<rect x="40" y="125" width="1320" height="65" rx="12" fill="#152b4b"/>')
-    text(60,166,'CONTROL  ·  Accepted configuration  ·  DMA residency  ·  loader interlock  ·  valid shadow promotion',25,color='#ffffff')
-    text(40,237,'External memory → AXI read',23,color=TEAL)
-    box(40,260,245,150,'Vector DMA',['64-bit AXI','2 beats → 16 B stripe'])
-    box(330,260,270,150,'Q / K / V SRAM',['16 banks × 1 byte','4 KB per scratchpad'])
-    box(645,260,290,150,'Tile loader + registers',['Q registers','K/V active + shadow'])
-    box(980,260,380,150,'Shared 16 × 16 array',['One array for QKᵀ and PV','Signed INT32 partial sums'],True)
-    arrow('M285 335 H330')
-    arrow('M600 335 H645')
-    arrow('M935 335 H980')
-    box(980,490,380,105,'256 dequantizers',['Shared Q/K scale + 1/√d'])
-    box(565,490,330,105,'16 online-softmax lanes',['Running max / sum + LUT'],True)
-    arrow('M1270 410 V490')
-    text(1283,456,'QKᵀ',23,color=TEAL)
-    arrow('M980 542 H895')
-    text(903,523,'scores',20,color=TEAL)
-    arrow('M800 490 V450 H1050 V410')
-    text(820,440,'P weights → PV',22,color=TEAL)
-    box(565,690,500,100,'Fused output update + SRAM',['Rescale + accumulate; final normalization'],True)
-    box(1120,690,240,100,'Output read port',['Normalized INT32'])
-    arrow('M1065 740 H1120')
-    arrow('M730 595 V690')
-    text(749,632,'Rescale factors',22,color=TEAL)
-    text(749,660,'and running sum',22,color=TEAL)
-    arrow('M1360 335 H1380 V647 H1020 V690')
-    text(1130,632,'PV × scale_v',23,color=TEAL)
-    text(40,525,'WHY THIS ORGANIZATION',23,'bold',TEAL)
-    text(40,572,'Keep score tiles on chip.',26)
-    text(40,617,'Reuse the array for both products.',26)
-    text(40,662,'Stage the next resident K/V tile.',26)
-    text(40,707,'Fuse two output-buffer passes.',26)
-    text(40,807,'Logical dataflow; operand muxes and control wires omitted. Output readout is outside measured start → done.',20,color=MUTED)
+    def arrow(path, control=False):
+        parts.append(f'<path class="{"control" if control else "data"}" d="{path}"/>')
+
+    text(40,58,'FlashAttention Accelerator',52,'bold')
+    text(40,98,'Single-head prefill · N = 64 · d = 16 / 64',30,color=muted)
+    panel(24,130,1632,115,'#f3f6fb','#8fa4bf')
+    text(45,176,'Simulation',31,'bold')
+    text(45,211,'environment',31,'bold')
+    box(385,147,380,80,'AXI memory model','Behavioral model only')
+    box(1095,147,345,80,'Testbench','Configure · start · check')
+
+    panel(24,279,1632,605,'#ffffff',navy,2.4)
+    text(45,317,'Synthesizable DUT',34,'bold')
+    panel(40,334,1600,251,'#fbfcff','#a7c5d7')
+    text(56,373,'Data movement',30,'bold')
+    panel(40,602,1600,267,'#f0fbfa','#97d6d9')
+    text(56,640,'Tiled compute',30,'bold')
+
+    box(297,364,283,75,'Vector DMA','64-bit AXI → 16 B stripes')
+    box(632,364,285,75,'Q / K / V scratchpads','16 banks per scratchpad')
+    box(970,364,280,75,'Shared tile loader','Load + prefetch')
+    box(1308,364,302,75,'Active Q / K / V','Current tile')
+    box(1340,489,270,75,'Shadow K / V','Next resident tile')
+    box(540,485,416,80,'Run control + DMA scheduler','Q first; then K/V tiles',control=True)
+
+    arrow('M500 227 V364')
+    text(515,267,'AXI read',23,'bold',teal)
+    # Config/start terminates at the top interface, not at a scratchpad.
+    arrow('M1268 227 V261 H893 V279',True)
+    text(1280,269,'control / start',21,color=muted)
+    arrow('M580 402 H632')
+    arrow('M917 402 H970')
+    arrow('M1250 402 H1308')
+    arrow('M1195 439 V527 H1340')
+    text(1210,510,'prefetch',22,color=teal)
+    arrow('M1467 489 V439')
+    text(1490,474,'copy',22,color=teal)
+    arrow('M540 525 H439 V439',True)
+    arrow('M956 525 H1057 V439',True)
+    # Array operands come from ACTIVE registers; shadow has no array read path.
+    arrow('M1610 402 H1625 V622 H1025 V658')
+    text(1240,615,'Active operands',20,color=teal)
+
+    box(60,658,235,85,'Output read port','Read after done',accent=True)
+    box(365,658,330,85,'Output update + SRAM','Rescale · accumulate · normalize',accent=True)
+    box(850,658,350,85,'Shared 16 × 16 array','QKᵀ and PV reuse the same array',accent=True)
+    box(1362,658,260,85,'Dequantize + mask','256 dequantizers',accent=True)
+    box(850,792,350,60,'16 online-softmax lanes',accent=True)
+    arrow('M365 700 H295')
+    arrow('M850 700 H695')
+    text(708,683,'PV × scale_v',20,color=teal)
+    arrow('M1200 700 H1362')
+    text(1218,683,'QKᵀ scores',22,color=teal)
+    arrow('M1492 743 V822 H1200')
+    arrow('M1025 792 V743')
+    text(1052,774,'P for PV',22,color=teal)
+    arrow('M850 822 H545 V743')
+    text(615,803,'Rescale + row sum',22,color=teal)
+
+    arrow('M40 919 H103')
+    text(120,926,'Data',22,color=teal)
+    arrow('M208 919 H275',True)
+    text(292,926,'Control',22,color=muted)
+    text(615,925,'d = 64: four chunks on the same array',20,color=muted)
+    text(1000,925,'External memory is simulation-only · Read port, no AXI writeback',20,color=muted)
     parts.append('</svg>')
     (HERE/'architecture.svg').write_text('\n'.join(parts)+'\n')
 
