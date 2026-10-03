@@ -1,0 +1,5 @@
+stage,d16_cycles,d64_cycles
+Scalar memory,15332,60421
+Vector + banks,12140,46412
+K/V prefetch,11912,45608
+Fused update,7800,29160

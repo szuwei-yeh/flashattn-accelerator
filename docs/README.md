@@ -14,7 +14,9 @@ provenance and report excerpts are the underlying evidence.
 | Source, library, report, netlist and verification hashes | [2026-09-30/provenance.json](evidence/2026-09-30/provenance.json) |
 | Accepted mapped reports | [Core](evidence/2026-09-30/core.txt), [DMA top](evidence/2026-09-30/top.txt) |
 | Verification scope | [Verification summary](evidence/2026-09-30/verification.txt) |
-| Architecture and simulation commands | [Repository README](../README.md) |
+| Project overview and quick start | [Repository README](../README.md) |
+| Architecture, arithmetic and configuration | [Design guide](DESIGN.md) |
+| Operating contracts and simulation/formal commands | [Verification guide](VERIFICATION.md) |
 | Synthesis settings and reproduction | [Synthesis guide](../syn/README.md) |
 
 `2026-09-30` names the final run series. It includes the DMA address-range guards.
