@@ -18,9 +18,15 @@ provenance and report excerpts are the underlying evidence.
 | Architecture, arithmetic and configuration | [Design guide](DESIGN.md) |
 | Operating contracts and simulation/formal commands | [Verification guide](VERIFICATION.md) |
 | Synthesis settings and reproduction | [Synthesis guide](../syn/README.md) |
+| Fixed-point vs float64 arithmetic error | [Numerical accuracy](NUMERICAL_ACCURACY.md) |
+| Optional 32/16-lane score hardware | [Shared dequantizer experiment](DEQUANT_EXPERIMENT.md) |
 
 The commit IDs shown here were translated after repository history cleanup.
 The measured source, library and report hashes are unchanged.
+
+The optional shared-dequantizer implementation is newer than this preserved
+mapped baseline. Its 32/16-lane measurements must be identified separately;
+the baseline hashes are not a claim about every subsequent RTL checkout.
 
 `2026-09-30` names the final run series. It includes the DMA address-range guards.
 Accepted runs are `final_20260930_n64d16/core` and

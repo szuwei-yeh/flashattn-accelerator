@@ -23,6 +23,7 @@ module flash_attn_top_dma_banked_prefetch #(
     parameter int SRAM_DEPTH = 4096,
     parameter int AXI_ADDR_W = 32,
     parameter int AXI_DATA_W = 64,
+    parameter int DEQUANT_LANES = 256,
     localparam int TILE_BYTES = TILE_SIZE * HEAD_DIM,
     localparam int LOG2_TILE  = $clog2(TILE_SIZE),
     localparam int VEC_W      = 16 * 8
@@ -105,6 +106,8 @@ module flash_attn_top_dma_banked_prefetch #(
             $fatal(1, "flash_attn_top_dma_banked_prefetch: AXI_ADDR_W must be 32");
         if (AXI_DATA_W != 64)
             $fatal(1, "flash_attn_top_dma_banked_prefetch: AXI_DATA_W must be 64");
+        if (!(DEQUANT_LANES == 256 || DEQUANT_LANES == 32 || DEQUANT_LANES == 16))
+            $fatal(1, "flash_attn_top_dma_banked_prefetch: DEQUANT_LANES must be 256, 32 or 16");
     end
 
     // ── Vector DMA engine ─────────────────────────────────────────────
@@ -299,7 +302,8 @@ module flash_attn_top_dma_banked_prefetch #(
     // ── Banked prefetch core; DMA fills its scratchpads via the vector port ──
     flash_attn_core_banked_prefetch #(
         .TILE_SIZE(TILE_SIZE), .HEAD_DIM(HEAD_DIM),
-        .SEQ_LEN(SEQ_LEN), .SRAM_DEPTH(SRAM_DEPTH)
+        .SEQ_LEN(SEQ_LEN), .SRAM_DEPTH(SRAM_DEPTH),
+        .DEQUANT_LANES(DEQUANT_LANES)
     ) u_core (
         .clk(clk), .rst_n(rst_n),
         .start(core_start), .done(core_done),

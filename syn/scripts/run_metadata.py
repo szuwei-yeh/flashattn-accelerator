@@ -9,7 +9,8 @@ from pathlib import Path
 def parameters(profile, override):
     if profile not in ('core', 'core_rtl', 'top', 'top_rtl'):
         return override.strip()
-    values = dict(TILE_SIZE=16, HEAD_DIM=16, SEQ_LEN=64, SRAM_DEPTH=4096)
+    values = dict(TILE_SIZE=16, HEAD_DIM=16, SEQ_LEN=64, SRAM_DEPTH=4096,
+                  DEQUANT_LANES=256)
     if profile.startswith('top'):
         values.update(AXI_ADDR_W=32, AXI_DATA_W=64)
     if override.strip():
@@ -26,6 +27,8 @@ def parameters(profile, override):
         raise ValueError('Require TILE_SIZE=16, HEAD_DIM=16/64, aligned nonzero N and N*d <= SRAM_DEPTH')
     if values.get('AXI_ADDR_W',32) != 32 or values.get('AXI_DATA_W',64) != 64:
         raise ValueError('Supported AXI widths are 32/64')
+    if values['DEQUANT_LANES'] not in (256,32,16):
+        raise ValueError('Supported DEQUANT_LANES are 256/32/16')
     return ','.join(f'{k}={v}' for k,v in values.items())
 
 

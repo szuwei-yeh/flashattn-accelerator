@@ -53,6 +53,18 @@ formal proofs.
 
 ## Reproducing checks
 
+[GitHub Actions](../.github/workflows/ci.yml) runs Python reference/accuracy,
+synthesis-parameter and runner checks; canonical noncausal/causal core/top smoke
+tests for all six d16/d64 × 256/32/16-lane configurations; default-path AXI/control
+and four-state output checks; and shared-dequantizer unit checks. Top smoke tests
+include read latencies 0/20/100. Logs and a fresh accuracy report are artifacts.
+CI is a subset of the full commands below; it does not run licensed synthesis,
+VCS or bounded formal. Its badge is live, while historical tables are recorded.
+
+The optional variants have a [separate sweep](DEQUANT_EXPERIMENT.md) that checks
+all generated numerical-analysis cases against the RTL. The [accuracy guide](NUMERICAL_ACCURACY.md)
+defines the floating-point comparison and its limits.
+
 Install Verilator, a C++ compiler, Python 3 with NumPy, and Icarus Verilog for the
 four-state check. Formal additionally needs Yosys, Z3 and SymbiYosys.
 

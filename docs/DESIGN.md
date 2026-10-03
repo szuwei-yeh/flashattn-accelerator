@@ -83,6 +83,11 @@ can become equal; this is not a full-range FP32 softmax. Dequantization rounds
 ties toward positive infinity, PV/rescale shifts round down, and final signed
 division truncates toward zero.
 
+The [numerical accuracy report](NUMERICAL_ACCURACY.md) measures these effects
+against float64 attention on identical quantized inputs. The diagram shows the
+256-lane default; optional `DEQUANT_LANES=32/16` uses a complete-tile staging
+handshake before softmax. See the [shared-dequantizer experiment](DEQUANT_EXPERIMENT.md).
+
 ## Optimization evidence
 
 - Vector writes and conflict-free banked stripe reads eliminated byte-serial

@@ -26,6 +26,7 @@ rtl/systolic/pe.sv
 rtl/systolic/systolic_array.sv
 rtl/systolic/array_controller.sv
 rtl/quantization/dequantizer.sv
+rtl/quantization/dequantizer_tile.sv
 rtl/softmax/exp_lut.sv
 rtl/softmax/online_softmax.sv
 rtl/memory/banked_scratchpad.sv

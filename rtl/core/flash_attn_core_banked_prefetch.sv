@@ -32,8 +32,9 @@
 //  variant keeps the copy style to stay bit-identical in behaviour to baseline;
 //  ping-pong select is left as future PPA work.
 //
-//  Everything from the data-slice mux onward (systolic array, dequant, online
-//  softmax, output_buffer) is copied verbatim from flash_attn_core_banked.sv.
+//  Shared-array, softmax and output arithmetic preserve the banked core's
+//  numerical contract. Optional DEQUANT_LANES=32/16 adds batched score staging;
+//  the 256-lane default retains the original parallel dequantizer timing.
 //
 //  All transaction-level configuration is sampled when the controller accepts
 //  start in S_IDLE.  Later input changes, including a start pulse while busy,
@@ -45,7 +46,8 @@ module flash_attn_core_banked_prefetch #(
     parameter int TILE_SIZE  = 16,
     parameter int HEAD_DIM   = 16,
     parameter int SEQ_LEN    = 16,
-    parameter int SRAM_DEPTH = 4096
+    parameter int SRAM_DEPTH = 4096,
+    parameter int DEQUANT_LANES = 256
 )(
     input  logic        clk,
     input  logic        rst_n,
@@ -112,6 +114,8 @@ module flash_attn_core_banked_prefetch #(
             $fatal(1, "flash_attn_core_banked_prefetch: SEQ_LEN*HEAD_DIM exceeds SRAM_DEPTH");
         if (SRAM_DEPTH != 4096)
             $fatal(1, "flash_attn_core_banked_prefetch: supported SRAM_DEPTH is 4096 (fixed 12-bit internal interfaces)");
+        if (!(DEQUANT_LANES == 256 || DEQUANT_LANES == 32 || DEQUANT_LANES == 16))
+            $fatal(1, "flash_attn_core_banked_prefetch: DEQUANT_LANES must be 256, 32 or 16");
     end
 
     // =========================================================
@@ -418,6 +422,7 @@ module flash_attn_core_banked_prefetch #(
     // =========================================================
     logic signed [15:0] dequant_out   [FLAT-1:0];
     logic [FLAT-1:0]    dequant_valid;
+    logic               dequant_tile_ready;
 
     logic is_last_qk_chunk;
     assign is_last_qk_chunk = (k_chunk == CHUNK_W'(NUM_CHUNKS - 1));
@@ -436,15 +441,34 @@ module flash_attn_core_banked_prefetch #(
             combined_scale_reg <= combined_scale_product;
     end
 
-    for (genvar gi = 0; gi < FLAT; gi++) begin : gen_dequant
-        dequantizer #(.OUT_WIDTH(16), .FRAC_BITS(8)) u_deq (
+    if (DEQUANT_LANES == 256) begin : gen_parallel_dequant
+        // Preserve the original one-cycle parallel datapath and start timing.
+        assign dequant_tile_ready = 1'b1;
+        for (genvar gi = 0; gi < FLAT; gi++) begin : gen_dequant
+            dequantizer #(.OUT_WIDTH(16), .FRAC_BITS(8)) u_deq (
+                .clk(clk), .rst_n(rst_n),
+                .valid_in(array_done && !is_pv_phase && is_last_qk_chunk),
+                .data_in(array_acc[gi]), .combined_scale(combined_scale_reg),
+                .valid_out(dequant_valid[gi]), .data_out(dequant_out[gi])
+            );
+        end
+    end else begin : gen_shared_dequant
+        logic batch_busy;
+        logic batch_done;
+        dequantizer_tile #(.LANES(DEQUANT_LANES)) u_dequant_tile (
             .clk(clk), .rst_n(rst_n),
             .valid_in(array_done && !is_pv_phase && is_last_qk_chunk),
-            .data_in(array_acc[gi]),
-            .combined_scale(combined_scale_reg),
-            .valid_out(dequant_valid[gi]),
-            .data_out(dequant_out[gi])
+            .data_in(array_acc), .combined_scale(combined_scale_reg),
+            .data_out(dequant_out), .busy(batch_busy), .done(batch_done),
+            .tile_ready(dequant_tile_ready)
         );
+        assign dequant_valid = {FLAT{batch_done}};
+        // synthesis translate_off
+        always @(posedge clk or negedge rst_n) begin
+            if (rst_n && batch_busy && array_start)
+                $fatal(1, "array reuse before shared dequantization completes");
+        end
+        // synthesis translate_on
     end
 
     // =========================================================
@@ -462,13 +486,13 @@ module flash_attn_core_banked_prefetch #(
     /* verilator lint_on UNUSEDSIGNAL */
 
     logic sfx_triggered;
+    logic tile_valid_pulse;
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n)                    sfx_triggered <= 1'b0;
         else if (sfx_exp_valid[0])     sfx_triggered <= 1'b0;
-        else if (softmax_tile_valid)   sfx_triggered <= 1'b1;
+        else if (tile_valid_pulse)     sfx_triggered <= 1'b1;
     end
-    logic tile_valid_pulse;
-    assign tile_valid_pulse = softmax_tile_valid && !sfx_triggered;
+    assign tile_valid_pulse = softmax_tile_valid && dequant_tile_ready && !sfx_triggered;
 
     for (genvar r = 0; r < SIZE; r++) begin : gen_softmax
         logic [SIZE*16-1:0] row_scores;

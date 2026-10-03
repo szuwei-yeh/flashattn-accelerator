@@ -1,5 +1,7 @@
 # FlashAttention Hardware Accelerator
 
+[![Verification](https://github.com/szuwei-yeh/flashattn-accelerator/actions/workflows/ci.yml/badge.svg)](https://github.com/szuwei-yeh/flashattn-accelerator/actions/workflows/ci.yml)
+
 **Tiled INT8 attention in SystemVerilog — from AXI reads to normalized output.**
 
 One shared **16 × 16 systolic array** performs QKᵀ and PV; **16 online-softmax
@@ -38,6 +40,11 @@ one buffer traversal per tile/chunk, then normalizes using the running sum.
 The **256 dequantizers remain**. The removed logic was an unused normalized
 softmax divider path. See the [design guide](docs/DESIGN.md)
 for arithmetic, ownership/interlocks and supported configurations.
+
+Optional [32/16-lane dequantizer experiments](docs/DEQUANT_EXPERIMENT.md) share
+the score hardware while preserving the 256-lane default. A reproducible
+[numerical accuracy report](docs/NUMERICAL_ACCURACY.md) compares the fixed-point
+output with float64 attention on the same quantized inputs.
 
 ## Measured optimization milestones
 

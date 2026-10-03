@@ -13,7 +13,8 @@ module tb_dma_banked_prefetch_harness #(
     parameter int SRAM_DEPTH = 4096,
     parameter int AXI_ADDR_W = 32,
     parameter int AXI_DATA_W = 64,
-    parameter int DRAM_DEPTH = 65536
+    parameter int DRAM_DEPTH = 65536,
+    parameter int DEQUANT_LANES = 256
 )(
     input  logic clk,
     input  logic rst_n,
@@ -69,7 +70,8 @@ module tb_dma_banked_prefetch_harness #(
 
     flash_attn_top_dma_banked_prefetch #(
         .SEQ_LEN(SEQ_LEN), .HEAD_DIM(HEAD_DIM), .TILE_SIZE(TILE_SIZE),
-        .SRAM_DEPTH(SRAM_DEPTH), .AXI_ADDR_W(AXI_ADDR_W), .AXI_DATA_W(AXI_DATA_W)
+        .SRAM_DEPTH(SRAM_DEPTH), .AXI_ADDR_W(AXI_ADDR_W), .AXI_DATA_W(AXI_DATA_W),
+        .DEQUANT_LANES(DEQUANT_LANES)
     ) u_dut (
         .clk(clk), .rst_n(rst_n), .start(start), .done(done),
         .causal(causal), .scale_q(scale_q), .scale_k(scale_k), .scale_v(scale_v),

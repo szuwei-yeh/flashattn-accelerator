@@ -15,6 +15,15 @@ class SynthesisGeometry(unittest.TestCase):
         self.assertEqual(core,{k:top[k] for k in core})
     def test_override_keeps_geometry(self):
         self.assertIn('SEQ_LEN=64',parameters('core','HEAD_DIM=64'))
+    def test_dequantizer_lane_configuration(self):
+        for profile in ('core', 'top', 'core_rtl', 'top_rtl'):
+            self.assertIn('DEQUANT_LANES=256', parameters(profile,''))
+            for lanes in (16,32,256):
+                self.assertIn(f'DEQUANT_LANES={lanes}',
+                              parameters(profile,f'DEQUANT_LANES={lanes}'))
+            for lanes in (0,1,8,17,64,257):
+                with self.assertRaisesRegex(ValueError,'DEQUANT_LANES'):
+                    parameters(profile,f'DEQUANT_LANES={lanes}')
     def test_fixed_sram_depth_contract(self):
         for profile in ('core', 'top', 'core_rtl', 'top_rtl'):
             with self.subTest(profile=profile):

@@ -1,0 +1,74 @@
+name: Verification
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Reference and accuracy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - run: python -m pip install numpy==2.2.6
+      - name: Reference, accuracy, parameter and runner contracts
+        run: |
+          python golden/test_hw_reference.py
+          python golden/test_accuracy.py
+          python syn/scripts/test_run_metadata.py
+          make -C sim/verilator test_runners PYTHON=python
+      - name: Reproduce arithmetic error analysis
+        run: python golden/report_accuracy.py --output-dir "$RUNNER_TEMP/accuracy"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: accuracy
+          path: ${{ runner.temp }}/accuracy
+
+  rtl:
+    name: RTL d${{ matrix.dim }} / ${{ matrix.lanes }} dequantizers
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        dim: [16, 64]
+        lanes: [256, 32, 16]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install simulator and compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y verilator iverilog g++ make
+          python -m pip install numpy==2.2.6
+          verilator --version
+      - name: Exact core/top noncausal and causal smoke tests
+        run: python sim/verilator/run_dequant_sweep.py --lanes ${{ matrix.lanes }} --dim ${{ matrix.dim }} --smoke
+      - name: Protocol and four-state output checks
+        if: matrix.lanes == 256 && matrix.dim == 16
+        run: make -C sim/verilator audit_fixes
+      - name: Shared dequantizer unit checks
+        if: matrix.lanes != 256 && matrix.dim == 16
+        run: make -C sim/verilator tb_dequantizer_tile DEQUANT_LANES=${{ matrix.lanes }}
+      - name: Preserve simulator logs and counts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: rtl-l${{ matrix.lanes }}-d${{ matrix.dim }}
+          path: |
+            sim/verilator/obj_dequant_*/**/*.log
+            sim/verilator/obj_dequant_reports/*.json

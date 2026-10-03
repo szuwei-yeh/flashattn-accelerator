@@ -434,6 +434,7 @@ RTL_CORE_BANKED_PREFETCH_SRCS := \
 	    ../../rtl/systolic/array_controller.sv \
 	    ../../rtl/quantization/quantizer.sv \
 	    ../../rtl/quantization/dequantizer.sv \
+	    ../../rtl/quantization/dequantizer_tile.sv \
 	    ../../rtl/softmax/exp_lut.sv \
 	    ../../rtl/softmax/online_softmax.sv \
 	    ../../rtl/memory/sram_1r1w.sv \
@@ -913,6 +914,17 @@ vcs_output_buffer_init:
 test_runners:
 	$(PYTHON) test_regression_reporting.py
 	$(PYTHON) test_vcs_runner.py
+
+# Shared dequantizer arithmetic, complete-tile publication and reset recovery.
+DEQUANT_LANES ?= 32
+.PHONY: tb_dequantizer_tile
+tb_dequantizer_tile:
+	$(VERILATOR) --sv --cc --exe --build -j 2 -Wall \
+	    --top-module dequantizer_tile -GLANES=$(DEQUANT_LANES) \
+	    --Mdir obj_dequant_unit_l$(DEQUANT_LANES) \
+	    ../../rtl/quantization/dequantizer.sv ../../rtl/quantization/dequantizer_tile.sv \
+	    tb_dequantizer_tile.cpp -o sim_dequant_unit
+	./obj_dequant_unit_l$(DEQUANT_LANES)/sim_dequant_unit
 
 # Negative controls run the real binaries on corrupt fixtures and a temporary
 # missing-done loader mutant. No checked-in fixture or RTL file is modified.
