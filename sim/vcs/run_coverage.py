@@ -21,6 +21,69 @@ PASS = "RESULT: PASS VCS attention four-state"
 FAIL = re.compile(
     r"^\s*(?:Fatal|Error)(?:[:\s-])|\b(?:FAIL|FAILED|MISMATCH|TIMEOUT)\b", re.I | re.M
 )
+RESET_CHECKPOINTS = (
+    "core_load_q", "core_load_kv", "core_qkt", "core_softmax", "core_pv",
+    "core_fused_update", "core_check_inner", "core_normalize", "core_check_outer",
+    "core_done", "core_prefetch_wait", "scheduler_q_issue", "scheduler_q_wait",
+    "scheduler_k_issue", "scheduler_k_wait", "scheduler_v_issue", "scheduler_v_wait",
+    "scheduler_done", "dma_ar", "dma_r_half_stripe", "dma_error", "array_clear",
+    "array_compute", "array_finish", "loader_issue", "loader_drain",
+    "softmax_find_max", "softmax_rescale", "softmax_rescale_wait", "softmax_accum",
+    "softmax_norm", "dequant_publish",
+)
+
+
+def reset_checkpoints(lanes):
+    return RESET_CHECKPOINTS + (() if lanes == 256 else (
+        "shared_dequant_mid_issue", "shared_dequant_retire_tail",
+    ))
+
+
+def validate_completions(output, dim, lanes, causal, latency, contract=False,
+                         reset_sweep=False):
+    """Reject incomplete/misidentified jobs and reset attempts without recovery."""
+    matches = re.findall(
+        r"^EXACT_PASS d=(\d+) lanes=(\d+) causal=(\d+) latency=(\d+) zero_v=(\d+) tb_cycles=(\d+) words=(\d+)$",
+        output, re.M,
+    )
+    names = reset_checkpoints(lanes) if reset_sweep else ()
+    expected_count = 2 * len(names) if reset_sweep else (3 if contract else 2)
+    expected_zero = ([0] * expected_count if reset_sweep
+                     else ([0, 0, 1] if contract else [0, 1]))
+    if len(matches) != expected_count or any(
+        tuple(map(int, m[:4])) != (dim, lanes, causal, latency)
+        or int(m[6]) != 64 * dim or int(m[5]) <= 0
+        or int(m[4]) != expected_zero[i]
+        for i, m in enumerate(matches)
+    ):
+        raise RuntimeError("Missing or mismatched exact completions")
+    if contract and "CONTRACT_PASS" not in output.splitlines():
+        raise RuntimeError("Missing contract PASS")
+    recoveries = []
+    if reset_sweep:
+        events = re.findall(
+            r"^(EXACT_PASS[^\n]*|RESET_HIT[^\n]*|RESET_RECOVERY_PASS[^\n]*|RESET_SWEEP_PASS[^\n]*)$",
+            output, re.M,
+        )
+        if len(events) != 4 * len(names) + 1:
+            raise RuntimeError("Incomplete reset event sequence")
+        for i, name in enumerate(names, 1):
+            prime, hit, recovery, marker = events[4 * (i - 1):4 * i]
+            hit_match = re.fullmatch(
+                r"RESET_HIT id=%d name=%s wait_cycles=(\d+)" % (i, name), hit
+            )
+            if (not prime.startswith("EXACT_PASS ")
+                or not recovery.startswith("EXACT_PASS ") or not hit_match
+                or marker != "RESET_RECOVERY_PASS id=%d name=%s zero_v=%d words=%d"
+                    % (i, name, 0, 64 * dim)):
+                raise RuntimeError("Mismatched reset checkpoint or recovery order")
+            recoveries.append(dict(
+                checkpoint=i, name=name, wait_cycles=int(hit_match[1]),
+                zero_v=0, words=64 * dim,
+            ))
+        if events[-1] != "RESET_SWEEP_PASS checkpoints=%d coverage=100.00" % len(names):
+            raise RuntimeError("Missing complete reset sweep coverage")
+    return matches, recoveries
 
 
 def run(argv, log, timeout=600, require_pass=False, cwd=ROOT):
@@ -96,7 +159,13 @@ def main():
     parser.add_argument(
         "--fixtures", type=Path, help="Directory prepared by prepare_cases.py"
     )
+    parser.add_argument(
+        "--reset-sweep", action="store_true",
+        help="Add per-stage reset/recovery checks in both causal modes at latency 100",
+    )
     args = parser.parse_args()
+    if args.reset_sweep and not args.fixtures:
+        parser.error("--reset-sweep requires --fixtures with changed Q/K/V inputs")
     base = args.run_dir.resolve()
     if base.exists():
         parser.error("Use a new run directory")
@@ -121,6 +190,9 @@ def main():
         },
         profiles=[],
         transactions=[],
+        reset_recoveries=[],
+        reset_sweep=args.reset_sweep,
+        runner_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
     )
     extra = []
     if args.fixtures:
@@ -160,21 +232,37 @@ def main():
             cases = []
             for mask in (0, 1):
                 for latency in (0, 20, 100):
-                    cases.append((canonical(dim, mask), latency, False))
-            cases += [(case, 20, False) for case in extra if case["dim"] == dim]
-            cases.append((canonical(dim, 0), 20, True))
-            for index, (case, latency, contract) in enumerate(cases):
+                    cases.append((canonical(dim, mask), latency, False, False))
+            cases += [(case, 20, False, False) for case in extra if case["dim"] == dim]
+            cases.append((canonical(dim, 0), 20, True, False))
+            if args.reset_sweep:
+                cases += [(canonical(dim, mask), 100, False, True) for mask in (0, 1)]
+            for index, (case, latency, contract, reset_sweep) in enumerate(cases):
                 name = "%02d_%s_c%d_%s" % (
                     index,
                     case["name"],
                     case["causal"],
-                    "contract" if contract else "lat%d" % latency,
+                    "reset_sweep" if reset_sweep else ("contract" if contract else "lat%d" % latency),
                 )
                 folder = Path(case["directory"])
                 hashes = validate_fixture(folder, dim)
                 if any(not -32768 <= s <= 32767 for s in case["scales"]):
                     raise ValueError("Invalid scales")
                 sq, sk, sv = case["scales"]
+                recovery_case = None
+                recovery_hashes = None
+                if reset_sweep:
+                    candidates = [x for x in extra if x["dim"] == dim
+                                  and x["causal"] == case["causal"]
+                                  and x["name"] == "random_seed7_amp1"]
+                    if len(candidates) != 1:
+                        raise ValueError("Reset sweep needs exactly one changed random fixture per mode")
+                    recovery_case = candidates[0]
+                    recovery_hashes = validate_fixture(Path(recovery_case["directory"]), dim)
+                    if (any(hashes[n] == recovery_hashes[n] for n in hashes)
+                        or recovery_case["scales"] == case["scales"]
+                        or any(not -32768 <= s <= 32767 for s in recovery_case["scales"])):
+                        raise ValueError("Recovery must change Q/K/V, golden and accepted scales")
                 command = [
                     str(binary),
                     "+DATA=" + str(folder),
@@ -184,6 +272,7 @@ def main():
                     "+CAUSAL=%d" % case["causal"],
                     "+LATENCY=%d" % latency,
                     "+CONTRACT=%d" % contract,
+                    "+RESET_SWEEP=%d" % reset_sweep,
                     "-cm",
                     METRICS,
                     "-cm_dir",
@@ -191,26 +280,29 @@ def main():
                     "-cm_name",
                     name,
                 ]
+                if reset_sweep:
+                    command += ["+RESET_DATA=" + str(recovery_case["directory"])]
+                    command += ["+RESET_%s=%d" % (label, scale)
+                                for label, scale in zip(("SQ", "SK", "SV"), recovery_case["scales"])]
                 output = run(
                     command,
                     profile / (name + ".log"),
                     require_pass=True,
                     cwd=ROOT / "sim/verilator",
                 )
-                matches = re.findall(
-                    r"EXACT_PASS d=(\d+) lanes=(\d+) causal=(\d+) latency=(\d+) zero_v=(\d+) tb_cycles=(\d+) words=(\d+)",
-                    output,
+                matches, recoveries = validate_completions(
+                    output, dim, lanes, case["causal"], latency, contract, reset_sweep
                 )
-                expected_count = 3 if contract else 2
-                if len(matches) != expected_count or any(
-                    tuple(map(int, m[:4])) != (dim, lanes, case["causal"], latency)
-                    or int(m[6]) != 64 * dim
-                    for m in matches
-                ):
-                    raise RuntimeError("Missing or mismatched exact completions")
-                if contract and "CONTRACT_PASS" not in output.splitlines():
-                    raise RuntimeError("Missing contract PASS")
-                for m in matches:
+                for recovery in recoveries:
+                    record["reset_recoveries"].append(dict(
+                        recovery, dim=dim, lanes=lanes, causal=case["causal"],
+                        latency=latency, invocation=name,
+                        recovery_case=recovery_case["name"],
+                        fixture_sha256=recovery_hashes,
+                        scales=recovery_case["scales"],
+                    ))
+                for job_index, m in enumerate(matches):
+                    alternate = reset_sweep and job_index % 2 == 1
                     record["transactions"].append(
                         dict(
                             dim=int(m[0]),
@@ -220,9 +312,12 @@ def main():
                             zero_v=int(m[4]),
                             tb_cycles=int(m[5]),
                             words=int(m[6]),
-                            case=case["name"],
+                            case=recovery_case["name"] if alternate else case["name"],
                             contract=contract,
-                            fixture_sha256=hashes,
+                            reset_sweep=reset_sweep,
+                            invocation=name,
+                            fixture_sha256=recovery_hashes if alternate else hashes,
+                            scales=recovery_case["scales"] if alternate else case["scales"],
                         )
                     )
                 print(
@@ -247,12 +342,18 @@ def main():
                     dim=dim,
                     invocations=len(cases),
                     coverage_directory=str((profile / "coverage").relative_to(base)),
+                    reset_checkpoint_count=len(reset_checkpoints(lanes)) if args.reset_sweep else 0,
+                    log_sha256={
+                        p.name: hashlib.sha256(p.read_bytes()).hexdigest()
+                        for p in sorted(profile.glob("*.log"))
+                    },
                 )
             )
             (base / "verification.json").write_text(json.dumps(record, indent=2) + "\n")
     record["status"] = "PASS"
     record["exact_transactions"] = len(record["transactions"])
     record["invocations"] = sum(p["invocations"] for p in record["profiles"])
+    record["reset_recovery_count"] = len(record["reset_recoveries"])
     (base / "verification.json").write_text(json.dumps(record, indent=2) + "\n")
     print(
         "RESULT: PASS %d invocations / %d exact transactions"

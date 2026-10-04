@@ -6,11 +6,15 @@ provenance and report excerpts are the underlying evidence.
 
 ## October 4 four-state coverage and activity analysis
 
-The added VCS bench checks the unchanged RTL: 90 invocations / 186 exact
-transactions across all six lane/dimension profiles. [Coverage scope and gaps](COVERAGE_POWER.md),
-[metrics](analysis/2026-10-04/coverage.json) and
-[source/transaction hashes](analysis/2026-10-04/coverage_verification.json)
+The latest VCS bench checks the unchanged RTL: **102 invocations / 986 exact
+transactions**, including **400 stage-reset recoveries**, across all six
+lane/dimension profiles. FSM transitions improve to 98.64–99.55%, with all
+reported reset-to-idle transitions covered. [Coverage scope and gaps](COVERAGE_POWER.md),
+[latest metrics](analysis/2026-10-04/reset_sweep/coverage.json),
+[source/transaction hashes](analysis/2026-10-04/reset_sweep/coverage_verification.json)
+and [reset checkpoint results](analysis/2026-10-04/reset_sweep/reset_recoveries.csv)
 are separate from the earlier Verilator sweep and synthesis provenance.
+The [initial 90-run coverage evidence](analysis/2026-10-04/coverage.json) is preserved.
 The matched N64/d16 activity study also completes **12 power analyses** using
 the original mapped artifacts: [power/energy](analysis/2026-10-04/power.csv),
 [annotation fractions](analysis/2026-10-04/activity_annotation.csv) and

@@ -5,13 +5,49 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from run_coverage import run, PASS, validate_fixture
+from run_coverage import run, PASS, validate_fixture, validate_completions, reset_checkpoints
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "syn/scripts"))
 from run_activity_power import normalize_scope_header, activity_counts, power_values
 
 
 class ReportingContracts(unittest.TestCase):
+    def test_reset_recovery_requires_every_checkpoint_and_output(self):
+        # A PASS banner, hit marker, or covered bin cannot replace two complete
+        # jobs (old-data prime and changed-data recovery) for each checkpoint.
+        for lanes in (256, 16):
+            with self.subTest(lanes=lanes):
+                names = reset_checkpoints(lanes)
+                lines = []
+                for i, name in enumerate(names, 1):
+                    for zero_v, extra in (
+                        (0, "RESET_HIT id=%d name=%s wait_cycles=42" % (i, name)),
+                        (0, "RESET_RECOVERY_PASS id=%d name=%s zero_v=0 words=1024" % (i, name)),
+                    ):
+                        lines += [
+                            "EXACT_PASS d=16 lanes=%d causal=0 latency=100 zero_v=%d tb_cycles=9000 words=1024" % (lanes, zero_v),
+                            extra,
+                        ]
+                lines += ["RESET_SWEEP_PASS checkpoints=%d coverage=100.00" % len(names), PASS]
+                good = "\n".join(lines)
+                jobs, recoveries = validate_completions(good, 16, lanes, 0, 100, reset_sweep=True)
+                self.assertEqual(len(jobs), 2 * len(names))
+                self.assertEqual(len(recoveries), len(names))
+                corruptions = [
+                    good.replace(lines[3] + "\n", "", 1),  # missing recovery
+                    good.replace(lines[2] + "\n", "", 1),  # missing exact output
+                    good.replace("name=core_load_q", "name=core_load_kv", 1),
+                    good.replace("words=1024", "words=1023", 1),
+                    good.replace("causal=0", "causal=1", 1),
+                    good.replace("zero_v=0", "zero_v=1", 1),
+                    good.replace("coverage=100.00", "coverage=99.00"),
+                    "\n".join(lines[:1] + [lines[2], lines[1]] + lines[3:]),
+                    good.replace(lines[1], lines[1] + "\n" + lines[1]),
+                ]
+                for bad in corruptions:
+                    with self.assertRaises(RuntimeError):
+                        validate_completions(bad, 16, lanes, 0, 100, reset_sweep=True)
+
     def test_simulation_false_success_is_rejected(self):
         for output, code, accepted in [
             (PASS, 0, True),

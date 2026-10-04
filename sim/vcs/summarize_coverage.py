@@ -16,7 +16,9 @@ def main():
     record = json.loads((args.run / "verification.json").read_text())
     if record.get("status") != "PASS":
         raise ValueError("Run has not passed")
-    args.output.mkdir(parents=True, exist_ok=True)
+    if args.output.exists():
+        raise ValueError("Use a new output directory; preserve accepted evidence")
+    args.output.mkdir(parents=True)
     rows = []
     review = []
     for profile in record["profiles"]:
@@ -91,9 +93,12 @@ def main():
         metrics="line+cond+tgl+fsm+branch+assert",
         invocations=record["invocations"],
         exact_transactions=record["exact_transactions"],
+        reset_sweep=record.get("reset_sweep", False),
+        reset_recovery_count=record.get("reset_recovery_count", 0),
         rows=rows,
     )
     (args.output / "coverage.json").write_text(json.dumps(summary, indent=2) + "\n")
+    (args.output / "coverage_verification.json").write_text(json.dumps(record, indent=2) + "\n")
     (args.output / "fsm_review.txt").write_text(
         "\n".join(line.rstrip() for line in "\n\n".join(review).splitlines()) + "\n"
     )
@@ -114,6 +119,14 @@ def main():
         )
         writer.writeheader()
         writer.writerows(rows)
+    if record.get("reset_recoveries"):
+        with (args.output / "reset_recoveries.csv").open("w", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=[
+                "lanes", "dim", "causal", "latency", "checkpoint", "name",
+                "wait_cycles", "zero_v", "words", "invocation", "recovery_case",
+            ], extrasaction="ignore", lineterminator="\n")
+            writer.writeheader()
+            writer.writerows(record["reset_recoveries"])
     print("Exported %d profiles" % len(rows))
 
 

@@ -1,0 +1,125 @@
+{
+  "status": "PASS",
+  "vcs_version": "V-2023.12-SP2",
+  "urg_version": "V-2023.12-SP2",
+  "scope": "tb_attention.dut.u_dut",
+  "metrics": "line+cond+tgl+fsm+branch+assert",
+  "invocations": 102,
+  "exact_transactions": 986,
+  "reset_sweep": true,
+  "reset_recovery_count": 400,
+  "rows": [
+    {
+      "lanes": 256,
+      "dim": 16,
+      "score": 94.74,
+      "line": 96.97,
+      "condition": 88.04,
+      "toggle": 88.64,
+      "fsm_transition": 98.64,
+      "branch": 96.17,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "48d75acfdb4367bd972f84725bd8c55628c80ba55792742e6e00c4193947a9d0",
+        "modinfo.txt": "8b59dd8356b6ea666631ca624ffbbe6416299f112dbefc9811116c7b4cad9ccb",
+        "groups.txt": "5f0dcc50bd628a7fe94fb7f15f5cbc9728d9ee2ce01ca7bfa9c6ee153744decd"
+      }
+    },
+    {
+      "lanes": 256,
+      "dim": 64,
+      "score": 95.76,
+      "line": 97.11,
+      "condition": 91.77,
+      "toggle": 89.88,
+      "fsm_transition": 99.55,
+      "branch": 96.24,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "3e553bc1f780e91670228087bed6d217e33c9fd3739fba8e8bdba9201d978715",
+        "modinfo.txt": "1cb436aff9b8c0330fee230c66d3afbebeb31ba19b101bda95c0fba204f7bffe",
+        "groups.txt": "5f0dcc50bd628a7fe94fb7f15f5cbc9728d9ee2ce01ca7bfa9c6ee153744decd"
+      }
+    },
+    {
+      "lanes": 32,
+      "dim": 16,
+      "score": 94.37,
+      "line": 97.36,
+      "condition": 90.26,
+      "toggle": 82.4,
+      "fsm_transition": 98.64,
+      "branch": 97.58,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "81f3dc9a44b2aafa836788aa0944abb866dbfbe1847f370d8d32e5030c645b4a",
+        "modinfo.txt": "9291dc2294985b1da1b9504d0509acd00087def63539be5450aee04efbc3bca7",
+        "groups.txt": "5f0dcc50bd628a7fe94fb7f15f5cbc9728d9ee2ce01ca7bfa9c6ee153744decd"
+      }
+    },
+    {
+      "lanes": 32,
+      "dim": 64,
+      "score": 94.69,
+      "line": 97.58,
+      "condition": 90.3,
+      "toggle": 83.06,
+      "fsm_transition": 99.55,
+      "branch": 97.66,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "d84c1a2a5d3fe6e916efdf0b644a91ee297861c70b3ac0674909d5d29db4d89b",
+        "modinfo.txt": "dc2057f1a999429fe2dcbd60dcc7ad6132daede6bb88f7374dfd5db1b9d04f62",
+        "groups.txt": "5f0dcc50bd628a7fe94fb7f15f5cbc9728d9ee2ce01ca7bfa9c6ee153744decd"
+      }
+    },
+    {
+      "lanes": 16,
+      "dim": 16,
+      "score": 94.24,
+      "line": 97.41,
+      "condition": 90.26,
+      "toggle": 81.41,
+      "fsm_transition": 98.64,
+      "branch": 97.71,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "61411a92704876db5d85ae08ade6a5f205a6f89df934f46a9c62cd221ebc2fe8",
+        "modinfo.txt": "b948828927164847cfbff8942519aeffeb11d698042d81633bfb68d94c08ef19",
+        "groups.txt": "5f0dcc50bd628a7fe94fb7f15f5cbc9728d9ee2ce01ca7bfa9c6ee153744decd"
+      }
+    },
+    {
+      "lanes": 16,
+      "dim": 64,
+      "score": 94.54,
+      "line": 97.64,
+      "condition": 90.3,
+      "toggle": 81.97,
+      "fsm_transition": 99.55,
+      "branch": 97.79,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "8de6172044e92fd577435b37dbdafa5c9594a76cd469884f797c9971183ceb38",
+        "modinfo.txt": "4818b701bbf60daf3aff07384fd7e77dbc427b8ef43ba33591213a9bc0e615ec",
+        "groups.txt": "5f0dcc50bd628a7fe94fb7f15f5cbc9728d9ee2ce01ca7bfa9c6ee153744decd"
+      }
+    }
+  ],
+  "source_snapshot": "RTL unchanged from 98db476 / measured d5f9123-dd68964; new bench and runner identified by verification SHA-256",
+  "fixture_generation": {
+    "python": "3.12.7",
+    "numpy": "1.26.4",
+    "source_sha256": {
+      "sim/vcs/prepare_cases.py": "8b379eb5c8114815e081fce077dcb7b58d9faa74ae6a8f07f880f14748e5e3e0",
+      "golden/generate_hw_expected.py": "1cc709bc4eae0dea7fbf51b5c78fc99f7c8e0a18ddbbf6cb9eadfcfc32e84683",
+      "golden/report_accuracy.py": "f9e0045ef21598504efb0c93728fe41523c96c28ebd01c02879940e23ab88015",
+      "data/exp_lut.hex": "231426352ac24b9db01139926763565da8b80ba8799ea838f481e5b708944c5c"
+    }
+  },
+  "cycles_matching_october3_geometry_latency_reference": 986,
+  "exporter_sha256": "7c38acd84d35abe219b271fcee5f5f1a5a5925cc75dfbd7094b557caec34e1be",
+  "execution_scope": "Three independent lane groups; separate per-profile VDBs/URG scores, no cross-elaboration merge",
+  "old_evidence_preserved": "../coverage.json",
+  "targeted_reset_scope": "Common DUT + behavioral AXI-slave reset; 32/34 named stages, both causal modes, latency100; changed Q/K/V/scales and full nonzero golden recovery without a second reset"
+}

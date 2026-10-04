@@ -20,8 +20,9 @@ module tb_attention;
     wire [15:0] perf_kv_tiles_loaded, dbg_kv_tiles_ready;
     logic [7:0] q[0:MAT-1], k[0:MAT-1], v[0:MAT-1];
     logic [31:0] expected[0:MAT-1];
-    string data_dir, activity_file;
-    int sq,sk,sv,mode_arg,latency_arg,contract_arg=0,restart_arg=1;
+    string data_dir, activity_file, reset_data_dir;
+    int reset_sq,reset_sk,reset_sv;
+    int sq,sk,sv,mode_arg,latency_arg,contract_arg=0,restart_arg=1,reset_sweep_arg=0;
     int event_id=0, cycles=0, output_writes=0;
     bit capture_activity=0;
     tb_dma_banked_prefetch_harness #(.SEQ_LEN(N),.HEAD_DIM(D),.DEQUANT_LANES(LANES)) dut (
@@ -63,6 +64,115 @@ module tb_attention;
         promotion: coverpoint dut.u_dut.u_core.kv_swap_banks iff(rst_n) {bins used={1};}
     endgroup
     controller_cg controller = new;
+    // Created only for the optional reset sweep. Bins count checked recovery,
+    // not merely reaching a state or asserting reset.
+    covergroup reset_recovery_cg with function sample(int checkpoint);
+        option.per_instance=1;
+        checkpoint_cp: coverpoint checkpoint {
+            bins supported[] = {[1:(LANES==256 ? 32 : 34)]};
+        }
+    endgroup
+    reset_recovery_cg reset_recovery;
+    wire shared_issue_mid, shared_retire_tail, shared_reset_clean;
+    if (LANES != 256) begin : observe_shared_reset
+        assign shared_issue_mid = dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.busy
+            && dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.issue_active
+            && (int'(dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.issue_group) >= (256/LANES)/2);
+        assign shared_retire_tail = dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.busy
+            && !dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.issue_active
+            && dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.retire_valid;
+        assign shared_reset_clean = !dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.busy
+            && !dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.done
+            && !dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.tile_ready
+            && !dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.issue_active
+            && !dut.u_dut.u_core.gen_shared_dequant.u_dequant_tile.retire_valid;
+    end else begin : observe_parallel_reset
+        assign shared_issue_mid=0;
+        assign shared_retire_tail=0;
+        assign shared_reset_clean=1;
+    end
+    function automatic string checkpoint_name(input int checkpoint);
+        case (checkpoint)
+            1: return "core_load_q"; 2: return "core_load_kv";
+            3: return "core_qkt"; 4: return "core_softmax";
+            5: return "core_pv"; 6: return "core_fused_update";
+            7: return "core_check_inner"; 8: return "core_normalize";
+            9: return "core_check_outer"; 10: return "core_done";
+            11: return "core_prefetch_wait";
+            12: return "scheduler_q_issue"; 13: return "scheduler_q_wait";
+            14: return "scheduler_k_issue"; 15: return "scheduler_k_wait";
+            16: return "scheduler_v_issue"; 17: return "scheduler_v_wait";
+            18: return "scheduler_done";
+            19: return "dma_ar"; 20: return "dma_r_half_stripe";
+            21: return "dma_error";
+            22: return "array_clear"; 23: return "array_compute";
+            24: return "array_finish";
+            25: return "loader_issue"; 26: return "loader_drain";
+            27: return "softmax_find_max"; 28: return "softmax_rescale";
+            29: return "softmax_rescale_wait"; 30: return "softmax_accum";
+            31: return "softmax_norm"; 32: return "dequant_publish";
+            33: return "shared_dequant_mid_issue";
+            34: return "shared_dequant_retire_tail";
+            default: return "invalid_checkpoint";
+        endcase
+    endfunction
+    function automatic bit checkpoint_reached(input int checkpoint);
+        int target;
+        if (checkpoint>=1 && checkpoint<=11) begin
+            target=checkpoint;
+            if(checkpoint>=5) target=checkpoint+1;
+            if(checkpoint==11) target=12;
+            return dut.u_dut.u_core._dbg_state === 4'(target);
+        end
+        if (checkpoint>=12 && checkpoint<=18)
+            return dut.u_dut.sch_state === 3'(checkpoint-11);
+        case (checkpoint)
+            19: return dut.u_dut.u_dma.state === 2'd1;
+            20: return (dut.u_dut.u_dma.state === 2'd2)
+                && (dut.u_dut.u_dma.beat_in_stripe === 1'b1);
+            21: return dut.u_dut.u_dma.state === 2'd3;
+            22: return dut.u_dut.u_core.u_array_ctrl.state === 2'd1;
+            23: return (dut.u_dut.u_core.u_array_ctrl.state === 2'd2)
+                && (dut.u_dut.u_core.u_array_ctrl.cycle_cnt >= 8);
+            24: return dut.u_dut.u_core.u_array_ctrl.state === 2'd3;
+            25: return (dut.u_dut.u_core.u_loader.state === 2'd1)
+                && (dut.u_dut.u_core.u_loader.issue_cnt >= 4);
+            26: return dut.u_dut.u_core.u_loader.state === 2'd2;
+            32: return dut.u_dut.u_core.dequant_valid[0] === 1'b1;
+            33: return shared_issue_mid === 1'b1;
+            34: return shared_retire_tail === 1'b1;
+            default: begin
+                if (checkpoint>=27 && checkpoint<=31) begin
+                    for(int row=0;row<16;row++)
+                        if(dut.u_dut.u_core.sfx_dbg_state[row] !== 3'(checkpoint-26)) return 0;
+                    return 1;
+                end
+                return 0;
+            end
+        endcase
+    endfunction
+    task automatic check_reset_clean;
+        if (dut.u_dut.u_core._dbg_state !== 0 || dut.u_dut.sch_state !== 0
+            || dut.u_dut.u_dma.state !== 0 || dut.u_dut.u_core.u_array_ctrl.state !== 0
+            || dut.u_dut.u_core.u_loader.state !== 0
+            || dut.u_dut.u_core.transaction_consumed !== 0
+            || done !== 0 || dma_error !== 0 || dbg_output_we !== 0
+            || perf_total_cycles !== 0 || perf_dma_bytes !== 0
+            || perf_kv_tiles_loaded !== 0 || dbg_kv_tiles_ready !== 0
+            || dut.u_dut.perf_dma_busy_cycles !== 0 || dut.u_dut.perf_core_busy_cycles !== 0
+            || dut.u_dut.perf_first_tile_wait_cycles !== 0
+            || dut.arvalid !== 0 || dut.rready !== 0 || dut.rvalid !== 0
+            || dut.u_dut.u_dma.w_en !== 0 || dut.u_dut.u_core.ld_wr_en !== 0
+            || dut.u_dut.u_core.kv_swap_banks !== 0 || shared_reset_clean !== 1
+            || dut.u_dut.u_core.dequant_valid !== 256'b0)
+            $fatal(1,"Reset left control, activity, error, counters or dequant validity live");
+        for(int row=0;row<16;row++)
+            if(dut.u_dut.u_core.sfx_dbg_state[row] !== 0
+                || dut.u_dut.u_core.sfx_running_sum[row] !== 0
+                || dut.u_dut.u_core.sfx_exp_valid[row] !== 0
+                || dut.u_dut.u_core.sfx_rescale_valid[row] !== 0)
+                $fatal(1,"Reset left softmax row %0d live",row);
+    endtask
     task automatic valid_config;
         cfg_seq_len=N;cfg_q_base=0;cfg_k_base=MAT;cfg_v_base=2*MAT;
         scale_q=16'(sq);scale_k=16'(sk);scale_v=16'(sv);causal=mode_arg!=0;
@@ -81,6 +191,14 @@ module tb_attention;
         end
         init_we=0;@(negedge clk);
     endtask
+    task automatic read_fixture(input string directory);
+        // Clear first so a truncated replacement cannot reuse previous words.
+        for(int i=0;i<MAT;i++) begin q[i]='x;k[i]='x;v[i]='x;expected[i]='x;end
+        $readmemh({directory,"/q_input.hex"},q);$readmemh({directory,"/k_input.hex"},k);
+        $readmemh({directory,"/v_input.hex"},v);$readmemh({directory,"/expected.hex"},expected);
+        for(int i=0;i<MAT;i++)
+            if($isunknown({q[i],k[i],v[i],expected[i]})) $fatal(1,"Incomplete/unknown fixture at %0d",i);
+    endtask
     task automatic launch;
         if(cfg_error !== 0) $fatal(1,"Unexpected configuration error");
         start=1;@(negedge clk);start=0;
@@ -94,10 +212,11 @@ module tb_attention;
         if(perf_dma_bytes !== 32'(3*MAT) || perf_kv_tiles_loaded !== 16'd4)
             $fatal(1,"DMA accounting mismatch");
     endtask
-    task automatic successful_job(input bit zero_v,input bit hostile);
+    task automatic successful_job(input bit zero_v,input bit hostile,input bit do_reset=1);
         bit accepted_mode;
         time active_begin,active_end;
-        reset_common();load_dram(zero_v);accepted_mode=causal;
+        if(do_reset) reset_common();
+        load_dram(zero_v);accepted_mode=causal;
         if(capture_activity) begin
             $dumpfile(activity_file);$dumpvars(0,dut.u_dut);
             $dumpon;
@@ -179,6 +298,54 @@ module tb_attention;
         contracts.sample(7);successful_job(1,0);
         $display("CONTRACT_PASS");
     endtask
+    task automatic check_reset_sweep;
+        int wait_cycles,total_checkpoints;
+        int old_sq,old_sk,old_sv;
+        logic [31:0] old_expected[0:MAT-1];
+        bit different_expected,nonzero_expected;
+        old_sq=sq;old_sk=sk;old_sv=sv;
+        for(int i=0;i<MAT;i++) old_expected[i]=expected[i];
+        read_fixture(reset_data_dir);
+        different_expected=0;nonzero_expected=0;
+        for(int i=0;i<MAT;i++) begin
+            if(expected[i]!==old_expected[i]) different_expected=1;
+            if(expected[i]!==32'b0) nonzero_expected=1;
+        end
+        if(!different_expected || !nonzero_expected)
+            $fatal(1,"Reset sweep requires a changed nonzero golden output");
+        total_checkpoints=(LANES==256)?32:34;
+        reset_recovery=new;
+        for(int checkpoint=1;checkpoint<=total_checkpoints;checkpoint++) begin
+            // Prime known stale output, then abort another original-data job.
+            // Recovery replaces Q/K/V and scales, and has a nonzero golden.
+            read_fixture(data_dir);sq=old_sq;sk=old_sk;sv=old_sv;
+            successful_job(0,0);
+            reset_common();load_dram(0);launch();
+            if(checkpoint==21) inject_rresp=2;
+            wait_cycles=0;
+            while(!checkpoint_reached(checkpoint) && wait_cycles<200000) begin
+                @(negedge clk);wait_cycles++;
+                if(dma_error !== 0 && checkpoint!=21) $fatal(1,"Unexpected fault while seeking reset checkpoint");
+            end
+            if(!checkpoint_reached(checkpoint))
+                $fatal(1,"Reset checkpoint not reached id=%0d name=%s",checkpoint,checkpoint_name(checkpoint));
+            $display("RESET_HIT id=%0d name=%s wait_cycles=%0d",checkpoint,checkpoint_name(checkpoint),wait_cycles);
+            // Off-edge assertion also checks asynchronous control reset before
+            // a new rising edge. Memory contents deliberately remain untouched.
+            #1;rst_n=0;start=0;inject_rresp=0;inject_bad_rlast=0;
+            #1;check_reset_clean();
+            repeat(3) begin @(negedge clk);check_reset_clean();end
+            valid_config();rst_n=1;
+            repeat(5) begin @(negedge clk);check_reset_clean();end
+            // Reuse this exact reset release; no second reset can hide a bad
+            // recovery. Initialization changes only external DRAM contents.
+            read_fixture(reset_data_dir);sq=reset_sq;sk=reset_sk;sv=reset_sv;
+            valid_config();successful_job(0,0,0);
+            reset_recovery.sample(checkpoint);
+            $display("RESET_RECOVERY_PASS id=%0d name=%s zero_v=0 words=%0d",checkpoint,checkpoint_name(checkpoint),MAT);
+        end
+        $display("RESET_SWEEP_PASS checkpoints=%0d coverage=%0.2f",total_checkpoints,reset_recovery.get_inst_coverage());
+    endtask
     initial begin
         $timeformat(-9,0,"",0);
         if(!$value$plusargs("DATA=%s",data_dir)) $fatal(1,"Missing DATA");
@@ -186,14 +353,18 @@ module tb_attention;
         if(!$value$plusargs("CAUSAL=%d",mode_arg) || !$value$plusargs("LATENCY=%d",latency_arg)) $fatal(1,"Missing mode/latency");
         if($value$plusargs("CONTRACT=%d",contract_arg)) begin end
         if($value$plusargs("RESTART=%d",restart_arg)) begin end
+        if($value$plusargs("RESET_SWEEP=%d",reset_sweep_arg)) begin end
         capture_activity=$value$plusargs("ACTIVITY=%s",activity_file);
+        if(reset_sweep_arg!=0 && (contract_arg!=0 || capture_activity))
+            $fatal(1,"Reset sweep must be separate from contracts and activity capture");
+        if(reset_sweep_arg!=0 && (!$value$plusargs("RESET_DATA=%s",reset_data_dir)
+            || !$value$plusargs("RESET_SQ=%d",reset_sq) || !$value$plusargs("RESET_SK=%d",reset_sk)
+            || !$value$plusargs("RESET_SV=%d",reset_sv))) $fatal(1,"Missing reset recovery fixture/scales");
         rd_latency=16'(latency_arg);
-        $readmemh({data_dir,"/q_input.hex"},q);$readmemh({data_dir,"/k_input.hex"},k);
-        $readmemh({data_dir,"/v_input.hex"},v);$readmemh({data_dir,"/expected.hex"},expected);
-        for(int i=0;i<MAT;i++)
-            if($isunknown({q[i],k[i],v[i],expected[i]})) $fatal(1,"Incomplete/unknown fixture at %0d",i);
+        read_fixture(data_dir);
         #1;if(!$isunknown(dut.u_dut.u_core.u_out_buf.u_sram_o.mem[0])) $fatal(1,"Requires unknown initial SRAM");
-        if(contract_arg!=0) check_contracts();
+        if(reset_sweep_arg!=0) check_reset_sweep();
+        else if(contract_arg!=0) check_contracts();
         else begin
             successful_job(0,0);
             capture_activity=0;

@@ -144,6 +144,13 @@ The additional [VCS/URG flow](../sim/vcs/README.md) runs the integrated path
 with unknown initial SRAM, exact full-output checks, changed-data common-reset
 recovery and configuration/DMA fault contracts for all six lane/dimension
 profiles. It reports DUT code coverage and explicit functional covergroups.
+The optional `--reset-sweep` checks 32/34 stages per profile in both causal modes:
+prime old output, abort at the selected stage, check common reset/quiescence,
+then replace Q/K/V and scales and compare all output words without another reset.
+It includes
+DMA half-stripe state, all softmax stages and shared-dequantizer issue/retire.
+This checks selected common-reset points, not arbitrary reset timing, physical
+reset recovery/removal or independent AXI-master drain/recovery.
 See [coverage evidence and unwaived gaps](COVERAGE_POWER.md); the licensed
 coverage run is separate from GitHub Actions and from `make coverage`, which
 is a compatibility scenario-test target.

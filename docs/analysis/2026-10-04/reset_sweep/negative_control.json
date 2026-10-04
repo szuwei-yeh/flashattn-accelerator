@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "scope": "Real VCS negative control; intentionally skip the targeted reset assertion in a temporary bench copy",
+  "dim": 16,
+  "lanes": 16,
+  "causal": 0,
+  "latency": 100,
+  "rejected": true,
+  "diagnostic": "Reset left control, activity, error, counters or dequant validity live",
+  "mutation": {
+    "before": "#1;rst_n=0;start=0;inject_rresp=0;inject_bad_rlast=0;",
+    "after": "#1;rst_n=1;start=0;inject_rresp=0;inject_bad_rlast=0;"
+  },
+  "original_bench_sha256": "104a63fa77d42ee422d6caf59b5eaf7a9af4a64a45a14e75c8bda0fb5967650b",
+  "mutated_bench_sha256": "5f40ce952e3b10520ee84f754ddeb4b7f8b99e6632c3856d5c5e6d29e6dfb3f9",
+  "fixture_sha256": {
+    "q_input.hex": "c838dfc0f9958ef37d9aa8554903e43cfcc1a836d1d5deed16c4d9ac722f6cf8",
+    "k_input.hex": "ef05b5997be3b4b22444af6c07bf72936e82e22e9753c6bfc11fa2744b10d909",
+    "v_input.hex": "6c842070dfb6a8f9dc2813a1721ef5c186dc27fac57e360a7ccd6f2c3148007e",
+    "expected.hex": "02d4ec22ccb553b625b9249fec7ed587a0949e34c1e51737f3439ccc87a165f6"
+  },
+  "report_sha256": {
+    "build.log": "ded6dbf15f09db6e5c71c0f005836d95870a304035909e3d5f5e1c934fa3132a",
+    "run.log": "23eb487b8d7cdcb3a2cd5f277795ce1e192e149dd07e8c186bf0e33cc8a58311"
+  }
+}

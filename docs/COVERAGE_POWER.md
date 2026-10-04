@@ -7,20 +7,28 @@ and the earlier Verilator sweep remain intact.
 
 ## Main-path VCS/URG coverage
 
-VCS/URG **V-2023.12-SP2** completed **90 invocations / 186 exact transactions**
+VCS/URG **V-2023.12-SP2** completed **102 invocations / 986 exact transactions**
 across 256/32/16 lanes and d16/d64. All outputs, DMA byte/tile accounting and
-cycle-counter checks passed. The 72 canonical transactions in this experiment
-have exactly the same cycles as the recorded October 3 sweep. These are additional
+cycle-counter checks passed, including **400 stage-reset/recovery cases** and
+2,524,160 checked output words. Every completed job retains the October 3 cycle
+count for its lane/dimension/causal/read-latency geometry. These are additional
 checks of the same design, not an expansion to a multiple-jobs-per-reset interface.
 
 | Lanes | Dimension | Line | Condition | Toggle | FSM transitions | Branch | Defined functional groups |
 |---|---|---:|---:|---:|---:|---:|---:|
-| 256 | d16 | 96.97% | 88.04% | 88.64% | 69.55% | 96.17% | 100% |
-| 256 | d64 | 97.11% | 91.77% | 89.88% | 64.09% | 96.24% | 100% |
-| 32 | d16 | 97.36% | 90.26% | 82.40% | 69.55% | 97.58% | 100% |
-| 32 | d64 | 97.58% | 90.30% | 83.06% | 64.09% | 97.66% | 100% |
-| 16 | d16 | 97.41% | 90.26% | 81.41% | 69.55% | 97.71% | 100% |
-| 16 | d64 | 97.64% | 90.30% | 81.97% | 64.09% | 97.79% | 100% |
+| 256 | d16 | 96.97% | 88.04% | 88.64% | 98.64% | 96.17% | 100% |
+| 256 | d64 | 97.11% | 91.77% | 89.88% | 99.55% | 96.24% | 100% |
+| 32 | d16 | 97.36% | 90.26% | 82.40% | 98.64% | 97.58% | 100% |
+| 32 | d64 | 97.58% | 90.30% | 83.06% | 99.55% | 97.66% | 100% |
+| 16 | d16 | 97.41% | 90.26% | 81.41% | 98.64% | 97.71% | 100% |
+| 16 | d64 | 97.64% | 90.30% | 81.97% | 99.55% | 97.79% | 100% |
+
+The [initial 90-invocation / 186-transaction sweep](analysis/2026-10-04/coverage.json)
+is preserved separately. Its FSM transitions were 69.55% for d16 and 64.09% for
+d64. The follow-up reruns those scenarios and adds 12 reset-sweep invocations;
+line/condition/toggle/branch coverage is unchanged. Reset already executed at
+startup, so covering reset from additional states improves transition coverage
+without necessarily adding executed lines. No cross-elaboration VDB merge is used.
 
 Each profile runs canonical causal/noncausal fixtures at read latencies
 0/20/100 and four additional fixture families in both causal modes: random
@@ -37,23 +45,60 @@ the first expected word and truncating the expected file—were rejected by real
 VCS execution. Python failure-handling checks also reject zero-exit failures and
 missing completion markers.
 
+### Stage reset/recovery follow-up
+
+The optional `--reset-sweep` adds 32 named checkpoints for the parallel design
+and 34 for shared dequantization, in both causal modes at read latency 100:
+
+| Block | Targeted stages |
+|---|---|
+| Tile controller | All 11 non-idle states, including Q/K/V loading, QKᵀ, softmax, PV, fused output update, normalization and prefetch wait |
+| DMA scheduler | All seven non-idle states, including Q/K/V issue and wait |
+| Read DMA | Address request, receive with a retained half stripe, and sticky error |
+| Array controller | Clear, compute after at least eight cycles, and finish |
+| Tile loader | Issue after at least four stripes, and drain |
+| All 16 softmax lanes | Find max, rescale, rescale wait, accumulate and norm |
+| Dequantization | Published-score validity; shared variants additionally interrupt mid-issue and the final pending retirement |
+
+Each checkpoint primes a fully checked canonical output, starts another
+canonical job and interrupts it at the named stage. Reset is asserted between
+clock edges. The bench checks idle control, cleared counters/errors/validity,
+and no DMA/output/loader writes or AXI activity during reset and for five cycles
+after release. It then loads a different prepared Q/K/V fixture and accepted
+scales and compares every output word with the new golden **without another
+reset**. The new golden must differ from the old output and cannot be all zero.
+Replacement fixture words are cleared to unknown before reading, so incomplete
+files cannot borrow old data. Neither scratchpad nor output SRAM is cleared by
+the bench. Regular cases separately retain changed-V-zero recovery.
+
+Recovery bins are sampled only after full-output and accounting checks. The
+runner rejects missing, duplicate, reordered or misidentified checkpoint
+markers, incorrect completion counts and incomplete reset-bin coverage.
+The reset remains common to DUT and behavioral AXI slave. This is selected-stage
+simulation, not exhaustive interruption timing, independent-master AXI recovery
+or physical asynchronous-reset recovery/removal signoff.
+
 ### Remaining coverage gaps
 
 Coverage includes only the integrated DUT hierarchy; there are no waivers. The
 100% functional number means all explicitly declared bins were hit: successful
-latency/causal combinations, nine contract events, 12 controller states and
-shadow promotion. It does not mean every legal input or fault interleaving was
+latency/causal combinations, nine contract events, 12 controller states,
+shadow promotion and 32/34 checked reset recoveries. It does not mean every legal input or fault interleaving was
 exercised. Procedural error checks contribute code coverage; no new complete
 SVA assertion-coverage claim is made.
 
 URG's FSM score counts transitions; state coverage is reported separately and
 is not included in that score. All enumerated controller, scheduler, DMA,
-array-controller, loader and softmax states were reached. For example, in the
-16-lane/d64 report the tile controller reaches all 12 states but 18/26 transitions,
-and softmax reaches all six states but 6/10 transitions. The remaining softmax
-transitions return to idle through reset from intermediate states. Reset during
-partial output is exercised, but reset at every state is not. The DMA's
-`S_IDLE → S_ERROR` guard is not driven by the valid integrated scheduler.
+array-controller, loader and softmax states were reached, and all reported
+reset-to-idle transitions are now covered. Every softmax instance reaches
+10/10 transitions; the tile controller reaches 26/26 for d64 and 25/26 for d16.
+The only remaining reported FSM transitions are:
+
+| Transition | Profiles | Reason / separate evidence |
+|---|---|---|
+| Controller `S_FUSED_UPDATE → S_MATMUL_PV` | d16 only | Next output chunk; d16 has one chunk. Covered by d64. |
+| Array `IDLE → COMPUTE` without clear | d16 only | Retaining partial sums across QK chunks; d16 has one chunk. Covered by d64. |
+| DMA `S_IDLE → S_ERROR` | All six | Illegal descriptor guard; validated integrated scheduler emits legal descriptors. The separate DMA protocol unit test checks eight invalid descriptor cases. |
 
 Other gaps include the output buffer's standalone rescale branch (the main path
 uses fused rescale/accumulate), forbidden-mode error statements and signal bits
@@ -62,10 +107,15 @@ reported percentages. They do not establish unreachable-code proofs or replace
 unit tests, protocol checks and the separately recorded bounded formal analysis.
 
 [Commands and bench contracts](../sim/vcs/README.md) ·
-[Coverage metrics and report hashes](analysis/2026-10-04/coverage.json) ·
-[Transactions and source hashes](analysis/2026-10-04/coverage_verification.json) ·
-[Unwaived FSM detail](analysis/2026-10-04/fsm_review.txt) ·
-[Intentional failing checks](analysis/2026-10-04/negative_controls.json)
+[Latest metrics and report hashes](analysis/2026-10-04/reset_sweep/coverage.json) ·
+[Transactions and source hashes](analysis/2026-10-04/reset_sweep/coverage_verification.json) ·
+[All 400 reset recoveries](analysis/2026-10-04/reset_sweep/reset_recoveries.csv) ·
+[Unwaived FSM detail](analysis/2026-10-04/reset_sweep/fsm_review.txt)
+
+A temporary bench mutation omitting the targeted reset was rejected by real VCS
+at the first checkpoint; [mutation, diagnostic and hashes](analysis/2026-10-04/reset_sweep/negative_control.json)
+are retained. The original corrupt/truncated-output
+[negative controls](analysis/2026-10-04/negative_controls.json) remain separate.
 
 ## Workload-based standard-cell power estimates
 
@@ -107,7 +157,7 @@ explicitly checked in both the bench and the collector.
 These are the four named fixtures, not a representative model workload average.
 Saturated cases still follow the fixed-point contract; their floating-point
 accuracy limitations remain in the [numerical report](NUMERICAL_ACCURACY.md).
-The additional exact jobs are separate from the 186-transaction coverage count.
+Power-capture jobs are counted separately from both coverage experiments.
 
 ### Annotation quality and interpretation
 

@@ -73,7 +73,7 @@ separate these results from the earlier vectorless DC estimate.
 | Layer | Recorded checks |
 |---|---|
 | Exact end-to-end RTL | **312 invocations / 624 transactions** across 256/32/16 lanes, d16/d64, causal/noncausal and top read latencies 0/20/100 |
-| Main-path four-state coverage | **90 VCS invocations / 186 exact transactions**; DUT line 96.97–97.64%, branch 96.17–97.79%; all defined functional bins hit |
+| Main-path four-state coverage | **102 VCS invocations / 986 exact transactions**, including 400 stage-reset recoveries; DUT line 96.97–97.64%, FSM transitions 98.64–99.55%; all defined functional bins hit |
 | Arithmetic and state | Full default regression; signed-scale and saturation corner cases; 200 shared-score tiles per 16/32-lane variant; four-state initialization and partial-tile reset checks |
 | AXI and control | Backpressure, burst boundaries, response errors, address guards, accepted-configuration locking, busy-start rejection and common-reset recovery |
 | Bounded formal | Controller safety to depth 48 and reachability covers, with an abstracted datapath |

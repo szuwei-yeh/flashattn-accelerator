@@ -4,12 +4,17 @@ Navigation: [documentation index](README.md).
 
 ## October 4 additional verification
 
-The unchanged design also passed a VCS/URG four-state integrated sweep: **90
-invocations / 186 exact transactions** over all six lane/dimension profiles,
+The unchanged design also passed a VCS/URG four-state integrated sweep: **102
+invocations / 986 exact transactions** over all six lane/dimension profiles,
 with full output/accounting checks, DMA/configuration contracts and common-reset
-recovery. Canonical cycle counts match the earlier sweep. DUT line coverage is
+recovery. This includes **400 stage-reset recoveries**: prime old output, interrupt
+the named stage, then replace Q/K/V/scales and compare complete nonzero golden
+outputs without another reset. All completed jobs match the earlier cycle count
+for their geometry and read latency. DUT line coverage is
 96.97–97.64%; branch coverage is 96.17–97.79%. The defined functional bins all
-hit, while FSM transition coverage remains 64.09–69.55% with no waivers.
+hit, and FSM transition coverage improves from 64.09–69.55% to **98.64–99.55%**
+with no waivers. All reported reset-to-idle transitions are covered; remaining
+transitions are the d16-unused chunk paths and the integrated DMA descriptor guard.
 [Scope, gaps and reproduction](COVERAGE_POWER.md) explain those distinctions.
 This adds evidence, without changing the original measured RTL or netlists.
 
