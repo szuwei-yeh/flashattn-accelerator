@@ -157,3 +157,59 @@ or large generated artifacts. Supply library/tool access separately when reprodu
 
 A passing logical synthesis run does not establish memory timing, physical setup/
 hold closure, signoff power, or mapped-netlist functional equivalence.
+
+## Workload activity on preserved mapped tops
+
+The [activity power runner](scripts/run_activity_power.py) checks preserved
+mapped netlist/SDC/library/RTL hashes against matched synthesis provenance,
+captures VCS RTL VCD activity for an exact-checked job, then uses
+[PrimeTime/PrimePower](scripts/pt_activity_power.tcl) in averaged mode. It does
+not synthesize another implementation. Results are N64/d16 only, at the same
+10 ns clock, with zero modeled AXI read latency.
+
+First complete the [VCS coverage flow](../sim/vcs/README.md). For the published
+October 3 mapped artifacts, set the tool/library environment through your EDA
+installation and run from the repository root:
+
+```sh
+# PT_SHELL_BIN selects a working licensed pt_shell. DC_TARGET_LIBRARY must
+# point to the same .db used for synthesis. Some installations also require
+# SYNOPSYS_LC_ROOT and its bin directory on PATH.
+python3 syn/scripts/run_activity_power.py \
+  --run-dir "$PWD/syn/runs/activity_new" \
+  --vcs-run "$PWD/sim/vcs/runs/coverage_new" \
+  --mapped-root "$PWD/syn/runs" \
+  --provenance docs/evidence/2026-10-03/provenance.json \
+  --fixtures /tmp/attention-extra-fixtures
+```
+
+This example requires the preserved `dequant_20261003_l{256,32,16}_n64d16/top`
+artifacts; public git does not contain licensed netlists/databases. For your own
+fresh matched synthesis runs, first collect their provenance with
+`report_dequant_sweep.py`, then pass that JSON to `--provenance` and the matching
+`--mapped-tag 'experiment_l{lanes}_n64d16'`. Rerunning synthesis need not produce
+byte-identical artifacts, so it must have its own provenance.
+
+The runner rebuilds d16 VCS executables with array dumping enabled, rather than
+modifying the accepted coverage databases. Four workloads per lane configuration
+are checked: canonical noncausal/causal, random seed 7, and distinct saturated
+logits. VCD capture covers accepted start through completion; host initialization
+and output readout are excluded. The activity duration includes the accepted
+start cycle (`perf_total_cycles = tb_cycles + 1`).
+
+Only VCD header names/ranges are normalized for DC's generate-scope renaming and
+packed array buses; timestamp/value records are preserved. Both original and
+normalized VCD hashes are retained. `read_vcd -rtl` maps activity to the preserved
+netlist, and the tool propagates activity into unmapped combinational logic.
+The runner requires no PrimeTime errors, an explicit completion marker, consistent
+power units/sums and at least 95% file-or-implied activity on primary-input and
+sequential-driver nets. File, implied, propagated, default and unannotated counts
+remain separate in the result. Implied activity is derived without random-vector
+propagation from annotated points; it is not counted as direct VCD annotation.
+
+`power.json` records per-workload input/report/activity hashes and annotation
+counts; `power.csv` records W and nJ/transaction. The conversion is
+`energy_nJ = total_power_W × activity_duration_ns`. Inspect residual activity
+reports and warning logs as well as PASS markers. These are pre-layout
+standard-cell estimates, with logical SRAM/ROM blackboxes, not physical memory
+or whole-system energy. See [coverage and power evidence](../docs/COVERAGE_POWER.md).

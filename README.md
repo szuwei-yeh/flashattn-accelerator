@@ -66,6 +66,7 @@ synthesis comparison is **d16 only**. The default remains 256 lanes.
 | Layer | Recorded checks |
 |---|---|
 | Exact end-to-end RTL | **312 invocations / 624 transactions** across 256/32/16 lanes, d16/d64, causal/noncausal and top read latencies 0/20/100 |
+| Main-path four-state coverage | **90 VCS invocations / 186 exact transactions**; DUT line 96.97–97.64%, branch 96.17–97.79%; all defined functional bins hit |
 | Arithmetic and state | Full default regression; signed-scale and saturation corner cases; 200 shared-score tiles per 16/32-lane variant; four-state initialization and partial-tile reset checks |
 | AXI and control | Backpressure, burst boundaries, response errors, address guards, accepted-configuration locking, busy-start rejection and common-reset recovery |
 | Bounded formal | Controller safety to depth 48 and reachability covers, with an abstracted datapath |
@@ -80,6 +81,7 @@ controller behavior, and CI runs a subset of the full verification suite.
 The optimized interface accepts **one transaction per common reset**. Multihead,
 GQA, decode and AXI writeback are outside this verified main path.
 
+[Four-state coverage and gaps](docs/COVERAGE_POWER.md) ·
 [Verification contracts and commands](docs/VERIFICATION.md) ·
 [Recorded RTL sweep](docs/analysis/2026-10-03/verification.json) ·
 [Live CI runs](https://github.com/szuwei-yeh/flashattn-accelerator/actions)

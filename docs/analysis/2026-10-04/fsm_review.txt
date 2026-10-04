@@ -1,0 +1,1859 @@
+PROFILE l256_d16
+
+Module: tile_controller_banked_prefetch
+Summary for FSM :: state
+            Total Covered Percent
+States      12    12      100.00  (Not included in score)
+Transitions 26    17      65.38
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states           Line No. Covered
+S_CHECK_INNER    316      Covered
+S_CHECK_OUTER    374      Covered
+S_DONE           386      Covered
+S_FUSED_UPDATE   295      Covered
+S_IDLE           152      Covered
+S_LOAD_KV        222      Covered
+S_LOAD_Q         207      Covered
+S_MATMUL_PV      282      Covered
+S_MATMUL_QK      242      Covered
+S_NORMALIZE      339      Covered
+S_PF_WAIT        333      Covered
+S_UPDATE_SOFTMAX 261      Covered
+
+transitions                   Line No. Covered
+S_CHECK_INNER->S_IDLE         152      Not Covered
+S_CHECK_INNER->S_LOAD_KV      335      Covered
+S_CHECK_INNER->S_NORMALIZE    339      Covered
+S_CHECK_INNER->S_PF_WAIT      333      Covered
+S_CHECK_OUTER->S_DONE         386      Covered
+S_CHECK_OUTER->S_IDLE         152      Not Covered
+S_CHECK_OUTER->S_LOAD_Q       384      Covered
+S_DONE->S_IDLE                152      Covered
+S_FUSED_UPDATE->S_CHECK_INNER 316      Covered
+S_FUSED_UPDATE->S_IDLE        152      Covered
+S_FUSED_UPDATE->S_MATMUL_PV   310      Not Covered
+S_IDLE->S_LOAD_Q              207      Covered
+S_LOAD_KV->S_IDLE             152      Not Covered
+S_LOAD_KV->S_MATMUL_QK        242      Covered
+S_LOAD_Q->S_IDLE              152      Not Covered
+S_LOAD_Q->S_LOAD_KV           222      Covered
+S_MATMUL_PV->S_FUSED_UPDATE   295      Covered
+S_MATMUL_PV->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_UPDATE_SOFTMAX 261      Covered
+S_NORMALIZE->S_CHECK_OUTER    374      Covered
+S_NORMALIZE->S_IDLE           152      Not Covered
+S_PF_WAIT->S_IDLE             152      Not Covered
+S_PF_WAIT->S_MATMUL_QK        353      Covered
+S_UPDATE_SOFTMAX->S_IDLE      152      Covered
+S_UPDATE_SOFTMAX->S_MATMUL_PV 282      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: flash_attn_top_dma_banked_prefetch
+Summary for FSM :: sch_state
+            Total Covered Percent
+States      8     8       100.00  (Not included in score)
+Transitions 15    11      73.33
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: sch_state
+-------------------------------------------------------------------------------
+states      Line No. Covered
+SCH_DONE    236      Covered
+SCH_IDLE    194      Covered
+SCH_K_ISSUE 227      Covered
+SCH_K_WAIT  228      Covered
+SCH_Q_ISSUE 223      Covered
+SCH_Q_WAIT  226      Covered
+SCH_V_ISSUE 229      Covered
+SCH_V_WAIT  230      Covered
+
+transitions             Line No. Covered
+SCH_DONE->SCH_IDLE      194      Covered
+SCH_IDLE->SCH_Q_ISSUE   223      Covered
+SCH_K_ISSUE->SCH_IDLE   194      Not Covered
+SCH_K_ISSUE->SCH_K_WAIT 228      Covered
+SCH_K_WAIT->SCH_IDLE    194      Covered
+SCH_K_WAIT->SCH_V_ISSUE 229      Covered
+SCH_Q_ISSUE->SCH_IDLE   194      Not Covered
+SCH_Q_ISSUE->SCH_Q_WAIT 226      Covered
+SCH_Q_WAIT->SCH_IDLE    194      Covered
+SCH_Q_WAIT->SCH_K_ISSUE 227      Covered
+SCH_V_ISSUE->SCH_IDLE   194      Not Covered
+SCH_V_ISSUE->SCH_V_WAIT 230      Covered
+SCH_V_WAIT->SCH_DONE    236      Covered
+SCH_V_WAIT->SCH_IDLE    194      Not Covered
+SCH_V_WAIT->SCH_K_ISSUE 239      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: dma_engine_vec
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 8     6       75.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_AR    153      Covered
+S_ERROR 152      Covered
+S_IDLE  124      Covered
+S_R     160      Covered
+
+transitions     Line No. Covered
+S_AR->S_IDLE    124      Not Covered
+S_AR->S_R       160      Covered
+S_ERROR->S_IDLE 124      Covered
+S_IDLE->S_AR    153      Covered
+S_IDLE->S_ERROR 152      Not Covered
+S_R->S_AR       188      Covered
+S_R->S_ERROR    167      Covered
+S_R->S_IDLE     124      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: array_controller
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 7     4       57.14
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+CLEAR   76       Covered
+COMPUTE 74       Covered
+FINISH  92       Covered
+IDLE    60       Covered
+
+transitions     Line No. Covered
+CLEAR->COMPUTE  84       Covered
+CLEAR->IDLE     60       Not Covered
+COMPUTE->FINISH 92       Covered
+COMPUTE->IDLE   60       Not Covered
+FINISH->IDLE    60       Covered
+IDLE->CLEAR     76       Covered
+IDLE->COMPUTE   74       Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: banked_tile_loader
+Summary for FSM :: state
+            Total Covered Percent
+States      3     3       100.00  (Not included in score)
+Transitions 4     3       75.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_DRAIN 130      Covered
+S_IDLE  98       Covered
+S_ISSUE 118      Covered
+
+transitions      Line No. Covered
+S_DRAIN->S_IDLE  98       Covered
+S_IDLE->S_ISSUE  118      Covered
+S_ISSUE->S_DRAIN 130      Covered
+S_ISSUE->S_IDLE  98       Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[0].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states         Line No. Covered
+S_ACCUM        239      Covered
+S_FIND_MAX     195      Covered
+S_IDLE         163      Covered
+S_NORM         252      Covered
+S_RESCALE      205      Covered
+S_RESCALE_WAIT 224      Covered
+
+transitions               Line No. Covered
+S_ACCUM->S_IDLE           163      Covered
+S_ACCUM->S_NORM           252      Covered
+S_FIND_MAX->S_IDLE        163      Not Covered
+S_FIND_MAX->S_RESCALE     205      Covered
+S_IDLE->S_FIND_MAX        195      Covered
+S_NORM->S_IDLE            163      Covered
+S_RESCALE->S_IDLE         163      Not Covered
+S_RESCALE->S_RESCALE_WAIT 224      Covered
+S_RESCALE_WAIT->S_ACCUM   239      Covered
+S_RESCALE_WAIT->S_IDLE    163      Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[1].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[2].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[3].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[4].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[5].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[6].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[7].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[8].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[9].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[10].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[11].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[12].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[13].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[14].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[15].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+PROFILE l256_d64
+
+Module: tile_controller_banked_prefetch
+Summary for FSM :: state
+            Total Covered Percent
+States      12    12      100.00  (Not included in score)
+Transitions 26    18      69.23
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states           Line No. Covered
+S_CHECK_INNER    316      Covered
+S_CHECK_OUTER    374      Covered
+S_DONE           386      Covered
+S_FUSED_UPDATE   295      Covered
+S_IDLE           152      Covered
+S_LOAD_KV        222      Covered
+S_LOAD_Q         207      Covered
+S_MATMUL_PV      282      Covered
+S_MATMUL_QK      242      Covered
+S_NORMALIZE      339      Covered
+S_PF_WAIT        333      Covered
+S_UPDATE_SOFTMAX 261      Covered
+
+transitions                   Line No. Covered
+S_CHECK_INNER->S_IDLE         152      Not Covered
+S_CHECK_INNER->S_LOAD_KV      335      Covered
+S_CHECK_INNER->S_NORMALIZE    339      Covered
+S_CHECK_INNER->S_PF_WAIT      333      Covered
+S_CHECK_OUTER->S_DONE         386      Covered
+S_CHECK_OUTER->S_IDLE         152      Not Covered
+S_CHECK_OUTER->S_LOAD_Q       384      Covered
+S_DONE->S_IDLE                152      Covered
+S_FUSED_UPDATE->S_CHECK_INNER 316      Covered
+S_FUSED_UPDATE->S_IDLE        152      Covered
+S_FUSED_UPDATE->S_MATMUL_PV   310      Covered
+S_IDLE->S_LOAD_Q              207      Covered
+S_LOAD_KV->S_IDLE             152      Covered
+S_LOAD_KV->S_MATMUL_QK        242      Covered
+S_LOAD_Q->S_IDLE              152      Not Covered
+S_LOAD_Q->S_LOAD_KV           222      Covered
+S_MATMUL_PV->S_FUSED_UPDATE   295      Covered
+S_MATMUL_PV->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_UPDATE_SOFTMAX 261      Covered
+S_NORMALIZE->S_CHECK_OUTER    374      Covered
+S_NORMALIZE->S_IDLE           152      Not Covered
+S_PF_WAIT->S_IDLE             152      Not Covered
+S_PF_WAIT->S_MATMUL_QK        353      Covered
+S_UPDATE_SOFTMAX->S_IDLE      152      Not Covered
+S_UPDATE_SOFTMAX->S_MATMUL_PV 282      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: flash_attn_top_dma_banked_prefetch
+Summary for FSM :: sch_state
+            Total Covered Percent
+States      8     8       100.00  (Not included in score)
+Transitions 15    12      80.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: sch_state
+-------------------------------------------------------------------------------
+states      Line No. Covered
+SCH_DONE    236      Covered
+SCH_IDLE    194      Covered
+SCH_K_ISSUE 227      Covered
+SCH_K_WAIT  228      Covered
+SCH_Q_ISSUE 223      Covered
+SCH_Q_WAIT  226      Covered
+SCH_V_ISSUE 229      Covered
+SCH_V_WAIT  230      Covered
+
+transitions             Line No. Covered
+SCH_DONE->SCH_IDLE      194      Covered
+SCH_IDLE->SCH_Q_ISSUE   223      Covered
+SCH_K_ISSUE->SCH_IDLE   194      Not Covered
+SCH_K_ISSUE->SCH_K_WAIT 228      Covered
+SCH_K_WAIT->SCH_IDLE    194      Covered
+SCH_K_WAIT->SCH_V_ISSUE 229      Covered
+SCH_Q_ISSUE->SCH_IDLE   194      Not Covered
+SCH_Q_ISSUE->SCH_Q_WAIT 226      Covered
+SCH_Q_WAIT->SCH_IDLE    194      Covered
+SCH_Q_WAIT->SCH_K_ISSUE 227      Covered
+SCH_V_ISSUE->SCH_IDLE   194      Not Covered
+SCH_V_ISSUE->SCH_V_WAIT 230      Covered
+SCH_V_WAIT->SCH_DONE    236      Covered
+SCH_V_WAIT->SCH_IDLE    194      Covered
+SCH_V_WAIT->SCH_K_ISSUE 239      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: dma_engine_vec
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 8     6       75.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_AR    153      Covered
+S_ERROR 152      Covered
+S_IDLE  124      Covered
+S_R     160      Covered
+
+transitions     Line No. Covered
+S_AR->S_IDLE    124      Not Covered
+S_AR->S_R       160      Covered
+S_ERROR->S_IDLE 124      Covered
+S_IDLE->S_AR    153      Covered
+S_IDLE->S_ERROR 152      Not Covered
+S_R->S_AR       188      Covered
+S_R->S_ERROR    167      Covered
+S_R->S_IDLE     124      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: array_controller
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 7     5       71.43
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+CLEAR   76       Covered
+COMPUTE 74       Covered
+FINISH  92       Covered
+IDLE    60       Covered
+
+transitions     Line No. Covered
+CLEAR->COMPUTE  84       Covered
+CLEAR->IDLE     60       Not Covered
+COMPUTE->FINISH 92       Covered
+COMPUTE->IDLE   60       Not Covered
+FINISH->IDLE    60       Covered
+IDLE->CLEAR     76       Covered
+IDLE->COMPUTE   74       Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: banked_tile_loader
+Summary for FSM :: state
+            Total Covered Percent
+States      3     3       100.00  (Not included in score)
+Transitions 4     4       100.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_DRAIN 130      Covered
+S_IDLE  98       Covered
+S_ISSUE 118      Covered
+
+transitions      Line No. Covered
+S_DRAIN->S_IDLE  98       Covered
+S_IDLE->S_ISSUE  118      Covered
+S_ISSUE->S_DRAIN 130      Covered
+S_ISSUE->S_IDLE  98       Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[0].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states         Line No. Covered
+S_ACCUM        239      Covered
+S_FIND_MAX     195      Covered
+S_IDLE         163      Covered
+S_NORM         252      Covered
+S_RESCALE      205      Covered
+S_RESCALE_WAIT 224      Covered
+
+transitions               Line No. Covered
+S_ACCUM->S_IDLE           163      Not Covered
+S_ACCUM->S_NORM           252      Covered
+S_FIND_MAX->S_IDLE        163      Not Covered
+S_FIND_MAX->S_RESCALE     205      Covered
+S_IDLE->S_FIND_MAX        195      Covered
+S_NORM->S_IDLE            163      Covered
+S_RESCALE->S_IDLE         163      Not Covered
+S_RESCALE->S_RESCALE_WAIT 224      Covered
+S_RESCALE_WAIT->S_ACCUM   239      Covered
+S_RESCALE_WAIT->S_IDLE    163      Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[1].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[2].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[3].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[4].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[5].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[6].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[7].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[8].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[9].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[10].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[11].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[12].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[13].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[14].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[15].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+PROFILE l32_d16
+
+Module: tile_controller_banked_prefetch
+Summary for FSM :: state
+            Total Covered Percent
+States      12    12      100.00  (Not included in score)
+Transitions 26    17      65.38
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states           Line No. Covered
+S_CHECK_INNER    316      Covered
+S_CHECK_OUTER    374      Covered
+S_DONE           386      Covered
+S_FUSED_UPDATE   295      Covered
+S_IDLE           152      Covered
+S_LOAD_KV        222      Covered
+S_LOAD_Q         207      Covered
+S_MATMUL_PV      282      Covered
+S_MATMUL_QK      242      Covered
+S_NORMALIZE      339      Covered
+S_PF_WAIT        333      Covered
+S_UPDATE_SOFTMAX 261      Covered
+
+transitions                   Line No. Covered
+S_CHECK_INNER->S_IDLE         152      Not Covered
+S_CHECK_INNER->S_LOAD_KV      335      Covered
+S_CHECK_INNER->S_NORMALIZE    339      Covered
+S_CHECK_INNER->S_PF_WAIT      333      Covered
+S_CHECK_OUTER->S_DONE         386      Covered
+S_CHECK_OUTER->S_IDLE         152      Not Covered
+S_CHECK_OUTER->S_LOAD_Q       384      Covered
+S_DONE->S_IDLE                152      Covered
+S_FUSED_UPDATE->S_CHECK_INNER 316      Covered
+S_FUSED_UPDATE->S_IDLE        152      Covered
+S_FUSED_UPDATE->S_MATMUL_PV   310      Not Covered
+S_IDLE->S_LOAD_Q              207      Covered
+S_LOAD_KV->S_IDLE             152      Not Covered
+S_LOAD_KV->S_MATMUL_QK        242      Covered
+S_LOAD_Q->S_IDLE              152      Not Covered
+S_LOAD_Q->S_LOAD_KV           222      Covered
+S_MATMUL_PV->S_FUSED_UPDATE   295      Covered
+S_MATMUL_PV->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_UPDATE_SOFTMAX 261      Covered
+S_NORMALIZE->S_CHECK_OUTER    374      Covered
+S_NORMALIZE->S_IDLE           152      Not Covered
+S_PF_WAIT->S_IDLE             152      Not Covered
+S_PF_WAIT->S_MATMUL_QK        353      Covered
+S_UPDATE_SOFTMAX->S_IDLE      152      Covered
+S_UPDATE_SOFTMAX->S_MATMUL_PV 282      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: flash_attn_top_dma_banked_prefetch
+Summary for FSM :: sch_state
+            Total Covered Percent
+States      8     8       100.00  (Not included in score)
+Transitions 15    11      73.33
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: sch_state
+-------------------------------------------------------------------------------
+states      Line No. Covered
+SCH_DONE    236      Covered
+SCH_IDLE    194      Covered
+SCH_K_ISSUE 227      Covered
+SCH_K_WAIT  228      Covered
+SCH_Q_ISSUE 223      Covered
+SCH_Q_WAIT  226      Covered
+SCH_V_ISSUE 229      Covered
+SCH_V_WAIT  230      Covered
+
+transitions             Line No. Covered
+SCH_DONE->SCH_IDLE      194      Covered
+SCH_IDLE->SCH_Q_ISSUE   223      Covered
+SCH_K_ISSUE->SCH_IDLE   194      Not Covered
+SCH_K_ISSUE->SCH_K_WAIT 228      Covered
+SCH_K_WAIT->SCH_IDLE    194      Covered
+SCH_K_WAIT->SCH_V_ISSUE 229      Covered
+SCH_Q_ISSUE->SCH_IDLE   194      Not Covered
+SCH_Q_ISSUE->SCH_Q_WAIT 226      Covered
+SCH_Q_WAIT->SCH_IDLE    194      Covered
+SCH_Q_WAIT->SCH_K_ISSUE 227      Covered
+SCH_V_ISSUE->SCH_IDLE   194      Not Covered
+SCH_V_ISSUE->SCH_V_WAIT 230      Covered
+SCH_V_WAIT->SCH_DONE    236      Covered
+SCH_V_WAIT->SCH_IDLE    194      Not Covered
+SCH_V_WAIT->SCH_K_ISSUE 239      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: dma_engine_vec
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 8     6       75.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_AR    153      Covered
+S_ERROR 152      Covered
+S_IDLE  124      Covered
+S_R     160      Covered
+
+transitions     Line No. Covered
+S_AR->S_IDLE    124      Not Covered
+S_AR->S_R       160      Covered
+S_ERROR->S_IDLE 124      Covered
+S_IDLE->S_AR    153      Covered
+S_IDLE->S_ERROR 152      Not Covered
+S_R->S_AR       188      Covered
+S_R->S_ERROR    167      Covered
+S_R->S_IDLE     124      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: array_controller
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 7     4       57.14
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+CLEAR   76       Covered
+COMPUTE 74       Covered
+FINISH  92       Covered
+IDLE    60       Covered
+
+transitions     Line No. Covered
+CLEAR->COMPUTE  84       Covered
+CLEAR->IDLE     60       Not Covered
+COMPUTE->FINISH 92       Covered
+COMPUTE->IDLE   60       Not Covered
+FINISH->IDLE    60       Covered
+IDLE->CLEAR     76       Covered
+IDLE->COMPUTE   74       Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: banked_tile_loader
+Summary for FSM :: state
+            Total Covered Percent
+States      3     3       100.00  (Not included in score)
+Transitions 4     3       75.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_DRAIN 130      Covered
+S_IDLE  98       Covered
+S_ISSUE 118      Covered
+
+transitions      Line No. Covered
+S_DRAIN->S_IDLE  98       Covered
+S_IDLE->S_ISSUE  118      Covered
+S_ISSUE->S_DRAIN 130      Covered
+S_ISSUE->S_IDLE  98       Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[0].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states         Line No. Covered
+S_ACCUM        239      Covered
+S_FIND_MAX     195      Covered
+S_IDLE         163      Covered
+S_NORM         252      Covered
+S_RESCALE      205      Covered
+S_RESCALE_WAIT 224      Covered
+
+transitions               Line No. Covered
+S_ACCUM->S_IDLE           163      Covered
+S_ACCUM->S_NORM           252      Covered
+S_FIND_MAX->S_IDLE        163      Not Covered
+S_FIND_MAX->S_RESCALE     205      Covered
+S_IDLE->S_FIND_MAX        195      Covered
+S_NORM->S_IDLE            163      Covered
+S_RESCALE->S_IDLE         163      Not Covered
+S_RESCALE->S_RESCALE_WAIT 224      Covered
+S_RESCALE_WAIT->S_ACCUM   239      Covered
+S_RESCALE_WAIT->S_IDLE    163      Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[1].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[2].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[3].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[4].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[5].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[6].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[7].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[8].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[9].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[10].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[11].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[12].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[13].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[14].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[15].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+PROFILE l32_d64
+
+Module: tile_controller_banked_prefetch
+Summary for FSM :: state
+            Total Covered Percent
+States      12    12      100.00  (Not included in score)
+Transitions 26    18      69.23
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states           Line No. Covered
+S_CHECK_INNER    316      Covered
+S_CHECK_OUTER    374      Covered
+S_DONE           386      Covered
+S_FUSED_UPDATE   295      Covered
+S_IDLE           152      Covered
+S_LOAD_KV        222      Covered
+S_LOAD_Q         207      Covered
+S_MATMUL_PV      282      Covered
+S_MATMUL_QK      242      Covered
+S_NORMALIZE      339      Covered
+S_PF_WAIT        333      Covered
+S_UPDATE_SOFTMAX 261      Covered
+
+transitions                   Line No. Covered
+S_CHECK_INNER->S_IDLE         152      Not Covered
+S_CHECK_INNER->S_LOAD_KV      335      Covered
+S_CHECK_INNER->S_NORMALIZE    339      Covered
+S_CHECK_INNER->S_PF_WAIT      333      Covered
+S_CHECK_OUTER->S_DONE         386      Covered
+S_CHECK_OUTER->S_IDLE         152      Not Covered
+S_CHECK_OUTER->S_LOAD_Q       384      Covered
+S_DONE->S_IDLE                152      Covered
+S_FUSED_UPDATE->S_CHECK_INNER 316      Covered
+S_FUSED_UPDATE->S_IDLE        152      Covered
+S_FUSED_UPDATE->S_MATMUL_PV   310      Covered
+S_IDLE->S_LOAD_Q              207      Covered
+S_LOAD_KV->S_IDLE             152      Covered
+S_LOAD_KV->S_MATMUL_QK        242      Covered
+S_LOAD_Q->S_IDLE              152      Not Covered
+S_LOAD_Q->S_LOAD_KV           222      Covered
+S_MATMUL_PV->S_FUSED_UPDATE   295      Covered
+S_MATMUL_PV->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_UPDATE_SOFTMAX 261      Covered
+S_NORMALIZE->S_CHECK_OUTER    374      Covered
+S_NORMALIZE->S_IDLE           152      Not Covered
+S_PF_WAIT->S_IDLE             152      Not Covered
+S_PF_WAIT->S_MATMUL_QK        353      Covered
+S_UPDATE_SOFTMAX->S_IDLE      152      Not Covered
+S_UPDATE_SOFTMAX->S_MATMUL_PV 282      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: flash_attn_top_dma_banked_prefetch
+Summary for FSM :: sch_state
+            Total Covered Percent
+States      8     8       100.00  (Not included in score)
+Transitions 15    12      80.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: sch_state
+-------------------------------------------------------------------------------
+states      Line No. Covered
+SCH_DONE    236      Covered
+SCH_IDLE    194      Covered
+SCH_K_ISSUE 227      Covered
+SCH_K_WAIT  228      Covered
+SCH_Q_ISSUE 223      Covered
+SCH_Q_WAIT  226      Covered
+SCH_V_ISSUE 229      Covered
+SCH_V_WAIT  230      Covered
+
+transitions             Line No. Covered
+SCH_DONE->SCH_IDLE      194      Covered
+SCH_IDLE->SCH_Q_ISSUE   223      Covered
+SCH_K_ISSUE->SCH_IDLE   194      Not Covered
+SCH_K_ISSUE->SCH_K_WAIT 228      Covered
+SCH_K_WAIT->SCH_IDLE    194      Covered
+SCH_K_WAIT->SCH_V_ISSUE 229      Covered
+SCH_Q_ISSUE->SCH_IDLE   194      Not Covered
+SCH_Q_ISSUE->SCH_Q_WAIT 226      Covered
+SCH_Q_WAIT->SCH_IDLE    194      Covered
+SCH_Q_WAIT->SCH_K_ISSUE 227      Covered
+SCH_V_ISSUE->SCH_IDLE   194      Not Covered
+SCH_V_ISSUE->SCH_V_WAIT 230      Covered
+SCH_V_WAIT->SCH_DONE    236      Covered
+SCH_V_WAIT->SCH_IDLE    194      Covered
+SCH_V_WAIT->SCH_K_ISSUE 239      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: dma_engine_vec
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 8     6       75.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_AR    153      Covered
+S_ERROR 152      Covered
+S_IDLE  124      Covered
+S_R     160      Covered
+
+transitions     Line No. Covered
+S_AR->S_IDLE    124      Not Covered
+S_AR->S_R       160      Covered
+S_ERROR->S_IDLE 124      Covered
+S_IDLE->S_AR    153      Covered
+S_IDLE->S_ERROR 152      Not Covered
+S_R->S_AR       188      Covered
+S_R->S_ERROR    167      Covered
+S_R->S_IDLE     124      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: array_controller
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 7     5       71.43
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+CLEAR   76       Covered
+COMPUTE 74       Covered
+FINISH  92       Covered
+IDLE    60       Covered
+
+transitions     Line No. Covered
+CLEAR->COMPUTE  84       Covered
+CLEAR->IDLE     60       Not Covered
+COMPUTE->FINISH 92       Covered
+COMPUTE->IDLE   60       Not Covered
+FINISH->IDLE    60       Covered
+IDLE->CLEAR     76       Covered
+IDLE->COMPUTE   74       Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: banked_tile_loader
+Summary for FSM :: state
+            Total Covered Percent
+States      3     3       100.00  (Not included in score)
+Transitions 4     4       100.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_DRAIN 130      Covered
+S_IDLE  98       Covered
+S_ISSUE 118      Covered
+
+transitions      Line No. Covered
+S_DRAIN->S_IDLE  98       Covered
+S_IDLE->S_ISSUE  118      Covered
+S_ISSUE->S_DRAIN 130      Covered
+S_ISSUE->S_IDLE  98       Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[0].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states         Line No. Covered
+S_ACCUM        239      Covered
+S_FIND_MAX     195      Covered
+S_IDLE         163      Covered
+S_NORM         252      Covered
+S_RESCALE      205      Covered
+S_RESCALE_WAIT 224      Covered
+
+transitions               Line No. Covered
+S_ACCUM->S_IDLE           163      Not Covered
+S_ACCUM->S_NORM           252      Covered
+S_FIND_MAX->S_IDLE        163      Not Covered
+S_FIND_MAX->S_RESCALE     205      Covered
+S_IDLE->S_FIND_MAX        195      Covered
+S_NORM->S_IDLE            163      Covered
+S_RESCALE->S_IDLE         163      Not Covered
+S_RESCALE->S_RESCALE_WAIT 224      Covered
+S_RESCALE_WAIT->S_ACCUM   239      Covered
+S_RESCALE_WAIT->S_IDLE    163      Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[1].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[2].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[3].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[4].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[5].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[6].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[7].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[8].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[9].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[10].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[11].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[12].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[13].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[14].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[15].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+PROFILE l16_d16
+
+Module: tile_controller_banked_prefetch
+Summary for FSM :: state
+            Total Covered Percent
+States      12    12      100.00  (Not included in score)
+Transitions 26    17      65.38
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states           Line No. Covered
+S_CHECK_INNER    316      Covered
+S_CHECK_OUTER    374      Covered
+S_DONE           386      Covered
+S_FUSED_UPDATE   295      Covered
+S_IDLE           152      Covered
+S_LOAD_KV        222      Covered
+S_LOAD_Q         207      Covered
+S_MATMUL_PV      282      Covered
+S_MATMUL_QK      242      Covered
+S_NORMALIZE      339      Covered
+S_PF_WAIT        333      Covered
+S_UPDATE_SOFTMAX 261      Covered
+
+transitions                   Line No. Covered
+S_CHECK_INNER->S_IDLE         152      Not Covered
+S_CHECK_INNER->S_LOAD_KV      335      Covered
+S_CHECK_INNER->S_NORMALIZE    339      Covered
+S_CHECK_INNER->S_PF_WAIT      333      Covered
+S_CHECK_OUTER->S_DONE         386      Covered
+S_CHECK_OUTER->S_IDLE         152      Not Covered
+S_CHECK_OUTER->S_LOAD_Q       384      Covered
+S_DONE->S_IDLE                152      Covered
+S_FUSED_UPDATE->S_CHECK_INNER 316      Covered
+S_FUSED_UPDATE->S_IDLE        152      Covered
+S_FUSED_UPDATE->S_MATMUL_PV   310      Not Covered
+S_IDLE->S_LOAD_Q              207      Covered
+S_LOAD_KV->S_IDLE             152      Not Covered
+S_LOAD_KV->S_MATMUL_QK        242      Covered
+S_LOAD_Q->S_IDLE              152      Not Covered
+S_LOAD_Q->S_LOAD_KV           222      Covered
+S_MATMUL_PV->S_FUSED_UPDATE   295      Covered
+S_MATMUL_PV->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_UPDATE_SOFTMAX 261      Covered
+S_NORMALIZE->S_CHECK_OUTER    374      Covered
+S_NORMALIZE->S_IDLE           152      Not Covered
+S_PF_WAIT->S_IDLE             152      Not Covered
+S_PF_WAIT->S_MATMUL_QK        353      Covered
+S_UPDATE_SOFTMAX->S_IDLE      152      Covered
+S_UPDATE_SOFTMAX->S_MATMUL_PV 282      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: flash_attn_top_dma_banked_prefetch
+Summary for FSM :: sch_state
+            Total Covered Percent
+States      8     8       100.00  (Not included in score)
+Transitions 15    11      73.33
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: sch_state
+-------------------------------------------------------------------------------
+states      Line No. Covered
+SCH_DONE    236      Covered
+SCH_IDLE    194      Covered
+SCH_K_ISSUE 227      Covered
+SCH_K_WAIT  228      Covered
+SCH_Q_ISSUE 223      Covered
+SCH_Q_WAIT  226      Covered
+SCH_V_ISSUE 229      Covered
+SCH_V_WAIT  230      Covered
+
+transitions             Line No. Covered
+SCH_DONE->SCH_IDLE      194      Covered
+SCH_IDLE->SCH_Q_ISSUE   223      Covered
+SCH_K_ISSUE->SCH_IDLE   194      Not Covered
+SCH_K_ISSUE->SCH_K_WAIT 228      Covered
+SCH_K_WAIT->SCH_IDLE    194      Covered
+SCH_K_WAIT->SCH_V_ISSUE 229      Covered
+SCH_Q_ISSUE->SCH_IDLE   194      Not Covered
+SCH_Q_ISSUE->SCH_Q_WAIT 226      Covered
+SCH_Q_WAIT->SCH_IDLE    194      Covered
+SCH_Q_WAIT->SCH_K_ISSUE 227      Covered
+SCH_V_ISSUE->SCH_IDLE   194      Not Covered
+SCH_V_ISSUE->SCH_V_WAIT 230      Covered
+SCH_V_WAIT->SCH_DONE    236      Covered
+SCH_V_WAIT->SCH_IDLE    194      Not Covered
+SCH_V_WAIT->SCH_K_ISSUE 239      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: dma_engine_vec
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 8     6       75.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_AR    153      Covered
+S_ERROR 152      Covered
+S_IDLE  124      Covered
+S_R     160      Covered
+
+transitions     Line No. Covered
+S_AR->S_IDLE    124      Not Covered
+S_AR->S_R       160      Covered
+S_ERROR->S_IDLE 124      Covered
+S_IDLE->S_AR    153      Covered
+S_IDLE->S_ERROR 152      Not Covered
+S_R->S_AR       188      Covered
+S_R->S_ERROR    167      Covered
+S_R->S_IDLE     124      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: array_controller
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 7     4       57.14
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+CLEAR   76       Covered
+COMPUTE 74       Covered
+FINISH  92       Covered
+IDLE    60       Covered
+
+transitions     Line No. Covered
+CLEAR->COMPUTE  84       Covered
+CLEAR->IDLE     60       Not Covered
+COMPUTE->FINISH 92       Covered
+COMPUTE->IDLE   60       Not Covered
+FINISH->IDLE    60       Covered
+IDLE->CLEAR     76       Covered
+IDLE->COMPUTE   74       Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: banked_tile_loader
+Summary for FSM :: state
+            Total Covered Percent
+States      3     3       100.00  (Not included in score)
+Transitions 4     3       75.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_DRAIN 130      Covered
+S_IDLE  98       Covered
+S_ISSUE 118      Covered
+
+transitions      Line No. Covered
+S_DRAIN->S_IDLE  98       Covered
+S_IDLE->S_ISSUE  118      Covered
+S_ISSUE->S_DRAIN 130      Covered
+S_ISSUE->S_IDLE  98       Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[0].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states         Line No. Covered
+S_ACCUM        239      Covered
+S_FIND_MAX     195      Covered
+S_IDLE         163      Covered
+S_NORM         252      Covered
+S_RESCALE      205      Covered
+S_RESCALE_WAIT 224      Covered
+
+transitions               Line No. Covered
+S_ACCUM->S_IDLE           163      Not Covered
+S_ACCUM->S_NORM           252      Covered
+S_FIND_MAX->S_IDLE        163      Covered
+S_FIND_MAX->S_RESCALE     205      Covered
+S_IDLE->S_FIND_MAX        195      Covered
+S_NORM->S_IDLE            163      Covered
+S_RESCALE->S_IDLE         163      Not Covered
+S_RESCALE->S_RESCALE_WAIT 224      Covered
+S_RESCALE_WAIT->S_ACCUM   239      Covered
+S_RESCALE_WAIT->S_IDLE    163      Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[1].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[2].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[3].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[4].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[5].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[6].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[7].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[8].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[9].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[10].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[11].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[12].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[13].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[14].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[15].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    7       70.00
+Sequences   0     0
+
+PROFILE l16_d64
+
+Module: tile_controller_banked_prefetch
+Summary for FSM :: state
+            Total Covered Percent
+States      12    12      100.00  (Not included in score)
+Transitions 26    18      69.23
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states           Line No. Covered
+S_CHECK_INNER    316      Covered
+S_CHECK_OUTER    374      Covered
+S_DONE           386      Covered
+S_FUSED_UPDATE   295      Covered
+S_IDLE           152      Covered
+S_LOAD_KV        222      Covered
+S_LOAD_Q         207      Covered
+S_MATMUL_PV      282      Covered
+S_MATMUL_QK      242      Covered
+S_NORMALIZE      339      Covered
+S_PF_WAIT        333      Covered
+S_UPDATE_SOFTMAX 261      Covered
+
+transitions                   Line No. Covered
+S_CHECK_INNER->S_IDLE         152      Not Covered
+S_CHECK_INNER->S_LOAD_KV      335      Covered
+S_CHECK_INNER->S_NORMALIZE    339      Covered
+S_CHECK_INNER->S_PF_WAIT      333      Covered
+S_CHECK_OUTER->S_DONE         386      Covered
+S_CHECK_OUTER->S_IDLE         152      Not Covered
+S_CHECK_OUTER->S_LOAD_Q       384      Covered
+S_DONE->S_IDLE                152      Covered
+S_FUSED_UPDATE->S_CHECK_INNER 316      Covered
+S_FUSED_UPDATE->S_IDLE        152      Covered
+S_FUSED_UPDATE->S_MATMUL_PV   310      Covered
+S_IDLE->S_LOAD_Q              207      Covered
+S_LOAD_KV->S_IDLE             152      Covered
+S_LOAD_KV->S_MATMUL_QK        242      Covered
+S_LOAD_Q->S_IDLE              152      Not Covered
+S_LOAD_Q->S_LOAD_KV           222      Covered
+S_MATMUL_PV->S_FUSED_UPDATE   295      Covered
+S_MATMUL_PV->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_IDLE           152      Not Covered
+S_MATMUL_QK->S_UPDATE_SOFTMAX 261      Covered
+S_NORMALIZE->S_CHECK_OUTER    374      Covered
+S_NORMALIZE->S_IDLE           152      Not Covered
+S_PF_WAIT->S_IDLE             152      Not Covered
+S_PF_WAIT->S_MATMUL_QK        353      Covered
+S_UPDATE_SOFTMAX->S_IDLE      152      Not Covered
+S_UPDATE_SOFTMAX->S_MATMUL_PV 282      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: flash_attn_top_dma_banked_prefetch
+Summary for FSM :: sch_state
+            Total Covered Percent
+States      8     8       100.00  (Not included in score)
+Transitions 15    12      80.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: sch_state
+-------------------------------------------------------------------------------
+states      Line No. Covered
+SCH_DONE    236      Covered
+SCH_IDLE    194      Covered
+SCH_K_ISSUE 227      Covered
+SCH_K_WAIT  228      Covered
+SCH_Q_ISSUE 223      Covered
+SCH_Q_WAIT  226      Covered
+SCH_V_ISSUE 229      Covered
+SCH_V_WAIT  230      Covered
+
+transitions             Line No. Covered
+SCH_DONE->SCH_IDLE      194      Covered
+SCH_IDLE->SCH_Q_ISSUE   223      Covered
+SCH_K_ISSUE->SCH_IDLE   194      Not Covered
+SCH_K_ISSUE->SCH_K_WAIT 228      Covered
+SCH_K_WAIT->SCH_IDLE    194      Covered
+SCH_K_WAIT->SCH_V_ISSUE 229      Covered
+SCH_Q_ISSUE->SCH_IDLE   194      Not Covered
+SCH_Q_ISSUE->SCH_Q_WAIT 226      Covered
+SCH_Q_WAIT->SCH_IDLE    194      Covered
+SCH_Q_WAIT->SCH_K_ISSUE 227      Covered
+SCH_V_ISSUE->SCH_IDLE   194      Not Covered
+SCH_V_ISSUE->SCH_V_WAIT 230      Covered
+SCH_V_WAIT->SCH_DONE    236      Covered
+SCH_V_WAIT->SCH_IDLE    194      Covered
+SCH_V_WAIT->SCH_K_ISSUE 239      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: dma_engine_vec
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 8     6       75.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_AR    153      Covered
+S_ERROR 152      Covered
+S_IDLE  124      Covered
+S_R     160      Covered
+
+transitions     Line No. Covered
+S_AR->S_IDLE    124      Not Covered
+S_AR->S_R       160      Covered
+S_ERROR->S_IDLE 124      Covered
+S_IDLE->S_AR    153      Covered
+S_IDLE->S_ERROR 152      Not Covered
+S_R->S_AR       188      Covered
+S_R->S_ERROR    167      Covered
+S_R->S_IDLE     124      Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: array_controller
+Summary for FSM :: state
+            Total Covered Percent
+States      4     4       100.00  (Not included in score)
+Transitions 7     5       71.43
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+CLEAR   76       Covered
+COMPUTE 74       Covered
+FINISH  92       Covered
+IDLE    60       Covered
+
+transitions     Line No. Covered
+CLEAR->COMPUTE  84       Covered
+CLEAR->IDLE     60       Not Covered
+COMPUTE->FINISH 92       Covered
+COMPUTE->IDLE   60       Not Covered
+FINISH->IDLE    60       Covered
+IDLE->CLEAR     76       Covered
+IDLE->COMPUTE   74       Covered
+
+
+-------------------------------------------------------------------------------
+
+Module: banked_tile_loader
+Summary for FSM :: state
+            Total Covered Percent
+States      3     3       100.00  (Not included in score)
+Transitions 4     4       100.00
+Sequences   0     0
+
+State, Transition and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states  Line No. Covered
+S_DRAIN 130      Covered
+S_IDLE  98       Covered
+S_ISSUE 118      Covered
+
+transitions      Line No. Covered
+S_DRAIN->S_IDLE  98       Covered
+S_IDLE->S_ISSUE  118      Covered
+S_ISSUE->S_DRAIN 130      Covered
+S_ISSUE->S_IDLE  98       Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[0].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+and Sequence Details for FSM :: state
+-------------------------------------------------------------------------------
+states         Line No. Covered
+S_ACCUM        239      Covered
+S_FIND_MAX     195      Covered
+S_IDLE         163      Covered
+S_NORM         252      Covered
+S_RESCALE      205      Covered
+S_RESCALE_WAIT 224      Covered
+
+transitions               Line No. Covered
+S_ACCUM->S_IDLE           163      Not Covered
+S_ACCUM->S_NORM           252      Covered
+S_FIND_MAX->S_IDLE        163      Not Covered
+S_FIND_MAX->S_RESCALE     205      Covered
+S_IDLE->S_FIND_MAX        195      Covered
+S_NORM->S_IDLE            163      Covered
+S_RESCALE->S_IDLE         163      Not Covered
+S_RESCALE->S_RESCALE_WAIT 224      Covered
+S_RESCALE_WAIT->S_ACCUM   239      Covered
+S_RESCALE_WAIT->S_IDLE    163      Not Covered
+
+
+-------------------------------------------------------------------------------
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[1].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[2].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[3].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[4].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[5].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[6].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[7].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[8].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[9].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[10].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[11].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[12].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[13].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[14].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0
+
+Instance: tb_attention.dut.u_dut.u_core.gen_softmax[15].u_softmax
+Summary for FSM :: state
+            Total Covered Percent
+States      6     6       100.00  (Not included in score)
+Transitions 10    6       60.00
+Sequences   0     0

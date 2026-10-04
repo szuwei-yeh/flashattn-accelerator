@@ -17,3 +17,6 @@ __pycache__/
 # syn/runs/<run-tag>/<profile>/ and synced separately from source control.
 syn/runs/*
 !syn/runs/.gitkeep
+
+# Licensed simulation and coverage run artifacts
+sim/vcs/runs/

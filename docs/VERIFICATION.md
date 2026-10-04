@@ -137,3 +137,13 @@ coverage or a fabricated aggregate case count. Four-state, Python checks and
 formal remain separate commands above. Full raw reports stay outside the repository;
 public tables state the run/configuration boundaries needed
 to interpret claims.
+
+## Licensed main-path four-state coverage
+
+The additional [VCS/URG flow](../sim/vcs/README.md) runs the integrated path
+with unknown initial SRAM, exact full-output checks, changed-data common-reset
+recovery and configuration/DMA fault contracts for all six lane/dimension
+profiles. It reports DUT code coverage and explicit functional covergroups.
+See [coverage evidence and unwaived gaps](COVERAGE_POWER.md); the licensed
+coverage run is separate from GitHub Actions and from `make coverage`, which
+is a compatibility scenario-test target.

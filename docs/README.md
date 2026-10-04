@@ -4,6 +4,15 @@ Start with [RESULTS_EVIDENCE.md](RESULTS_EVIDENCE.md) for current results and
 verification. It is the maintained explanation of the measurements; the linked
 provenance and report excerpts are the underlying evidence.
 
+## October 4 four-state coverage and activity analysis
+
+The added VCS bench checks the unchanged RTL: 90 invocations / 186 exact
+transactions across all six lane/dimension profiles. [Coverage scope and gaps](COVERAGE_POWER.md),
+[metrics](analysis/2026-10-04/coverage.json) and
+[source/transaction hashes](analysis/2026-10-04/coverage_verification.json)
+are separate from the earlier Verilator sweep and synthesis provenance.
+Licensed run databases and raw waveforms stay outside the public repository.
+
 ## Latest shared-dequantizer experiment
 
 | Item | Authoritative location / identity |

@@ -1,0 +1,18 @@
+[
+  {
+    "case": "corrupt_expected",
+    "rejected": true,
+    "diagnostic": [
+      "Fatal: \"sim/vcs/tb_attention.sv\", 92: tb_attention.compare_output.unnamed$$_0: at time 108800000 ps"
+    ],
+    "fixture_validator_rejected": false
+  },
+  {
+    "case": "truncate_expected",
+    "rejected": true,
+    "diagnostic": [
+      "Fatal: \"sim/vcs/tb_attention.sv\", 194: tb_attention.unnamed$$_0: at time 0 ps"
+    ],
+    "fixture_validator_rejected": true
+  }
+]

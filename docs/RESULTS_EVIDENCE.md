@@ -2,6 +2,17 @@
 
 Navigation: [documentation index](README.md).
 
+## October 4 additional verification
+
+The unchanged design also passed a VCS/URG four-state integrated sweep: **90
+invocations / 186 exact transactions** over all six lane/dimension profiles,
+with full output/accounting checks, DMA/configuration contracts and common-reset
+recovery. Canonical cycle counts match the earlier sweep. DUT line coverage is
+96.97–97.64%; branch coverage is 96.17–97.79%. The defined functional bins all
+hit, while FSM transition coverage remains 64.09–69.55% with no waivers.
+[Scope, gaps and reproduction](COVERAGE_POWER.md) explain those distinctions.
+This adds evidence, without changing the original measured RTL or netlists.
+
 ## Latest matched shared-dequantizer sweep
 
 The October 3 series maps three **N64/d16 DMA-integrated tops** from clean

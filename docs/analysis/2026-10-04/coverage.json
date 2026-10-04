@@ -1,0 +1,119 @@
+{
+  "status": "PASS",
+  "vcs_version": "V-2023.12-SP2",
+  "urg_version": "V-2023.12-SP2",
+  "scope": "tb_attention.dut.u_dut",
+  "metrics": "line+cond+tgl+fsm+branch+assert",
+  "invocations": 90,
+  "exact_transactions": 186,
+  "rows": [
+    {
+      "lanes": 256,
+      "dim": 16,
+      "score": 89.89,
+      "line": 96.97,
+      "condition": 88.04,
+      "toggle": 88.64,
+      "fsm_transition": 69.55,
+      "branch": 96.17,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "70add6d6e249542f82e7a33348dc4d41f4c2b4cf4ebfa3e53e0b2883628749ae",
+        "modinfo.txt": "d95e35623f0db69b99063d37854296f03ae68a4c4add886c8c0c5863ac14640a",
+        "groups.txt": "b4bb5f2fa6d3780e1ea9f37b4e8b6b6abdf0852aa5f785211982588b84ad644d"
+      }
+    },
+    {
+      "lanes": 256,
+      "dim": 64,
+      "score": 89.85,
+      "line": 97.11,
+      "condition": 91.77,
+      "toggle": 89.88,
+      "fsm_transition": 64.09,
+      "branch": 96.24,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "995b26488ded4b8d42e2e2f6baac50f037e565eadf04b8601c8cb3558252cd33",
+        "modinfo.txt": "95972548dd57b910ae7a55dc01071f03b0e449a17c8b0ea473a8f5cf8180a43d",
+        "groups.txt": "b4bb5f2fa6d3780e1ea9f37b4e8b6b6abdf0852aa5f785211982588b84ad644d"
+      }
+    },
+    {
+      "lanes": 32,
+      "dim": 16,
+      "score": 89.53,
+      "line": 97.36,
+      "condition": 90.26,
+      "toggle": 82.4,
+      "fsm_transition": 69.55,
+      "branch": 97.58,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "09fa23004395bc7bbcafc60fa509b9b4cf4192aa61cc123d3577a54dcc796555",
+        "modinfo.txt": "2e821da47944d4031216c44d64a22e689a050b86d93791bbe9b315540e4c7bd2",
+        "groups.txt": "b4bb5f2fa6d3780e1ea9f37b4e8b6b6abdf0852aa5f785211982588b84ad644d"
+      }
+    },
+    {
+      "lanes": 32,
+      "dim": 64,
+      "score": 88.78,
+      "line": 97.58,
+      "condition": 90.3,
+      "toggle": 83.06,
+      "fsm_transition": 64.09,
+      "branch": 97.66,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "3d3cd474ab398c312928ca563ab3799ece57372d71410874eaddc916f5bf36b6",
+        "modinfo.txt": "2430d11eb2d4c3d14409fdfc838b068109003b541abeefce3018a72181142274",
+        "groups.txt": "b4bb5f2fa6d3780e1ea9f37b4e8b6b6abdf0852aa5f785211982588b84ad644d"
+      }
+    },
+    {
+      "lanes": 16,
+      "dim": 16,
+      "score": 89.39,
+      "line": 97.41,
+      "condition": 90.26,
+      "toggle": 81.41,
+      "fsm_transition": 69.55,
+      "branch": 97.71,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "2d12ba8c905292a7e73938b71d6dd9026ff14fcbd807e234ca463bbd83781aa8",
+        "modinfo.txt": "35c62c86c922bfca6e21385d3559b7b9d862da4f6ac6d92c037b6f45ac79d5ac",
+        "groups.txt": "b4bb5f2fa6d3780e1ea9f37b4e8b6b6abdf0852aa5f785211982588b84ad644d"
+      }
+    },
+    {
+      "lanes": 16,
+      "dim": 64,
+      "score": 88.63,
+      "line": 97.64,
+      "condition": 90.3,
+      "toggle": 81.97,
+      "fsm_transition": 64.09,
+      "branch": 97.79,
+      "functional_group": 100.0,
+      "report_sha256": {
+        "dashboard.txt": "50d5e66939e2c714c60b5f51425fc803b72976302a069b4b9550920b98828a54",
+        "modinfo.txt": "ec4bc97cc4053c6fc1a9a14f2d30361236dd2669d921f641f96c6206d797cf79",
+        "groups.txt": "b4bb5f2fa6d3780e1ea9f37b4e8b6b6abdf0852aa5f785211982588b84ad644d"
+      }
+    }
+  ],
+  "source_snapshot": "3e9d60cf70f2ad0cd84a5cd6328bcd50f90c28a1 (RTL unchanged from measured d5f9123/dd68964)",
+  "canonical_cycles_checked": 72,
+  "fixture_generation": {
+    "python": "3.12.7",
+    "numpy": "1.26.4",
+    "source_sha256": {
+      "sim/vcs/prepare_cases.py": "8b379eb5c8114815e081fce077dcb7b58d9faa74ae6a8f07f880f14748e5e3e0",
+      "golden/generate_hw_expected.py": "1cc709bc4eae0dea7fbf51b5c78fc99f7c8e0a18ddbbf6cb9eadfcfc32e84683",
+      "golden/report_accuracy.py": "f9e0045ef21598504efb0c93728fe41523c96c28ebd01c02879940e23ab88015",
+      "data/exp_lut.hex": "231426352ac24b9db01139926763565da8b80ba8799ea838f481e5b708944c5c"
+    }
+  }
+}

@@ -914,6 +914,7 @@ vcs_output_buffer_init:
 test_runners:
 	$(PYTHON) test_regression_reporting.py
 	$(PYTHON) test_vcs_runner.py
+	$(PYTHON) ../vcs/test_eda_reporting.py
 
 # Shared dequantizer arithmetic, complete-tile publication and reset recovery.
 DEQUANT_LANES ?= 32
