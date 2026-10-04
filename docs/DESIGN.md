@@ -3,7 +3,9 @@
 [Home](../README.md) · [Verification](VERIFICATION.md) · [Results and evidence](RESULTS_EVIDENCE.md)
 
 This guide describes the optimized single-head DMA/banked/prefetch path.
-The architecture figure follows the measured RTL at `dfbd28e`.
+The architecture figure follows the DMA/banked/prefetch path and includes the
+256/32/16-lane dequantizer configurations from the
+[latest matched experiment](DEQUANT_EXPERIMENT.md).
 
 ![FlashAttention architecture: simulation environment outside the DUT, data movement through active/shadow staging, shared QK/PV compute and fused output update](figures/architecture.svg)
 
@@ -132,13 +134,18 @@ summarized rather than drawn separately. SRAM/ROM in the accepted synthesis flow
 are logical blackboxes; the external memory model is simulation-only. The figure
 is a logical dataflow, not a complete port or cycle-accurate timing diagram.
 
-`figures/cycle-milestones.csv` records the historical cycle-count milestones from
-the [results table](../README.md#measured-optimization-milestones). Each bar uses
-its actual cycle count; the two dimension panels use different axis ranges.
-The final values also match the current guarded RTL regression. These are
-successive implementation milestones, not four configurations of the current RTL.
+The README uses `figures/cycle-optimization-stages.png` to show the historical
+cycle milestones and the shared-dequantizer tradeoffs. Its first four rows are
+successive implementation milestones from `figures/cycle-milestones.csv`;
+the last two rows are 32/16-lane alternatives to the fused 256-lane design,
+with counts from [the recorded lane sweep](analysis/2026-10-03/cycles.csv).
+The two dimension panels use different axis ranges. The area comparison is
+N64/d16 only; see the [matched experiment](DEQUANT_EXPERIMENT.md).
 
-Regenerate both SVGs from the repository root with Python 3 and Matplotlib:
+`figures/cycle-milestones.svg` retains the reproducible historical four-stage
+chart. The command below regenerates it and `figures/architecture.svg`; it does
+not regenerate the supplied six-row PNG. Run from the repository root with
+Python 3 and Matplotlib:
 
 ```bash
 python3 docs/figures/render.py

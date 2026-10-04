@@ -1,10 +1,10 @@
 {
   "canonical_cycles": "cycles.csv",
   "ci": {
-    "commit": "f31a274",
-    "run": 37156716731,
+    "commit": "068a33f",
+    "run": 37157616386,
     "status": "success",
-    "url": "https://github.com/szuwei-yeh/flashattn-accelerator/actions/runs/37156716731"
+    "url": "https://github.com/szuwei-yeh/flashattn-accelerator/actions/runs/37157616386"
   },
   "date_utc": "2026-10-03",
   "exact_invocations": 312,

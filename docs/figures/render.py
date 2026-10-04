@@ -18,7 +18,7 @@ def architecture():
     navy, teal, muted = '#081d4f', '#00999c', '#445f7b'
     parts = [f'''<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="950" viewBox="0 0 1680 950" role="img" aria-labelledby="title desc">
 <title id="title">FlashAttention accelerator architecture and simulation boundary</title>
-<desc id="desc">A simulation-only behavioral AXI memory model and testbench are outside the synthesizable DUT. Vector DMA fills 16-bank Q/K/V scratchpads; a shared loader fills active Q/K/V or prefetches the next resident K/V tile into shadow registers. Shadow is copied to active before use. Only active registers supply operands to the shared 16 by 16 array. QK scores pass through 256 dequantizers and masking into 16 online-softmax lanes; unnormalized P returns for PV on the same array. Rescale factors and running sums feed fused output update and final normalization. Output is read after done, with no AXI writeback. Data movement and tiled compute are functional groupings, not module or physical boundaries. Teal arrows are data, gray dashed arrows are control; individual ports and interlocks are summarized.</desc>
+<desc id="desc">A simulation-only behavioral AXI memory model and testbench are outside the synthesizable DUT. Vector DMA fills 16-bank Q/K/V scratchpads; a shared loader fills active Q/K/V or prefetches the next resident K/V tile into shadow registers. Shadow is copied to active before use. Only active registers supply operands to the shared 16 by 16 array. QK scores pass through 256 (default), 32 or 16 dequantization lanes and masking into 16 online-softmax lanes; shared variants process scores in batches and publish a complete tile before softmax consumes it; unnormalized P returns for PV on the same array. Rescale factors and running sums feed fused output update and final normalization. Output is read after done, with no AXI writeback. Data movement and tiled compute are functional groupings, not module or physical boundaries. Teal arrows are data, gray dashed arrows are control; individual ports and interlocks are summarized.</desc>
 <defs>
 <marker id="data-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="{teal}"/></marker>
 <marker id="control-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="{muted}"/></marker>
@@ -86,14 +86,16 @@ def architecture():
     box(60,658,235,85,'Output read port','Read after done',accent=True)
     box(365,658,330,85,'Output update + SRAM','Rescale · accumulate · normalize',accent=True)
     box(850,658,350,85,'Shared 16 × 16 array','QKᵀ and PV reuse the same array',accent=True)
-    box(1362,658,260,85,'Dequantize + mask','256 dequantizers',accent=True)
+    box(1362,658,260,115,'Dequantize + mask','256 / 32 / 16 lanes',accent=True)
+    text(1492,743,'Shared variants process',17,color=muted,center=True)
+    text(1492,761,'scores in batches',17,color=muted,center=True)
     box(850,792,350,60,'16 online-softmax lanes',accent=True)
     arrow('M365 700 H295')
     arrow('M850 700 H695')
     text(708,683,'PV × scale_v',20,color=teal)
     arrow('M1200 700 H1362')
     text(1218,683,'QKᵀ scores',22,color=teal)
-    arrow('M1492 743 V822 H1200')
+    arrow('M1492 773 V822 H1200')
     arrow('M1025 792 V743')
     text(1052,774,'P for PV',22,color=teal)
     arrow('M850 822 H545 V743')

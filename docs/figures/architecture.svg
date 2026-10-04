@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1680" height="950" viewBox="0 0 1680 950" role="img" aria-labelledby="title desc">
 <title id="title">FlashAttention accelerator architecture and simulation boundary</title>
-<desc id="desc">A simulation-only behavioral AXI memory model and testbench are outside the synthesizable DUT. Vector DMA fills 16-bank Q/K/V scratchpads; a shared loader fills active Q/K/V or prefetches the next resident K/V tile into shadow registers. Shadow is copied to active before use. Only active registers supply operands to the shared 16 by 16 array. QK scores pass through 256 dequantizers and masking into 16 online-softmax lanes; unnormalized P returns for PV on the same array. Rescale factors and running sums feed fused output update and final normalization. Output is read after done, with no AXI writeback. Data movement and tiled compute are functional groupings, not module or physical boundaries. Teal arrows are data, gray dashed arrows are control; individual ports and interlocks are summarized.</desc>
+<desc id="desc">A simulation-only behavioral AXI memory model and testbench are outside the synthesizable DUT. Vector DMA fills 16-bank Q/K/V scratchpads; a shared loader fills active Q/K/V or prefetches the next resident K/V tile into shadow registers. Shadow is copied to active before use. Only active registers supply operands to the shared 16 by 16 array. QK scores pass through 256 (default), 32 or 16 dequantization lanes and masking into 16 online-softmax lanes; shared variants process scores in batches and publish a complete tile before softmax consumes it; unnormalized P returns for PV on the same array. Rescale factors and running sums feed fused output update and final normalization. Output is read after done, with no AXI writeback. Data movement and tiled compute are functional groupings, not module or physical boundaries. Teal arrows are data, gray dashed arrows are control; individual ports and interlocks are summarized.</desc>
 <defs>
 <marker id="data-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#00999c"/></marker>
 <marker id="control-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#445f7b"/></marker>
@@ -66,9 +66,11 @@
 <rect x="850" y="658" width="350" height="85" rx="12" fill="#e7f7f6" stroke="#138391" stroke-width="1.7"/>
 <text x="1025.0" y="693" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Shared 16 × 16 array</text>
 <text x="1025.0" y="722" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">QKᵀ and PV reuse the same array</text>
-<rect x="1362" y="658" width="260" height="85" rx="12" fill="#e7f7f6" stroke="#138391" stroke-width="1.7"/>
+<rect x="1362" y="658" width="260" height="115" rx="12" fill="#e7f7f6" stroke="#138391" stroke-width="1.7"/>
 <text x="1492.0" y="693" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">Dequantize + mask</text>
-<text x="1492.0" y="722" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">256 dequantizers</text>
+<text x="1492.0" y="722" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#445f7b">256 / 32 / 16 lanes</text>
+<text x="1492" y="743" text-anchor="middle" font-size="17" font-weight="normal" style="fill:#445f7b">Shared variants process</text>
+<text x="1492" y="761" text-anchor="middle" font-size="17" font-weight="normal" style="fill:#445f7b">scores in batches</text>
 <rect x="850" y="792" width="350" height="60" rx="12" fill="#e7f7f6" stroke="#138391" stroke-width="1.7"/>
 <text x="1025.0" y="831.0" text-anchor="middle" font-size="25" font-weight="bold" style="fill:#081d4f">16 online-softmax lanes</text>
 <path class="data" d="M365 700 H295"/>
@@ -76,7 +78,7 @@
 <text x="708" y="683" font-size="20" font-weight="normal" style="fill:#00999c">PV × scale_v</text>
 <path class="data" d="M1200 700 H1362"/>
 <text x="1218" y="683" font-size="22" font-weight="normal" style="fill:#00999c">QKᵀ scores</text>
-<path class="data" d="M1492 743 V822 H1200"/>
+<path class="data" d="M1492 773 V822 H1200"/>
 <path class="data" d="M1025 792 V743"/>
 <text x="1052" y="774" font-size="22" font-weight="normal" style="fill:#00999c">P for PV</text>
 <path class="data" d="M850 822 H545 V743"/>

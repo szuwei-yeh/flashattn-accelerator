@@ -1,0 +1,71 @@
+Run: dequant_20261003_l256_n64d16/top
+Measured commit: d5f9123fbbf73154073b28d683ea4bb88b9e3571 (clean)
+Elaboration: TILE_SIZE=16,HEAD_DIM=16,SEQ_LEN=64,SRAM_DEPTH=4096,DEQUANT_LANES=256,AXI_ADDR_W=32,AXI_DATA_W=64
+Mapped dequantizer instances: 256
+Units: library cell-area units; timing in ns. Logical SRAM/ROM blackboxes.
+
+[qor.rpt — clock group]
+Timing Path Group 'clk'
+  -----------------------------------
+  Levels of Logic:              88.00
+  Critical Path Length:          6.00
+  Critical Path Slack:           3.92
+  Critical Path Clk Period:     10.00
+  Total Negative Slack:          0.00
+  No. of Violating Paths:        0.00
+  Worst Hold Violation:          0.00
+  Total Hold Violation:          0.00
+  No. of Hold Violations:        0.00
+  -----------------------------------
+
+[area.rpt — totals]
+Combinational area:            4685396.916271
+Buf/Inv area:                   679368.052586
+Noncombinational area:          389268.398529
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+Total cell area:               5074665.314800
+Total area:                 undefined
+
+[timing_setup.rpt — worst path]
+Startpoint: u_core/combined_scale_reg_reg[31]
+Endpoint: u_core/gen_parallel_dequant.gen_dequant[243].u_deq/data_out_reg[14]
+
+[Derived metrics]
+{
+  "cell_area": 5074665.3148,
+  "critical_path_ns": 6.0,
+  "worst_setup_slack_ns": 3.92,
+  "setup_tns_ns": 0.0,
+  "setup_violating_paths": 0,
+  "max_cap_violations": 107039,
+  "macro_blackbox_area": 0.0,
+  "mapped_latch_count": 0,
+  "unused_low_product_pins": 320,
+  "unused_low_product_live_endpoints": 0,
+  "mapped_lint_counts": {
+    "LINT-5": 320,
+    "LINT-8": 3444,
+    "LINT-28": 36015,
+    "LINT-29": 10330,
+    "LINT-31": 65,
+    "LINT-52": 4145,
+    "LINT-32": 31486,
+    "LINT-33": 2501,
+    "LINT-55": 1,
+    "LINT-2": 14002,
+    "LINT-3": 320
+  },
+  "mapped_check_timing_warnings": 0,
+  "reported_min_delay_slack_ns": 0.12,
+  "max_cap_required_limit_min": 0.0,
+  "max_cap_required_limit_max": 0.0,
+  "startpoint": "u_core/combined_scale_reg_reg[31]",
+  "endpoint": "u_core/gen_parallel_dequant.gen_dequant[243].u_deq/data_out_reg[14]",
+  "timing_report_slack_ns": 3.92,
+  "vectorless_dynamic_power_w": 0.0858273,
+  "vectorless_leakage_power_w": 0.0250366
+}
+
+Power is DC vectorless estimation with unannotated activity; not workload or system power.
+Max-cap violations are retained; no physical/electrical signoff is claimed.
