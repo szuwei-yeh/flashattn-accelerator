@@ -10,7 +10,14 @@ are reproduction entry points. The newer shared-dequantizer implementation has a
 312 exact invocations / 624 transactions across 256/32/16 lanes and d16/d64,
 plus a full default regression, six core corner cases, shared top contract tests,
 unit-level four-state tests and bounded controller formal. Its measured source
-identity is recorded separately from the earlier mapped PPA.
+identity is recorded separately from the earlier mapped PPA. The
+[new matched top PPA](evidence/2026-10-03/provenance.json) also completes saved-DDC
+link, mapped latch/unused-bit review, and high-precision constraint checks; it
+does not claim gate-level functional simulation or mapped equivalence.
+
+The recorded pre-consolidation source and CI identities are mapped to equivalent
+current snapshots in the [revision index](README.md#october-3-revision-identities).
+The original verification records and inputs are unchanged.
 
 ## Functional and protocol checks
 

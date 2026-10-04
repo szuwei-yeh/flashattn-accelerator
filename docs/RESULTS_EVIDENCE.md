@@ -1,7 +1,69 @@
-# FlashAttention final results evidence — September 30 run series
+# FlashAttention results evidence
 
-Navigation: [documentation index](README.md). The evidence directory below is the
-current baseline; September 24 reports are retained as historical evidence.
+Navigation: [documentation index](README.md).
+
+## Latest matched shared-dequantizer sweep
+
+The October 3 series maps three **N64/d16 DMA-integrated tops** from clean
+`d5f9123fbbf73154073b28d683ea4bb88b9e3571`, with identical source/library hashes,
+DC R-2020.09-SP4, ordinary `compile`, a 10 ns clock and 1 ns I/O delays.
+After history consolidation, the identical measured snapshot is available at
+`dd68964`; see the [revision map](README.md#october-3-revision-identities).
+Original manifest identities and measurement hashes are preserved.
+
+| Lanes | Cell area (library units) | Area reduction vs 256 | Critical path | Setup slack | Noncausal top cycles |
+|---|---:|---:|---:|---:|---:|
+| 256 | 5,074,665.315 | — | 6.00 ns | +3.92 ns | 7,800 |
+| 32 | 1,940,361.688 | 61.76% | 9.26 ns | +0.66 ns | 7,928 |
+| 16 | 1,715,678.209 | 66.19% | 7.80 ns | +2.12 ns | 8,056 |
+
+All three have zero setup TNS/violating paths. Cycle counts are N64/d16,
+noncausal, zero modeled read latency, `start → done`, excluding host setup and
+output readout. The exact reductions are 61.76375055% / 66.19130321%; d16 cycles
+increase by 1.64102564% / 3.28205128%. The 256-lane default is preserved.
+
+[Experiment details](DEQUANT_EXPERIMENT.md) and [new provenance](evidence/2026-10-03/provenance.json)
+record actual mapped lane counts, source identity, report/netlist/SDC hashes and
+mapped postchecks. Shared-path behavioral verification completes 312 invocations /
+624 exact transactions across all lane/dimension combinations; see
+[verification](analysis/2026-10-03/verification.json) and
+[full latency/causal counts](analysis/2026-10-03/cycles.csv).
+The original full regression, six core corners, shared units and contract tests,
+Python checks and bounded controller formal also passed. CI remains a subset of
+that recorded verification.
+
+This newer PPA is **top-only and d16-only**. Do not subtract the older standalone
+core area from these top areas. Memories are logical blackboxes; there is no
+physical/electrical signoff, mapped equivalence or new d64 PPA claim.
+
+### New mapped warning and power scope
+
+All three saved DDCs were reloaded and linked to the same library. There are
+**zero mapped latches** despite the softmax elaboration warning. The audited
+unused `PRODUCT[1]` pins total 320 / 96 / 80 for 256 / 32 / 16 lanes; each has
+zero flattened fanout endpoints, matching the actual undriven-output/net lint
+counts. Other mapped lint categories remain recorded in provenance.
+`check_timing` emits no warning; min-delay slack is +0.12 / +0.09 / +0.09 ns under
+the logical constraints, not physical hold closure.
+
+Max-cap violations are **107,039 / 103,877 / 100,206**. Every required cap limit
+is zero in the high-precision recheck, and sampled library output pins also have
+`max_capacitance=0`. The violations are retained; electrical closure is not claimed.
+
+| Vectorless DC estimate | 256 lanes | 32 lanes | 16 lanes |
+|---|---:|---:|---:|
+| Total dynamic power | 85.8273 mW | 82.6901 mW | 82.0574 mW |
+| Cell leakage power | 25.0366 mW | 10.6205 mW | 9.5850 mW |
+
+These use unannotated activity and omit physical memory power and parasitics.
+They are tool estimates, not workload power or an energy-efficiency result.
+The measured area reduction must not be presented as the same percentage
+reduction in system power or die area.
+
+## Preserved September 30 standalone-core/top pair
+
+The following sections retain that earlier matched pair, including its warning
+review and verification boundaries. September 24 reports remain historical.
 
 The final N64/d16 core and DMA-integrated top were mapped from the same clean
 commit **`dfbd28e6262f9c40b5ff840557a4c9d1957b7606`**, including the source/destination address-range guards.

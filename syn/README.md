@@ -1,8 +1,12 @@
 # Design Compiler synthesis flow
 
-The canonical mapped profiles are **N64/d16 standalone core and DMA-integrated
-top**, using the same RTL revision, library, clock and flow. The current measured
+The preserved matched pair is **N64/d16 standalone core and DMA-integrated top**
+at `dfbd28e`. The newer shared-dequantizer sweep measures **three integrated tops**
+at `d5f9123`, using the same source, library, clock and flow within that sweep. The current measured
 results and provenance are in [results evidence](../docs/RESULTS_EVIDENCE.md).
+The equivalent measured source after history consolidation is `dd68964`;
+see the [revision map](../docs/README.md#october-3-revision-identities). Original
+run manifests and source hashes are preserved.
 
 ## Profiles and explicit geometry
 
@@ -16,10 +20,15 @@ results and provenance are in [results evidence](../docs/RESULTS_EVIDENCE.md).
 | `loader` | `banked_tile_loader` | None |
 
 Core/top profiles explicitly default to `TILE_SIZE=16,HEAD_DIM=16,SEQ_LEN=64,
-SRAM_DEPTH=4096`; top also selects AXI widths 32/64. `ELAB_PARAMETERS` provides
+SRAM_DEPTH=4096,DEQUANT_LANES=256`; top also selects AXI widths 32/64. `ELAB_PARAMETERS` provides
 partial overrides, expanded by `run_metadata.py`. Unsupported geometry is rejected
 before invoking DC. The standalone RTL module's default N16 is **not** the flow's
 canonical setting.
+
+`DEQUANT_LANES=32` or `16` selects an optional batch-dequantizer architecture;
+`256` preserves the parallel default. Compare variants using a fresh matched
+256-lane run from the same source. Functional scope and cycle counts are in the
+[experiment guide](../docs/DEQUANT_EXPERIMENT.md).
 
 The optimized core/top profiles require `SRAM_DEPTH=4096`, matching their fixed
 12-bit internal interfaces and RTL guards. Smaller depths are not supported;
@@ -100,6 +109,34 @@ label or requested parameter string alone is insufficient evidence.
 For integration area, use only the canonical matched pair and explicitly define
 `(top − standalone core) / standalone core`. Record in-context `u_core` separately;
 the difference is not necessarily pure DMA area because mapping context matters.
+
+After compilation, recheck each accepted mapped run sequentially:
+
+```bash
+MAPPED_RUN_DIR=syn/runs/experiment_l32_n64d16/top \
+  dc_shell -f syn/scripts/check_mapped.tcl \
+  > syn/runs/experiment_l32_n64d16/top/logs/postcheck.log 2>&1
+```
+
+Keep `DC_TARGET_LIBRARY` set to the same library. Repeat for 16 and 256 lanes.
+The recheck reads the saved DDC and preserves the mapped netlist; it records
+high-precision constraints, min-delay timing, mapped lint, latch count and
+fanout of unused low product bits. Require the completion marker and no tool
+errors. These structural checks do not establish mapped functional equivalence.
+
+For a completed three-way top comparison, `report_dequant_sweep.py` accepts
+run tags `<prefix>_l256_n64d16`, `<prefix>_l32_n64d16`, and `<prefix>_l16_n64d16`:
+
+```bash
+python3 syn/scripts/report_dequant_sweep.py --runs-root syn/runs \
+  --run-prefix experiment --output-dir /tmp/flashattn-dequant-evidence
+```
+
+It requires clean successful runs, identical source/library hashes and settings,
+explicit geometry, actual mapped dequantizer counts and completed mapped rechecks. It emits portable
+metric excerpts and provenance with library basenames, retaining raw report and
+artifact hashes. This collector does not replace warning review or functional
+verification.
 
 ## Historical corrections and public artifacts
 

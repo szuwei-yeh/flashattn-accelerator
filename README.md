@@ -4,176 +4,133 @@
 
 **Tiled INT8 attention in SystemVerilog — from AXI reads to normalized output.**
 
-One shared **16 × 16 systolic array** performs QKᵀ and PV; **16 online-softmax
+One shared **16 × 16 systolic array** performs QKᵀ and PV, while **16 online-softmax
 lanes** carry state across tiles. Vector DMA, banked scratchpads, K/V prefetch,
-and fused output updates reduce data movement without storing the full attention
-matrix in DRAM. The main portfolio path is **single-head prefill**, verified at
-N64 with head dimensions 16 and 64.
+and fused output updates reduce data movement without writing the full attention
+matrix to external memory. The optimized path supports **single-head prefill at
+N64, d16/d64**, with causal and noncausal attention.
 
-[Architecture](docs/DESIGN.md) · [Results & evidence](docs/RESULTS_EVIDENCE.md) ·
-[Verification](docs/VERIFICATION.md) · [Run a simulation](#quick-start) ·
-[Synthesis flow](syn/README.md)
+The latest matched synthesis experiment reduces integrated-top **standard-cell
+area by 66.19% for 3.28% more cycles** at N64/d16 by sharing 16 dequantizers.
+All three lane configurations preserve exact fixed-point outputs in the recorded
+**624-transaction RTL sweep**.
 
-| Result | What it demonstrates |
+[Design](docs/DESIGN.md) · [Measured results](#measured-results) ·
+[Quick start](#quick-start) · [Verification](docs/VERIFICATION.md) ·
+[Documentation index](docs/README.md)
+
+## Architecture
+
+![FlashAttention architecture: simulation environment outside the DUT, active/shadow tile staging, shared QK/PV compute and fused output update](docs/figures/architecture.svg)
+
+- **Data movement:** 64-bit AXI reads fill 16-bank Q/K/V scratchpads. DMA and local K/V shadow-tile prefetch overlap compute after the first tile pair is resident.
+- **Shared compute:** the same array performs QKᵀ and PV with INT8 operands and INT32 accumulation. d64 uses four chunks on the array.
+- **Online attention:** score tiles feed 16 softmax lanes; running maxima and sums carry across tiles. Output rescaling and accumulation share one buffer traversal, followed by final normalization.
+- **Configurable dequantization:** `DEQUANT_LANES=256` retains the parallel baseline; 32 or 16 lanes assemble each 256-score tile in batches before softmax consumes it.
+
+The AXI memory model and testbench are outside the synthesizable DUT. Results
+are read through the output port after `done`; the main path has no AXI writeback.
+See the [design guide](docs/DESIGN.md) for arithmetic, tile ownership and interlocks.
+
+## Measured results
+
+The three DMA-integrated tops below use the same measured RTL source
+(`d5f9123`; [equivalent current revision](docs/README.md#october-3-revision-identities)), library,
+constraints and synthesis flow: **Design Compiler R-2020.09-SP4, typical
+`gscl45nm.db`, a 10 ns clock, 1 ns I/O delays and ordinary `compile`**.
+
+| Dequantizer lanes | Standard-cell area¹ | Area reduction | d16 top cycles² | Setup slack |
+|---|---:|---:|---:|---:|
+| 256 (default) | 5,074,665.315 | — | 7,800 | +3.92 ns |
+| 32 | 1,940,361.688 | 61.76% | 7,928 (+1.64%) | +0.66 ns |
+| 16 | 1,715,678.209 | **66.19%** | 8,056 (+3.28%) | +2.12 ns |
+
+¹ Area is in library units. SRAM/ROM are logical blackboxes; physical memory
+area and access timing are excluded. This is pre-layout synthesis, without
+physical or electrical signoff. All three runs have zero setup TNS and zero
+setup violating paths under these constraints.
+
+² Cycles are noncausal N64/d16 testbench `start → done` at zero modeled read
+latency, excluding host initialization and output readout. At d64, the corresponding
+counts are **29,160 / 29,288 / 29,416**; d64 is functionally verified, but this
+synthesis comparison is **d16 only**. The default remains 256 lanes.
+
+[Experiment and reproduction](docs/DEQUANT_EXPERIMENT.md) ·
+[Source and report provenance](docs/evidence/2026-10-03/provenance.json) ·
+[Complete cycle counts](docs/analysis/2026-10-03/cycles.csv) ·
+[Warnings and measurement limits](docs/RESULTS_EVIDENCE.md)
+
+## Verification
+
+| Layer | Recorded checks |
 |---|---|
-| **7,800 / 29,160 cycles** at N64 d16 / d64 | Current DMA-prefetch top, testbench start → done, zero modeled read latency |
-| **34.52% / 36.06% fewer cycles** | Fused output update vs the historical unfused prefetch top |
-| **+3.94 ns setup slack** at a 10 ns target | Current N64/d16 integrated top, pre-layout Design Compiler mapping |
-| **7.35% lower cell area** | Historical matched N64/d16 shared-Q/K-scale experiment |
+| Exact end-to-end RTL | **312 invocations / 624 transactions** across 256/32/16 lanes, d16/d64, causal/noncausal and top read latencies 0/20/100 |
+| Arithmetic and state | Full default regression; signed-scale and saturation corner cases; 200 shared-score tiles per 16/32-lane variant; four-state initialization and partial-tile reset checks |
+| AXI and control | Backpressure, burst boundaries, response errors, address guards, accepted-configuration locking, busy-start rejection and common-reset recovery |
+| Bounded formal | Controller safety to depth 48 and reachability covers, with an abstracted datapath |
+| Numerical quality | **52 cases** comparing fixed-point arithmetic with float64 attention on the same quantized inputs, including saturation and precision limits |
+| GitHub Actions | Python checks, all six lane/dimension smoke configurations, and selected AXI/control/arithmetic/four-state checks |
 
-Timing uses logical memory blackboxes; this is **not physical signoff**.
-Cycle counts exclude host setup, output readout and AXI writeback. Each
-optimization comparison below names its own baseline.
+Exact fixed-point agreement does not establish floating-point equivalence or
+model accuracy. The [numerical report](docs/NUMERICAL_ACCURACY.md) publishes both
+ordinary fixtures and adversarial saturation cases. Formal checks cover bounded
+controller behavior, and CI runs a subset of the full verification suite.
 
-## Architecture at a glance
+The optimized interface accepts **one transaction per common reset**. Multihead,
+GQA, decode and AXI writeback are outside this verified main path.
 
-![FlashAttention architecture: simulation environment outside the DUT, data movement through active/shadow staging, shared QK/PV compute and fused output update](docs/figures/architecture.svg)
-
-[Architecture details and simulation boundary](docs/DESIGN.md#detailed-architecture-and-simulation-boundary)
-explains the behavioral AXI memory and active/shadow tile paths.
-
-DMA fills Q, then K/V tile pairs. Compute begins when the first pair is resident;
-subsequent transfers and local shadow-tile prefetch overlap compute. One array
-is reused for QKᵀ and PV. The output path fuses rescaling and accumulation into
-one buffer traversal per tile/chunk, then normalizes using the running sum.
-
-The **256 dequantizers remain**. The removed logic was an unused normalized
-softmax divider path. See the [design guide](docs/DESIGN.md)
-for arithmetic, ownership/interlocks and supported configurations.
-
-Optional [32/16-lane dequantizer experiments](docs/DEQUANT_EXPERIMENT.md) share
-the score hardware while preserving the 256-lane default. A reproducible
-[numerical accuracy report](docs/NUMERICAL_ACCURACY.md) compares the fixed-point
-output with float64 attention on the same quantized inputs.
-
-## Measured optimization milestones
-
-![Cycle-count milestones for N64 d16 and d64: scalar memory, vector and banks, prefetch, fused output update](docs/figures/cycle-milestones.svg)
-
-| Optimization | Before | After | Configuration / definition |
-|---|---:|---:|---|
-| DMA fill | 312 cycles | **56 cycles (5.57×)** | 256 B, scalar vs vector DMA, modeled read latency 10 |
-| Scratchpad drain | 256 cycles | **17 cycles (15.06×)** | 256 B, byte-serial vs 16-bank stripe read |
-| Memory-path E2E | 15,332 / 60,421 | **12,140 / 46,412** | N64, d16/d64, flat/byte DMA vs banked/vector DMA; 1.263× / 1.302× |
-| Incremental K/V prefetch | 12,140 / 46,412 | **11,912 / 45,608** | Same historical memory stage; −1.878% / −1.732% |
-| Fused output update | 11,912 / 45,608 | **7,800 / 29,160** | N64, d16/d64 prefetch top; −34.52% / −36.06% |
-| Shared Q/K scale | 5,463,487.889 area units | **5,061,648.810 (−7.35%)** | Historical N64/d16 core, identical library/constraints |
-| Final DMA-integrated timing | 10 ns target | **+3.94 ns setup slack** | Final N64/d16, `dfbd28e`; mapped DC, memory blackboxes |
-
-E2E counts are testbench `start → done`, with zero modeled read latency unless
-stated otherwise. They exclude host initialization, output readout, and AXI
-writeback. Memory, prefetch, and fusion rows belong to successive RTL milestones;
-the total fusion gain is not a DMA-only speedup. RTL performance counters begin
-one cycle earlier than the testbench count.
-
-Final regression of the guarded RTL preserves the canonical core and full-top
-cycle counts. Both **N64/d16** profiles now have matched mapped-synthesis
-evidence from clean commit `dfbd28e`. See the public
-[results evidence](docs/RESULTS_EVIDENCE.md) for source identity, parameter proof,
-report excerpts, metric definitions and the disposition of older claims.
-
-## Final N64/d16 logical-synthesis PPA
-
-Both profiles were mapped from clean commit `dfbd28e` after the DMA
-address-range fix, using Design Compiler R-2020.09-SP4, typical `gscl45nm.db`,
-10 ns clock, 1 ns input/output delays and the unchanged `compile` flow.
-SRAM/ROM remain logical blackboxes. Actual hierarchy and mapped declarations
-confirm **SEQ_LEN64 / HEAD_DIM16** in both cores.
-
-| Final mapped result | Standalone core | DMA-integrated top |
-|---|---:|---:|
-| Standard-cell area (library units) | 5,061,521.160 | 5,074,696.289 |
-| Critical path length | 6.01 ns | 5.98 ns |
-| Worst setup slack at 100 MHz | +3.90 ns | +3.94 ns |
-| Setup TNS / violating paths | 0.00 ns / 0 | 0.00 ns / 0 |
-
-Matched top-minus-core area is **13,175.128 units (0.26030%)**.
-This includes mapping-context effects and is not isolated DMA area. The top
-critical path starts at `u_core/combined_scale_reg_reg[31]` and ends at `u_core/gen_dequant[251].u_deq/data_out_reg[14]`.
-Source manifests, netlist/SDC hashes and report extracts are in
-[final provenance](docs/evidence/2026-09-30/provenance.json) and
-[results evidence](docs/RESULTS_EVIDENCE.md).
-
-The top reports **107,039 max-capacitance violations**. The
-high-precision recheck finds a zero required-capacitance limit on every reported
-violation; sampled library output pins have `max_capacitance=0`. This library
-constraint issue does not establish physical electrical closure. Memory area
-and access timing, placement, CTS, routing and extracted parasitics are absent.
-DC vectorless power estimates are retained with their unannotated-activity
-warnings; they are not workload or measured system power. No physical signoff
-or independently measured Fmax is claimed.
-
-The **7.35% shared-scale area reduction** remains the separate historical
-N64/d16 comparison `558f6a2` → `f4bccfa`, 5,463,487.889 → 5,061,648.810.
-Its exact reduction is 7.3549917%; this release does not replace either endpoint
-or attribute that delta to divider removal. The prior September 24 mapping is
-retained as [archival evidence](docs/evidence/2026-09-24/provenance.json).
-
-## Verification evidence
-
-These are recorded results for RTL **`dfbd28e`**, not a live CI status badge.
-
-| Layer | Recorded scope |
-|---|---|
-| End-to-end RTL | N64 d16/d64, causal and noncausal; DMA read latencies 0/20/100 |
-| Independent numerical checks | 40 fixtures, 160 core/top transactions; closed-form and permutation checks |
-| Testbench failure detection | 147 deliberately rejected oracle scenarios |
-| AXI and control | Backpressure, burst boundaries, bad responses, address guards, configuration locking and reset/restart |
-| Four-state simulation | Icarus/VCS output-buffer checks; 8 VCS full-top transactions |
-| Bounded formal | Controller safety to depth 48 plus reachability covers; abstracted datapath |
-
-Exact fixed-point agreement does not imply FP32 equivalence. Formal is bounded
-controller verification, and the scenario runner does not measure aggregate
-code/functional coverage. The optimized interface supports **one transaction per
-common reset**, a 4096-byte scratchpad per Q/K/V, and an output read port.
-Multihead/GQA/decode and AXI writeback wrappers are separate reference paths.
-
-[Verification contracts and reproduction commands](docs/VERIFICATION.md) ·
-[Recorded verification summary](docs/evidence/2026-09-30/verification.txt) ·
-[Numerical and configuration limits](docs/DESIGN.md)
+[Verification contracts and commands](docs/VERIFICATION.md) ·
+[Recorded RTL sweep](docs/analysis/2026-10-03/verification.json) ·
+[Live CI runs](https://github.com/szuwei-yeh/flashattn-accelerator/actions)
 
 ## Quick start
 
-Install Verilator, a C++ compiler, and Python 3 with NumPy. From the repository
-root, build and run the optimized N64/d16 DMA top:
+Use **Verilator 5.046**, a C++ compiler, and Python 3 with NumPy. The checkout
+path must **not contain spaces**. CI builds and caches the pinned simulator.
+From the repository root:
 
 ```bash
+# Default 256-lane N64/d16 DMA top; canonical zero-latency count: 7,800 cycles.
 make -C sim/verilator dma_banked_prefetch_top_N64
+
+# 16-lane core/top smoke: causal + noncausal, top read latencies 0/20/100.
+python3 sim/verilator/run_dequant_sweep.py --lanes 16 --dim 16 --smoke
 ```
 
-For the canonical zero-latency run, the recorded testbench count is **7,800
-cycles** (the RTL counter starts one cycle earlier). To run the regression:
+Use `--lanes 32` or `256` and `--dim 64` to select other configurations. Omit
+`--smoke` to include the generated numerical-analysis fixtures. For the full
+default regression:
 
 ```bash
 make -C sim/verilator regression
 ```
 
-See the [full verification guide](docs/VERIFICATION.md#reproducing-checks) for
-additional audits, numerical checks, four-state simulation and formal tools.
-Synthesis requires licensed Synopsys tools and the specified library; follow
-the [synthesis guide](syn/README.md).
+The [verification guide](docs/VERIFICATION.md#reproducing-checks) includes
+additional audits, four-state simulation and formal requirements. Reproducing
+mapped synthesis requires licensed Synopsys tools and the specified library;
+follow the [synthesis guide](syn/README.md).
+
+## Earlier optimization milestones
+
+![Historical N64 d16/d64 cycle milestones: scalar memory, vector/banked memory, K/V prefetch and fused output update](docs/figures/cycle-milestones.svg)
+
+The earlier memory, prefetch and output-fusion stages brought the default top to
+**7,800 / 29,160 cycles** at N64 d16/d64. Fusion alone reduced cycles by
+**34.52% / 36.06%** against the historical unfused prefetch top. The shared-Q/K-scale
+experiment also recorded a separate **7.35% standard-cell area reduction**.
+Each comparison retains its own baseline and source revisions in the
+[results evidence](docs/RESULTS_EVIDENCE.md); the new dequantizer sweep is a
+separate matched experiment.
 
 ## Repository guide
 
 | Directory | Contents |
 |---|---|
-| `rtl/` | Synthesizable blocks, organized by function; the optimized entry point is `top/flash_attn_top_dma_banked_prefetch.sv` |
-| `sim/verilator/` | Simulation testbenches, regression targets, and runner checks |
-| `sim/icarus/` | Four-state output-buffer testbench, also used by VCS |
+| `rtl/` | Compute, control, memory, DMA and arithmetic blocks; optimized entry point: [DMA-prefetch top](rtl/top/flash_attn_top_dma_banked_prefetch.sv) |
+| `sim/verilator/` | RTL testbenches, regression targets and lane/dimension sweep runner |
+| `sim/icarus/` | Four-state output-buffer and shared-score initialization tests |
 | `formal/` | Bounded controller safety and reachability checks |
-| `golden/` | Numerical references, fixture generators, and numerical checks |
-| `data/` | Versioned input fixtures, expected outputs, scales, and exponential LUT |
-| `syn/` | Synthesis scripts, filelists, and logical memory blackboxes; see the [flow guide](syn/README.md) |
-| `docs/` | [Documentation index](docs/README.md), current results and compact evidence; current run series: `evidence/2026-09-30/` |
-
-Generated simulator builds remain in ignored `sim/verilator/obj_*` directories;
-raw synthesis runs remain in ignored `syn/runs/`. Start with the
-[documentation index](docs/README.md) for current evidence and historical boundaries.
-
-## Source organization
-
-`rtl/core` contains compute variants; `rtl/top` contains integrations;
-`rtl/interface` contains DMA/AXI and simulation memory models; `rtl/memory`
-contains scratchpads, loaders and output storage; `rtl/systolic`, `rtl/softmax`
-and `rtl/quantization` contain arithmetic blocks. `sim`, `formal`, `golden` and
-`syn` hold the corresponding checks and flows.
+| `golden/` | Fixed-point reference, fixture generators and numerical analysis |
+| `data/` | Versioned inputs, expected outputs, scales and exponential LUT |
+| `syn/` | Synthesis scripts, filelists and logical memory blackboxes |
+| `docs/` | [Documentation index](docs/README.md), design, verification and preserved measurement evidence |
