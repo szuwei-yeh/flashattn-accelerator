@@ -1,0 +1,86 @@
+[
+  {
+    "lanes": 256,
+    "actual_register_clock_pins": 40033,
+    "actual_register_clock_pins_outside_clk": 0,
+    "library_related_async_control_warning_pins": 29781,
+    "warning_pin_suffix_counts": {
+      "S": 29731,
+      "R": 50
+    },
+    "mapped_register_types": {
+      "DFFSR": 29781,
+      "DFFPOSX1": 10252
+    },
+    "mapped_clk_connections": {
+      "clk": 40033
+    },
+    "mapped_sha256": "9377fa1745905271a7f0288dbc9c9c34db3b2c7ff115ebbb138e9a23fa22cb89",
+    "sdc_sha256": "c28e6b2bd925e4824ba82d5fbd277ee54699789c07a6d47e136c97a21706f556",
+    "report_sha256": {
+      "clock_scope.txt": "48d137be335697b6882277e2c6694f7c0e989b730e3dfcc7a683022eed3dae35",
+      "no_clock.rpt": "770689ef8efec1b56a0e79acdd02cfc63a3132d1fcba69c3545680c6b3fd6705",
+      "clocks.rpt": "32209683f747c5f473e644466d83ead120a1f97c292e0275db9970db66b00337",
+      "disabled.rpt": "00017ea6cafbf1c267257befdc272a3a488cae2383a2c94e0b0ad4539a174c9a"
+    },
+    "audit_script_sha256": "e040e44f73a6b9f01c31858ef85ac8ca92f7023436d3dce4fd4ef0a0bc956989",
+    "pt_version": "R-2020.09-SP5-1",
+    "library_sha256": "4968d1dba7ff9911cc51dfac7d8ea8b94fbab59d2f862f0531d7c774fb0a5791"
+  },
+  {
+    "lanes": 32,
+    "actual_register_clock_pins": 40332,
+    "actual_register_clock_pins_outside_clk": 0,
+    "library_related_async_control_warning_pins": 25984,
+    "warning_pin_suffix_counts": {
+      "S": 25934,
+      "R": 50
+    },
+    "mapped_register_types": {
+      "DFFSR": 25984,
+      "DFFPOSX1": 14348
+    },
+    "mapped_clk_connections": {
+      "clk": 40332
+    },
+    "mapped_sha256": "1f7854a0e057a2de9a7b3e020ab99bcd6eb996698a20dbd3edc8fd12fe8268cd",
+    "sdc_sha256": "fd51d88c5dcacdc9075f0ad9630dfbf5fdcd3e7a8d4f7887c29c6374f0bd3fdf",
+    "report_sha256": {
+      "clock_scope.txt": "4422c2f81e0e89e7ae2db14b793c805518923f8fed0d1e71e8550e3aa7975af0",
+      "no_clock.rpt": "22e1e3ae36018a9a97a6c13ab0facc4f4a1ee0e97319a71f6b0edc33fdbad771",
+      "clocks.rpt": "806ec02df34a0b819f535f224d070207d243d2c1d2f644c0493c136ad3c27b44",
+      "disabled.rpt": "93f7c0d307efa42106cbc553f41bd1044ecf0af05f70530d8f3116aa20bd5f4e"
+    },
+    "audit_script_sha256": "e040e44f73a6b9f01c31858ef85ac8ca92f7023436d3dce4fd4ef0a0bc956989",
+    "pt_version": "R-2020.09-SP5-1",
+    "library_sha256": "4968d1dba7ff9911cc51dfac7d8ea8b94fbab59d2f862f0531d7c774fb0a5791"
+  },
+  {
+    "lanes": 16,
+    "actual_register_clock_pins": 40062,
+    "actual_register_clock_pins_outside_clk": 0,
+    "library_related_async_control_warning_pins": 25714,
+    "warning_pin_suffix_counts": {
+      "S": 25664,
+      "R": 50
+    },
+    "mapped_register_types": {
+      "DFFSR": 25714,
+      "DFFPOSX1": 14348
+    },
+    "mapped_clk_connections": {
+      "clk": 40062
+    },
+    "mapped_sha256": "33be1b0decaf02755157932bc487d928b3f7e0c43c2da2abb4bc96b62b556f37",
+    "sdc_sha256": "ee48ec3a309aa806cf2184f79ed05d0261a54304c6f0633ba497aa7c7a2f1c7c",
+    "report_sha256": {
+      "clock_scope.txt": "0f4c031a2b30b4807b2b49a433eac4ccb00ab35f229953e1303d358b36ae515e",
+      "no_clock.rpt": "16dc36340d6d1862a51026cf52d1d5b500164e375a5fab99ff06f44bc92e4a78",
+      "clocks.rpt": "1aec9bdef3ecbd35d8d053c50b698e2ad845279f5544b9e0ae119433c0670224",
+      "disabled.rpt": "8023a73e86cc19591bbb6c7bcb1fbd0d3c78bb5b652dc9c8b9a8706d3a4b69f0"
+    },
+    "audit_script_sha256": "e040e44f73a6b9f01c31858ef85ac8ca92f7023436d3dce4fd4ef0a0bc956989",
+    "pt_version": "R-2020.09-SP5-1",
+    "library_sha256": "4968d1dba7ff9911cc51dfac7d8ea8b94fbab59d2f862f0531d7c774fb0a5791"
+  }
+]

@@ -915,6 +915,7 @@ test_runners:
 	$(PYTHON) test_regression_reporting.py
 	$(PYTHON) test_vcs_runner.py
 	$(PYTHON) ../vcs/test_eda_reporting.py
+	$(PYTHON) ../../syn/scripts/test_activity_collector.py
 
 # Shared dequantizer arithmetic, complete-tile publication and reset recovery.
 DEQUANT_LANES ?= 32

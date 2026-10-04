@@ -1,0 +1,68 @@
+LANES 256
+SAMPLE core_start_reg/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_1_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_2_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_5_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_9_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_11_/CLK clocks=clk
+SAMPLE r_q_len_bytes_reg_10_/CLK clocks=clk
+SAMPLE r_num_tiles_reg_2_/CLK clocks=clk
+SAMPLE r_v_base_reg_31_/CLK clocks=clk
+SAMPLE r_v_base_reg_23_/CLK clocks=clk
+actual_register_clock_pins=40033
+actual_register_clock_pins_outside_clk=0
+Unclocked-related-pin report: 29781 entries, all /S or /R; suffix counts={'S': 29731, 'R': 50}; sample:
+core_active_reg/S
+core_start_reg/S
+kv_tiles_ready_reg_0_/S
+kv_tiles_ready_reg_1_/S
+kv_tiles_ready_reg_2_/S
+kv_tiles_ready_reg_3_/S
+kv_tiles_ready_reg_4_/S
+kv_tiles_ready_reg_5_/S
+
+LANES 32
+SAMPLE kv_tiles_ready_reg_1_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_4_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_6_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_10_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_11_/CLK clocks=clk
+SAMPLE r_num_tiles_reg_2_/CLK clocks=clk
+SAMPLE waiting_first_reg/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_13_/CLK clocks=clk
+SAMPLE r_v_base_reg_29_/CLK clocks=clk
+SAMPLE r_v_base_reg_23_/CLK clocks=clk
+actual_register_clock_pins=40332
+actual_register_clock_pins_outside_clk=0
+Unclocked-related-pin report: 25984 entries, all /S or /R; suffix counts={'S': 25934, 'R': 50}; sample:
+core_active_reg/S
+core_start_reg/S
+kv_tiles_ready_reg_0_/S
+kv_tiles_ready_reg_1_/S
+kv_tiles_ready_reg_2_/S
+kv_tiles_ready_reg_3_/S
+kv_tiles_ready_reg_4_/S
+kv_tiles_ready_reg_5_/S
+
+LANES 16
+SAMPLE core_start_reg/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_0_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_1_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_2_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_3_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_4_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_5_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_6_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_7_/CLK clocks=clk
+SAMPLE kv_tiles_ready_reg_8_/CLK clocks=clk
+actual_register_clock_pins=40062
+actual_register_clock_pins_outside_clk=0
+Unclocked-related-pin report: 25714 entries, all /S or /R; suffix counts={'S': 25664, 'R': 50}; sample:
+core_active_reg/S
+core_start_reg/S
+kv_tiles_ready_reg_0_/S
+kv_tiles_ready_reg_1_/S
+kv_tiles_ready_reg_2_/S
+kv_tiles_ready_reg_3_/S
+kv_tiles_ready_reg_4_/S
+kv_tiles_ready_reg_5_/S

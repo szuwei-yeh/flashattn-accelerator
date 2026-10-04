@@ -1,0 +1,182 @@
+[
+  {
+    "lanes": 256,
+    "case": "canonical",
+    "causal": 0,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 29781 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 256,
+    "case": "canonical",
+    "causal": 1,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 29781 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 256,
+    "case": "random_seed7_amp1",
+    "causal": 0,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 29781 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 256,
+    "case": "saturated_distinct",
+    "causal": 0,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 29781 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 32,
+    "case": "canonical",
+    "causal": 0,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 25984 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 32,
+    "case": "canonical",
+    "causal": 1,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 25984 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 32,
+    "case": "random_seed7_amp1",
+    "causal": 0,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 25984 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 32,
+    "case": "saturated_distinct",
+    "causal": 0,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 25984 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 16,
+    "case": "canonical",
+    "causal": 0,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 25714 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 16,
+    "case": "canonical",
+    "causal": 1,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 25714 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 16,
+    "case": "random_seed7_amp1",
+    "causal": 0,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 25714 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  },
+  {
+    "lanes": 16,
+    "case": "saturated_distinct",
+    "causal": 0,
+    "prime_time_errors": 0,
+    "initial_check_timing_warnings": [
+      "Warning: Some timing arcs have been disabled for breaking timing loops or because of constant propagation. Use the 'report_disable_timing' command to get the list of these disabled timing arcs. (PTE-003)",
+      "Warning: There are 25714 register clock pins with no clock."
+    ],
+    "residual_sequential_nets": 1920,
+    "residual_sequential_kind": "array-controller a_sr/b_sr operand delay registers",
+    "prime_time_diagnostics_summary": [
+      "Diagnostics summary: 82 warnings, 19 informationals"
+    ]
+  }
+]

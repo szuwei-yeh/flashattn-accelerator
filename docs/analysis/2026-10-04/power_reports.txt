@@ -1,0 +1,635 @@
+CASE l256_canonical_c0
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES256
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:32:29 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.42008293e-02       0.00000000e+00       0.00000000e+00       8.42008293e-02      (66.18%)   i
+register                9.76274896e-04       3.42990315e-05       3.79823195e-03       4.80880588e-03      ( 3.78%)
+combinational           8.99862126e-03       7.98721425e-03       2.12384053e-02       3.82242426e-02      (30.04%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 8.02151393e-03        ( 6.30%)
+  Cell Internal Power  = 9.41757262e-02        (74.02%)
+  Cell Leakage Power   = 2.50366386e-02        (19.68%)
+                         -------------------------
+Total Power            = 1.27233878e-01       (100.00%)
+
+1
+
+CASE l256_canonical_c1
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES256
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:37:05 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.41984302e-02       0.00000000e+00       0.00000000e+00       8.41984302e-02      (67.33%)   i
+register                8.41480389e-04       2.92999030e-05       3.79823195e-03       4.66901250e-03      ( 3.73%)
+combinational           7.96164759e-03       6.99030934e-03       2.12384053e-02       3.61903608e-02      (28.94%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 7.01960921e-03        ( 5.61%)
+  Cell Internal Power  = 9.30015594e-02        (74.37%)
+  Cell Leakage Power   = 2.50366386e-02        (20.02%)
+                         -------------------------
+Total Power            = 1.25057802e-01       (100.00%)
+
+1
+
+CASE l256_random_seed7_amp1_c0
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES256
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:41:50 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.42008293e-02       0.00000000e+00       0.00000000e+00       8.42008293e-02      (66.01%)   i
+register                9.86392261e-04       3.46363449e-05       3.79823195e-03       4.81926044e-03      ( 3.78%)
+combinational           9.17041954e-03       8.12124368e-03       2.12384053e-02       3.85300666e-02      (30.21%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 8.15588050e-03        ( 6.39%)
+  Cell Internal Power  = 9.43576396e-02        (73.98%)
+  Cell Leakage Power   = 2.50366386e-02        (19.63%)
+                         -------------------------
+Total Power            = 1.27550155e-01       (100.00%)
+
+1
+
+CASE l256_saturated_distinct_c0
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES256
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:46:02 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.42008293e-02       0.00000000e+00       0.00000000e+00       8.42008293e-02      (70.62%)   i
+register                5.11100458e-04       1.57135855e-05       3.79823195e-03       4.32504620e-03      ( 3.63%)
+combinational           4.92141023e-03       4.54282947e-03       2.12384053e-02       3.07026450e-02      (25.75%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 4.55854321e-03        ( 3.82%)
+  Cell Internal Power  = 8.96333382e-02        (75.18%)
+  Cell Leakage Power   = 2.50366386e-02        (21.00%)
+                         -------------------------
+Total Power            = 1.19228519e-01       (100.00%)
+
+1
+
+CASE l32_canonical_c0
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES32
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:30:20 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.10639560e-02       0.00000000e+00       0.00000000e+00       8.10639560e-02      (76.96%)   i
+register                9.82095720e-04       3.47428722e-05       3.61101585e-03       4.62785456e-03      ( 4.39%)
+combinational           6.96148770e-03       5.66779450e-03       7.00946804e-03       1.96387507e-02      (18.64%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 5.70253748e-03        ( 5.41%)
+  Cell Internal Power  = 8.90075415e-02        (84.50%)
+  Cell Leakage Power   = 1.06204841e-02        (10.08%)
+                         -------------------------
+Total Power            = 1.05330564e-01       (100.00%)
+
+1
+
+CASE l32_canonical_c1
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES32
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:32:49 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.10616836e-02       0.00000000e+00       0.00000000e+00       8.10616836e-02      (77.93%)   i
+register                8.45309114e-04       2.97367205e-05       3.61101585e-03       4.48606163e-03      ( 4.31%)
+combinational           6.36712648e-03       5.09605138e-03       7.00946804e-03       1.84726454e-02      (17.76%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 5.12578804e-03        ( 4.93%)
+  Cell Internal Power  = 8.82741138e-02        (84.86%)
+  Cell Leakage Power   = 1.06204841e-02        (10.21%)
+                         -------------------------
+Total Power            = 1.04020387e-01       (100.00%)
+
+1
+
+CASE l32_random_seed7_amp1_c0
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES32
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:35:21 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.10639560e-02       0.00000000e+00       0.00000000e+00       8.10639560e-02      (76.81%)   i
+register                9.89545370e-04       3.50802002e-05       3.61101585e-03       4.63564135e-03      ( 4.39%)
+combinational           7.07036117e-03       5.75409457e-03       7.00946804e-03       1.98339224e-02      (18.79%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 5.78917516e-03        ( 5.49%)
+  Cell Internal Power  = 8.91238675e-02        (84.45%)
+  Cell Leakage Power   = 1.06204841e-02        (10.06%)
+                         -------------------------
+Total Power            = 1.05533525e-01       (100.00%)
+
+1
+
+CASE l32_saturated_distinct_c0
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES32
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:37:18 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.10639560e-02       0.00000000e+00       0.00000000e+00       8.10639560e-02      (80.89%)   i
+register                4.90134466e-04       1.54424197e-05       3.61101585e-03       4.11659293e-03      ( 4.11%)
+combinational           4.33453033e-03       3.69213219e-03       7.00946804e-03       1.50361303e-02      (15.00%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 3.70757468e-03        ( 3.70%)
+  Cell Internal Power  = 8.58886242e-02        (85.70%)
+  Cell Leakage Power   = 1.06204841e-02        (10.60%)
+                         -------------------------
+Total Power            = 1.00216679e-01       (100.00%)
+
+1
+
+CASE l16_canonical_c0
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES16
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:39:45 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.04313719e-02       0.00000000e+00       0.00000000e+00       8.04313719e-02      (78.06%)   i
+register                9.65885993e-04       3.42511994e-05       3.58169014e-03       4.58182720e-03      ( 4.45%)
+combinational           6.57465262e-03       5.44211874e-03       6.00330159e-03       1.80200730e-02      (17.49%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 5.47636999e-03        ( 5.32%)
+  Cell Internal Power  = 8.79719034e-02        (85.38%)
+  Cell Leakage Power   = 9.58499219e-03        ( 9.30%)
+                         -------------------------
+Total Power            = 1.03033267e-01       (100.00%)
+
+1
+
+CASE l16_canonical_c1
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES16
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:42:05 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.04291368e-02       0.00000000e+00       0.00000000e+00       8.04291368e-02      (79.01%)   i
+register                8.30252771e-04       2.93041267e-05       3.58169014e-03       4.44124686e-03      ( 4.36%)
+combinational           6.01133564e-03       4.91070468e-03       6.00330159e-03       1.69253424e-02      (16.63%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 4.94000874e-03        ( 4.85%)
+  Cell Internal Power  = 8.72707218e-02        (85.73%)
+  Cell Leakage Power   = 9.58499219e-03        ( 9.42%)
+                         -------------------------
+Total Power            = 1.01795726e-01       (100.00%)
+
+1
+
+CASE l16_random_seed7_amp1_c0
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES16
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:44:14 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.04313719e-02       0.00000000e+00       0.00000000e+00       8.04313719e-02      (77.91%)   i
+register                9.72755137e-04       3.45145781e-05       3.58169014e-03       4.58895974e-03      ( 4.44%)
+combinational           6.68486394e-03       5.53052640e-03       6.00330159e-03       1.82186924e-02      (17.65%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 5.56504121e-03        ( 5.39%)
+  Cell Internal Power  = 8.80889893e-02        (85.33%)
+  Cell Leakage Power   = 9.58499219e-03        ( 9.28%)
+                         -------------------------
+Total Power            = 1.03239022e-01       (100.00%)
+
+1
+
+CASE l16_saturated_distinct_c0
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_top_dma_banked_prefetch_SEQ_LEN64_HEAD_DIM16_TILE_SIZE16_SRAM_DEPTH4096_AXI_ADDR_W32_AXI_DATA_W64_DEQUANT_LANES16
+Version: R-2020.09-SP5-1
+Date   : Sun Oct  4 10:46:06 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           8.04313719e-02       0.00000000e+00       0.00000000e+00       8.04313719e-02      (81.86%)   i
+register                4.79374285e-04       1.51996819e-05       3.58169014e-03       4.07626387e-03      ( 4.15%)
+combinational           4.14560921e-03       3.60253500e-03       6.00330159e-03       1.37514453e-02      (14.00%)
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)
+
+  Net Switching Power  = 3.61773465e-03        ( 3.68%)
+  Cell Internal Power  = 8.50563496e-02        (86.56%)
+  Cell Leakage Power   = 9.58499219e-03        ( 9.75%)
+                         -------------------------
+Total Power            = 9.82590765e-02       (100.00%)
+
+1

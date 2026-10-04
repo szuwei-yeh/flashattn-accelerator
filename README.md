@@ -61,6 +61,13 @@ synthesis comparison is **d16 only**. The default remains 256 lanes.
 [Complete cycle counts](docs/analysis/2026-10-03/cycles.csv) ·
 [Warnings and measurement limits](docs/RESULTS_EVIDENCE.md)
 
+The additional **workload activity estimate** for canonical noncausal N64/d16
+is **9.926 / 8.352 / 8.301 µJ per job** for 256 / 32 / 16 lanes at 100 MHz.
+The 16-lane estimate is **16.36% lower** than the 256-lane baseline; this is
+pre-layout standard-cell power with partial RTL activity and logical memory
+blackboxes. [Four workloads, annotation quality and limits](docs/COVERAGE_POWER.md#workload-based-standard-cell-power-estimates)
+separate these results from the earlier vectorless DC estimate.
+
 ## Verification
 
 | Layer | Recorded checks |

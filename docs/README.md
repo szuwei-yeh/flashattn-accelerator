@@ -11,6 +11,13 @@ transactions across all six lane/dimension profiles. [Coverage scope and gaps](C
 [metrics](analysis/2026-10-04/coverage.json) and
 [source/transaction hashes](analysis/2026-10-04/coverage_verification.json)
 are separate from the earlier Verilator sweep and synthesis provenance.
+The matched N64/d16 activity study also completes **12 power analyses** using
+the original mapped artifacts: [power/energy](analysis/2026-10-04/power.csv),
+[annotation fractions](analysis/2026-10-04/activity_annotation.csv) and
+[input/report hashes](analysis/2026-10-04/power.json). Canonical noncausal
+standard-cell energy estimates are 9.926 / 8.352 / 8.301 µJ for 256/32/16 lanes.
+These estimates have partial RTL activity and omit physical memory/parasitics.
+The capture flow is `512377e`; the mapped RTL remains `d5f9123` / `dd68964`.
 Licensed run databases and raw waveforms stay outside the public repository.
 
 ## Latest shared-dequantizer experiment

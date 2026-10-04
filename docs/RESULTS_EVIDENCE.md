@@ -13,6 +13,16 @@ hit, while FSM transition coverage remains 64.09–69.55% with no waivers.
 [Scope, gaps and reproduction](COVERAGE_POWER.md) explain those distinctions.
 This adds evidence, without changing the original measured RTL or netlists.
 
+The companion PrimeTime/PrimePower study completes 12 activity analyses on the
+three preserved N64/d16 netlists. Canonical noncausal standard-cell estimates
+are **127.234 / 105.331 / 103.033 mW** and **9.926 / 8.352 / 8.301 µJ** per job
+for 256/32/16 lanes. The 16-lane energy estimate is 16.36% below the baseline.
+Primary inputs are directly annotated; sequential file-plus-implied coverage is
+95.20–95.24%, with propagated/default activity disclosed separately. These are
+pre-layout standard-cell estimates, excluding physical memory and parasitics.
+[Four workloads, provenance and limits](COVERAGE_POWER.md#workload-based-standard-cell-power-estimates)
+retain the old vectorless results as a different experiment.
+
 ## Latest matched shared-dequantizer sweep
 
 The October 3 series maps three **N64/d16 DMA-integrated tops** from clean

@@ -213,3 +213,24 @@ counts; `power.csv` records W and nJ/transaction. The conversion is
 reports and warning logs as well as PASS markers. These are pre-layout
 standard-cell estimates, with logical SRAM/ROM blackboxes, not physical memory
 or whole-system energy. See [coverage and power evidence](../docs/COVERAGE_POWER.md).
+
+Collect a complete accepted 12-case summary (or disjoint per-lane summaries):
+
+```sh
+python3 syn/scripts/summarize_activity_power.py syn/runs/activity_new/power.json \
+  --output-dir /tmp/attention-power-export \
+  --flow-commit YOUR_CAPTURE_REVISION \
+  --pt-version YOUR_VERIFIED_PT_VERSION --vcs-version YOUR_VERIFIED_VCS_VERSION
+```
+
+The collector requires the full three-lane/four-workload grid, identical source,
+flow/library/fixture hashes across the relevant comparisons, consistent timing
+windows and energy arithmetic, and accepted annotations. It exports matched
+energy reductions and annotation fractions without assuming area equals energy.
+
+For the library's asynchronous-control clock warnings, use the same mapped
+inputs with a **new** `PT_RUN_DIR` and run
+`pt_shell -f syn/scripts/check_pt_clock_scope.tcl`. It checks all actual register
+CLK pins have exactly the `clk` domain, and preserves the verbose related-pin
+warning list. The recorded warning entries are DFFSR S/R controls; adding a fake
+clock to those controls would not establish physical reset timing closure.
