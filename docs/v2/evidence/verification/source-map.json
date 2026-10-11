@@ -1,0 +1,121 @@
+[
+  {
+    "public_path": "docs/v2/m7/evidence/rtl_measurements.csv",
+    "public_sha256": "67c294adeff7ce377b16df7c9bd116bf5f32ea57ff624bc98f24a85db19d03f2",
+    "transformation": "identity",
+    "source_path": "docs/v2/m6c/rtl_measurements.csv",
+    "source_sha256": "67c294adeff7ce377b16df7c9bd116bf5f32ea57ff624bc98f24a85db19d03f2"
+  },
+  {
+    "public_path": "docs/v2/m7/evidence/rtl_measurements.json",
+    "public_sha256": "26c1ca4947aa18b0605af67f7ffce0852abe9a2f9c4a9eda207b43bf0a4f00f9",
+    "transformation": "identity",
+    "source_path": "docs/v2/m6c/rtl_measurements.json",
+    "source_sha256": "26c1ca4947aa18b0605af67f7ffce0852abe9a2f9c4a9eda207b43bf0a4f00f9"
+  },
+  {
+    "public_path": "docs/v2/m7/evidence/coverage_gap_inventory.json",
+    "public_sha256": "3c28d6db85f32e8ea04b343e4b4e13f2f07b142251a20d3d7c1a22167f20e247",
+    "transformation": "identity",
+    "source_path": "docs/v2/m6c/coverage_gap_inventory.json",
+    "source_sha256": "3c28d6db85f32e8ea04b343e4b4e13f2f07b142251a20d3d7c1a22167f20e247"
+  },
+  {
+    "source_path": "docs/v2/m6b1/provenance.json",
+    "source_sha256": "0acbdc946404690f7fcee9a70a5cb10c0f18c4000a35f819ed8324f45cd09de6",
+    "public_path": "docs/v2/m7/evidence/m6b1_provenance.json",
+    "public_sha256": "0acbdc946404690f7fcee9a70a5cb10c0f18c4000a35f819ed8324f45cd09de6",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6b1/coverage.json",
+    "source_sha256": "a7057b4d3af9c2fc12374999b5808c7ab0c58887ff87d0397abdcd90adda7984",
+    "public_path": "docs/v2/m7/evidence/m6b1_coverage.json",
+    "public_sha256": "a7057b4d3af9c2fc12374999b5808c7ab0c58887ff87d0397abdcd90adda7984",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/power_l256_04/collection_attempt01.json",
+    "source_sha256": "6da9ade5f6ddd1c5ff2ab74048d4d85936371170fa9eb76f8e7ac84782a6c626",
+    "public_path": "docs/v2/m7/evidence/transport_failure.json",
+    "public_sha256": "6da9ade5f6ddd1c5ff2ab74048d4d85936371170fa9eb76f8e7ac84782a6c626",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/validation_attempt01.json",
+    "source_sha256": "63eceed3b5aca5f8016b5868c00b1c489597c181f06e6af9ff17c0ef70e35edc",
+    "public_path": "docs/v2/m7/evidence/validation_attempt01.json",
+    "public_sha256": "63eceed3b5aca5f8016b5868c00b1c489597c181f06e6af9ff17c0ef70e35edc",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/host_bounded03/qualification.diff",
+    "source_sha256": "7d10923d6db21086d343c7a7e7d1d095d3656ff4ab78b9afedf993af3929e999",
+    "public_path": "docs/v2/m7/evidence/host_qualification.diff",
+    "public_sha256": "7d10923d6db21086d343c7a7e7d1d095d3656ff4ab78b9afedf993af3929e999",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/csr_c0_01/results.json",
+    "source_sha256": "7dc2043ffef944ee7b761c8f053c5213ec123891b065a221d6f61073cc058c4c",
+    "public_path": "docs/v2/m7/evidence/csr_c0_01.json",
+    "public_sha256": "7dc2043ffef944ee7b761c8f053c5213ec123891b065a221d6f61073cc058c4c",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/csr_c1_01/results.json",
+    "source_sha256": "42ff61e1752c0303909e57bbc03217ebe9c3f85ffca9bc51eb3bf81e89008752",
+    "public_path": "docs/v2/m7/evidence/csr_c1_01.json",
+    "public_sha256": "42ff61e1752c0303909e57bbc03217ebe9c3f85ffca9bc51eb3bf81e89008752",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/csr_control_done_01/results.json",
+    "source_sha256": "7440cf26ce3fab4546940042201c3cf502ebde1b644f9098d441ba859af38cf4",
+    "public_path": "docs/v2/m7/evidence/csr_control_done_01.json",
+    "public_sha256": "7440cf26ce3fab4546940042201c3cf502ebde1b644f9098d441ba859af38cf4",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/csr_control_owner_01/results.json",
+    "source_sha256": "f1612e9710afcae5f25e1d5fb8c822eb180e5c88de554d8fee14b77b78874aa8",
+    "public_path": "docs/v2/m7/evidence/csr_control_owner_01.json",
+    "public_sha256": "f1612e9710afcae5f25e1d5fb8c822eb180e5c88de554d8fee14b77b78874aa8",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/host_bounded03/proof.log",
+    "source_sha256": "380b17ac030772679cfc85711381a560e5c4ed5f8ffaa02cd7c56b772244f1fc",
+    "public_path": "docs/v2/m7/evidence/host_proof.log",
+    "public_sha256": "380b17ac030772679cfc85711381a560e5c4ed5f8ffaa02cd7c56b772244f1fc",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/host_bounded03/cover_success.log",
+    "source_sha256": "9e8e8028f42e3f006452f3a3f1a64e7f47e747b2913fba0343b952b5a70c183b",
+    "public_path": "docs/v2/m7/evidence/host_cover_success.log",
+    "public_sha256": "9e8e8028f42e3f006452f3a3f1a64e7f47e747b2913fba0343b952b5a70c183b",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/host_bounded03/cover_owner_fault.log",
+    "source_sha256": "a4020ab446ca8ab2c68670d1d79edf52190075ee47222d5152eff950e3d51fc8",
+    "public_path": "docs/v2/m7/evidence/host_cover_owner_fault.log",
+    "public_sha256": "a4020ab446ca8ab2c68670d1d79edf52190075ee47222d5152eff950e3d51fc8",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6c/host_bounded03/cover_conservation_fault.log",
+    "source_sha256": "2fc0de23eb037c9ad175cd5c8bb7278796151113fac7c28bd173ff5262dab57a",
+    "public_path": "docs/v2/m7/evidence/host_cover_conservation_fault.log",
+    "public_sha256": "2fc0de23eb037c9ad175cd5c8bb7278796151113fac7c28bd173ff5262dab57a",
+    "transformation": "identity"
+  },
+  {
+    "source_path": "docs/v2/m6a/provenance.json",
+    "source_sha256": "c1da53ec77b2e5e14b9e82fee385f81aa1ce78fe14519fe95e6f71834745af20",
+    "public_path": "docs/v2/m7/evidence/m6a_summary.json",
+    "public_sha256": "ab335ee8724355e5c52353a9ec8edd4f9ac33b991967ccda153b4a1c01cef923",
+    "transformation": "Select status/gates/configuration/measured_summary/verification_boundary; exact original field values, not a fresh run"
+  }
+]

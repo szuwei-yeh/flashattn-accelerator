@@ -20,3 +20,7 @@ syn/runs/*
 
 # Licensed simulation and coverage run artifacts
 sim/vcs/runs/
+
+
+# Private local archives and review material; never publish.
+/private/

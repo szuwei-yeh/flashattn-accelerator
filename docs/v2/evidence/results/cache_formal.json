@@ -1,0 +1,182 @@
+{
+  "status": "PASS",
+  "bounded_steps": 24,
+  "clock_unit": "One normalized posedge-equivalent SMT step after async2sync; initial reset then no further reset. Not 24-step induction or unbounded proof.",
+  "scope": "Actual cache metadata, publication and accepted read/write gates. SRAM payload arbitrary. Host accepted-command legality, no ownership collision and commit only after pair complete assumed. Top busy capture, AXI protocol, physical store retirement, loader/shadow state, SRAM content and arithmetic excluded.",
+  "source_sha256": {
+    "rtl/v2/m2c3/kv_cache_banked_decode_m2c3.sv": "fb3f4d65c6c7e5bb450c04bd64d7d8c62af81e39309059676dd93e59b9e02b05",
+    "formal/v2/m2d4/cache_properties.svh": "8682d072bfd1e8ef45d4c036ff88c89cd1457ba2fe9b1836976fe2651dc6ab86",
+    "formal/v2/m2d4/memory_abstraction.sv": "aee100d77832b970d60c9f1b05bec7a31e6228bad62cc00be3ab1f37a2aa6fb5"
+  },
+  "view_sha256": "7dc1851690064309c88bfbfd63ed727a76e7ce7bd23e45f7a3dde7fdb4de39e2",
+  "commands": [
+    {
+      "name": "d16_elaboration",
+      "argv": [
+        "yosys",
+        "-s",
+        "<REPO>/notes/v2_m2d4_2026-10-08/cache_bounded/d16.ys"
+      ],
+      "exit_code": 0,
+      "seconds": 0.512,
+      "log": "d16_elaboration.log",
+      "negative": false
+    },
+    {
+      "name": "d16_bmc",
+      "argv": [
+        "yosys-smtbmc",
+        "-s",
+        "z3",
+        "-t",
+        "24",
+        "<REPO>/notes/v2_m2d4_2026-10-08/cache_bounded/d16.smt2"
+      ],
+      "exit_code": 0,
+      "seconds": 18.44,
+      "log": "d16_bmc.log",
+      "negative": false
+    },
+    {
+      "name": "d16_cover",
+      "argv": [
+        "yosys-smtbmc",
+        "-s",
+        "z3",
+        "-c",
+        "-t",
+        "24",
+        "<REPO>/notes/v2_m2d4_2026-10-08/cache_bounded/d16.smt2"
+      ],
+      "exit_code": 1,
+      "seconds": 10.432,
+      "log": "d16_cover.log",
+      "negative": false
+    },
+    {
+      "name": "d64_elaboration",
+      "argv": [
+        "yosys",
+        "-s",
+        "<REPO>/notes/v2_m2d4_2026-10-08/cache_bounded/d64.ys"
+      ],
+      "exit_code": 0,
+      "seconds": 0.41,
+      "log": "d64_elaboration.log",
+      "negative": false
+    },
+    {
+      "name": "d64_bmc",
+      "argv": [
+        "yosys-smtbmc",
+        "-s",
+        "z3",
+        "-t",
+        "24",
+        "<REPO>/notes/v2_m2d4_2026-10-08/cache_bounded/d64.smt2"
+      ],
+      "exit_code": 0,
+      "seconds": 8.605,
+      "log": "d64_bmc.log",
+      "negative": false
+    },
+    {
+      "name": "d64_cover",
+      "argv": [
+        "yosys-smtbmc",
+        "-s",
+        "z3",
+        "-c",
+        "-t",
+        "24",
+        "<REPO>/notes/v2_m2d4_2026-10-08/cache_bounded/d64.smt2"
+      ],
+      "exit_code": 1,
+      "seconds": 13.599,
+      "log": "d64_cover.log",
+      "negative": false
+    },
+    {
+      "name": "negative_capacity_elaboration",
+      "argv": [
+        "yosys",
+        "-s",
+        "<REPO>/notes/v2_m2d4_2026-10-08/cache_bounded/negative_capacity.ys"
+      ],
+      "exit_code": 0,
+      "seconds": 0.401,
+      "log": "negative_capacity_elaboration.log",
+      "negative": false
+    },
+    {
+      "name": "negative_capacity_bmc",
+      "argv": [
+        "yosys-smtbmc",
+        "-s",
+        "z3",
+        "-t",
+        "24",
+        "<REPO>/notes/v2_m2d4_2026-10-08/cache_bounded/negative_capacity.smt2"
+      ],
+      "exit_code": 1,
+      "seconds": 0.492,
+      "log": "negative_capacity_bmc.log",
+      "negative": true
+    }
+  ],
+  "configurations": [
+    {
+      "dim": 16,
+      "safety_status": "PASS",
+      "steps": 24,
+      "cover_exit_code": 1,
+      "cover_status": "PARTIAL",
+      "reached": 5,
+      "unreached": 1
+    },
+    {
+      "dim": 64,
+      "safety_status": "PASS",
+      "steps": 24,
+      "cover_exit_code": 1,
+      "cover_status": "PARTIAL",
+      "reached": 5,
+      "unreached": 1
+    }
+  ],
+  "negative_control": {
+    "status": "REJECTED",
+    "mutant_sha256": "f40153d8f79b60eea28aabd32a010f25879e8ffbceae9397060cf88876de555f",
+    "violation": "Positive committed length violates intentionally false <=0 invariant"
+  },
+  "log_sha256": {
+    "negative_capacity_elaboration.log": "2854a4108443fc015592879f3b7f4d531292a4797f5e7fa4957395a7736c18da",
+    "d64_elaboration.log": "27ed39b30ba4a5ac25d13224ff2d29f9401b3dd85094eba32351ae13c52452ce",
+    "d64_cover.log": "4dc16ddc9b121780198ee60bef650805fda5c7e9c0b167294a1ae31e1dd99553",
+    "d16_elaboration.log": "e96ae07676a8ed0477e69533dc3ebaaad6dd7f3275100f6cccd08f5ff9aecae1",
+    "d16_cover.log": "e4a30648f379931549cca1076ddba080b9ed8ca8748861ee7332ce294ef01bc2",
+    "negative_capacity_bmc.log": "324459fdff4744436046ae1a8d5aea0e5a47f26de992801dd67c9810d18da2b4",
+    "d16_bmc.log": "10f462c9e23bd83eb0ce02bd39c5685aede393dc0602ce53bfc4b1c569c1e0d1",
+    "d64_bmc.log": "759f910d43a91bdc65512cb6e22c98093e5b545cc11f941c63f8d3ff8fda1628"
+  },
+  "prior_portable_log_sha256": {
+    "negative_capacity_elaboration.log": "e993a51cd8e74701c538327a6a5ad8b164069e10b27a02fc1780b3b10aafc804",
+    "d64_elaboration.log": "cded80200acd715c78b102f34b2dd95310f39eb745ed20fd19df085b66e8ae33",
+    "d64_cover.log": "7752533ed39787c5e7d2e6c5a580d1288a796e829c14ba8744a03ba6925d3ee4",
+    "d16_elaboration.log": "d7803c3309a32e1a04df2ec79fedf95dd4694006322fd8289f6955f15e22b8e0",
+    "d16_cover.log": "5e9d71ec2f869544d5aa846cca8e466b86fd17193494969d34809f7e42ea0862",
+    "negative_capacity_bmc.log": "3a0c88690ed1a149aacb19c54fcb6285ed0f684b882fb02756d92ef3b3d48545",
+    "d16_bmc.log": "10f462c9e23bd83eb0ce02bd39c5685aede393dc0602ce53bfc4b1c569c1e0d1",
+    "d64_bmc.log": "759f910d43a91bdc65512cb6e22c98093e5b545cc11f941c63f8d3ff8fda1628"
+  },
+  "original_raw_log_sha256": {
+    "negative_capacity_elaboration.log": "a68067ad3c123c184cb730f240dd708ac75e4c29c082a4df760a79e02126671a",
+    "d64_elaboration.log": "36fc99dad7a46644a0dc51f7305aabd0a4fe16aa53667944feaace3d11a02947",
+    "d64_cover.log": "7752533ed39787c5e7d2e6c5a580d1288a796e829c14ba8744a03ba6925d3ee4",
+    "d16_elaboration.log": "fefd718e6e55c49f0515c5927e6033eaaa23360fa4130030c866230d7dc22528",
+    "d16_cover.log": "5e9d71ec2f869544d5aa846cca8e466b86fd17193494969d34809f7e42ea0862",
+    "negative_capacity_bmc.log": "3a0c88690ed1a149aacb19c54fcb6285ed0f684b882fb02756d92ef3b3d48545",
+    "d16_bmc.log": "5cb8389ddb29f91d0c9c279f5547b915a2a83a8a360cf5da4f85019b8a9b9e60",
+    "d64_bmc.log": "759f910d43a91bdc65512cb6e22c98093e5b545cc11f941c63f8d3ff8fda1628"
+  }
+}

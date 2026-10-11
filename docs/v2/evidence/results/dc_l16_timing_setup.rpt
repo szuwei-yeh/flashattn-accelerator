@@ -1,0 +1,2060 @@
+Information: Updating design information... (UID-85)
+Warning: Design 'flash_attn_soc_m6b1_COMPACT_DECODE_OUTPUT1_DEQUANT_LANES16' contains 3 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -nworst 5
+        -max_paths 20
+Design : flash_attn_soc_m6b1_COMPACT_DECODE_OUTPUT1_DEQUANT_LANES16
+Version: R-2020.09-SP4
+Date   : Fri Oct  9 23:28:08 2026
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[4]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35730/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25346/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[4]/D (DFFSR)                0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[4]/CLK (DFFSR)              0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[5]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35729/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25345/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[5]/D (DFFSR)                0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[5]/CLK (DFFSR)              0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[6]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35728/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25344/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[6]/D (DFFSR)                0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[6]/CLK (DFFSR)              0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[7]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35727/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25343/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[7]/D (DFFSR)                0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[7]/CLK (DFFSR)              0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[8]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35726/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25342/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[8]/D (DFFSR)                0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[8]/CLK (DFFSR)              0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[9]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35725/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25341/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[9]/D (DFFSR)                0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[9]/CLK (DFFSR)              0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[10]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35724/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25340/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[10]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[10]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[11]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35723/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25339/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[11]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[11]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[12]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35722/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25338/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[12]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[12]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[13]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35721/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25337/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[13]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[13]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[14]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35720/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25336/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[14]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[14]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[15]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35719/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25335/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[15]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[15]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[16]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35718/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25334/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[16]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[16]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[17]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35717/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25333/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[17]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[17]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[18]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35716/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25332/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[18]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[18]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[19]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35715/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25331/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[19]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[19]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[20]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35714/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25330/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[20]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[20]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[21]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35713/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25329/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[21]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[21]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[22]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35712/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25328/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[22]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[22]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+  Startpoint: u_job/phase_reg[0]
+              (rising edge-triggered flip-flop clocked by clk)
+  Endpoint: u_engine/perf_dma_bytes_reg[23]
+            (rising edge-triggered flip-flop clocked by clk)
+  Path Group: clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk (rise edge)                                   0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  u_job/phase_reg[0]/CLK (DFFSR)                          0.00 #     0.00 r
+  u_job/phase_reg[0]/Q (DFFSR)                            0.11       0.11 f
+  u_job/U1580/Y (BUFX2)                                   0.05       0.17 f
+  u_job/U4791/Y (INVX1)                                   0.03       0.19 r
+  u_job/U1259/Y (AND2X1)                                  0.04       0.23 r
+  u_job/U1260/Y (INVX1)                                   0.03       0.26 f
+  u_job/U1148/Y (OR2X1)                                   0.06       0.32 f
+  u_job/U1749/Y (INVX1)                                   0.76       1.09 r
+  u_job/U4461/Y (MUX2X1)                                  0.22       1.30 f
+  u_job/child_config[op][1] (soc_job_adapter_m5)          0.00       1.30 f
+  u_engine/cfg_op[1] (flash_attn_serial_m6b1_4_2_1_16)
+                                                          0.00       1.30 f
+  u_engine/U24929/Y (INVX1)                               0.11       1.42 r
+  u_engine/U18963/Y (AND2X1)                              0.29       1.71 r
+  u_engine/U18964/Y (INVX1)                               0.12       1.83 f
+  u_engine/U23769/Y (BUFX2)                               0.07       1.91 f
+  u_engine/add_95_I2/B[4] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       1.91 f
+  u_engine/add_95_I2/U19/Y (AND2X1)                       0.05       1.95 f
+  u_engine/add_95_I2/U23/Y (AND2X1)                       0.04       2.00 f
+  u_engine/add_95_I2/U22/Y (AND2X1)                       0.04       2.04 f
+  u_engine/add_95_I2/U8/Y (AND2X1)                        0.04       2.08 f
+  u_engine/add_95_I2/U1_8/YC (FAX1)                       0.08       2.16 f
+  u_engine/add_95_I2/U18/Y (AND2X1)                       0.04       2.21 f
+  u_engine/add_95_I2/U25/Y (AND2X1)                       0.04       2.25 f
+  u_engine/add_95_I2/U20/Y (AND2X1)                       0.04       2.29 f
+  u_engine/add_95_I2/U27/Y (AND2X1)                       0.04       2.34 f
+  u_engine/add_95_I2/U26/Y (AND2X1)                       0.04       2.38 f
+  u_engine/add_95_I2/U15/Y (AND2X1)                       0.04       2.42 f
+  u_engine/add_95_I2/U17/Y (AND2X1)                       0.04       2.47 f
+  u_engine/add_95_I2/U24/Y (AND2X1)                       0.04       2.51 f
+  u_engine/add_95_I2/U9/Y (AND2X1)                        0.04       2.55 f
+  u_engine/add_95_I2/U10/Y (AND2X1)                       0.04       2.60 f
+  u_engine/add_95_I2/U2/Y (AND2X1)                        0.04       2.64 f
+  u_engine/add_95_I2/U3/Y (AND2X1)                        0.04       2.68 f
+  u_engine/add_95_I2/U11/Y (AND2X1)                       0.04       2.72 f
+  u_engine/add_95_I2/U12/Y (AND2X1)                       0.04       2.77 f
+  u_engine/add_95_I2/U13/Y (AND2X1)                       0.04       2.81 f
+  u_engine/add_95_I2/U4/Y (AND2X1)                        0.04       2.85 f
+  u_engine/add_95_I2/U5/Y (AND2X1)                        0.04       2.90 f
+  u_engine/add_95_I2/U14/Y (AND2X1)                       0.04       2.94 f
+  u_engine/add_95_I2/U6/Y (AND2X1)                        0.04       2.98 f
+  u_engine/add_95_I2/U7/Y (AND2X1)                        0.04       3.03 f
+  u_engine/add_95_I2/U16/Y (AND2X1)                       0.04       3.07 f
+  u_engine/add_95_I2/U21/Y (AND2X1)                       0.04       3.11 f
+  u_engine/add_95_I2/U28/Y (XOR2X1)                       0.03       3.14 f
+  u_engine/add_95_I2/SUM[31] (flash_attn_serial_m6b1_4_2_1_16_DW01_add_8_DW01_add_12)
+                                                          0.00       3.14 f
+  u_engine/U131871/Y (NOR3X1)                             0.03       3.17 r
+  u_engine/U131874/Y (AND2X1)                             0.03       3.20 r
+  u_engine/U131875/Y (NAND3X1)                            0.01       3.22 f
+  u_engine/U16959/Y (BUFX2)                               0.03       3.25 f
+  u_engine/U131886/Y (OAI21X1)                            0.04       3.29 r
+  u_engine/U24721/Y (INVX1)                               0.03       3.32 f
+  u_engine/U70830/Y (NOR3X1)                              0.05       3.37 r
+  u_engine/U70829/Y (NAND3X1)                             0.02       3.39 f
+  u_engine/U70826/Y (NOR3X1)                              0.05       3.44 r
+  u_engine/U70820/Y (AOI21X1)                             0.03       3.47 f
+  u_engine/U70815/Y (NOR3X1)                              0.04       3.51 r
+  u_engine/U70814/Y (NAND3X1)                             0.03       3.54 f
+  u_engine/U70813/Y (NOR2X1)                              0.04       3.57 r
+  u_engine/U70812/Y (NAND3X1)                             0.01       3.59 f
+  u_engine/U25318/Y (INVX1)                               0.77       4.35 r
+  u_engine/U25317/Y (INVX1)                               0.69       5.04 f
+  u_engine/U25168/Y (INVX1)                               1.02       6.07 r
+  u_engine/U25167/Y (INVX1)                               0.71       6.77 f
+  u_engine/U24935/Y (INVX1)                               1.03       7.80 r
+  u_engine/U24731/Y (INVX1)                               0.28       8.09 f
+  u_engine/U23772/Y (INVX1)                               0.52       8.61 r
+  u_engine/U35736/Y (AOI21X1)                             0.17       8.77 f
+  u_engine/U24934/Y (INVX1)                               0.06       8.83 r
+  u_engine/U24732/Y (INVX1)                               0.18       9.01 f
+  u_engine/U25166/Y (OR2X1)                               0.07       9.08 f
+  u_engine/U24936/Y (INVX1)                               0.24       9.33 r
+  u_engine/U35711/Y (AOI22X1)                             0.11       9.44 f
+  u_engine/U25327/Y (INVX1)                               0.03       9.47 r
+  u_engine/perf_dma_bytes_reg[23]/D (DFFSR)               0.00       9.47 r
+  data arrival time                                                  9.47
+
+  clock clk (rise edge)                                  10.00      10.00
+  clock network delay (ideal)                             0.00      10.00
+  u_engine/perf_dma_bytes_reg[23]/CLK (DFFSR)             0.00      10.00 r
+  library setup time                                     -0.07       9.93
+  data required time                                                 9.93
+  --------------------------------------------------------------------------
+  data required time                                                 9.93
+  data arrival time                                                 -9.47
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.46
+
+
+1

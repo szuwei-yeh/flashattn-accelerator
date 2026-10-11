@@ -1,0 +1,242 @@
+[
+  {
+    "file": "docs/v2/m6d/evidence/closure_attempts.txt",
+    "line": 16,
+    "target": "power_l256_04/collection_attempt01.json",
+    "original_sha256": "7f1508a9e521fb68308da79779a030a0438e51cdad9be2066500fd5436a75150",
+    "derivative": "docs/v2/m7/evidence/closure_attempts.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/transport_failure.json",
+    "public_target": "docs/v2/m7/evidence/transport_failure.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/closure_attempts.txt",
+    "line": 18,
+    "target": "validation_attempt01.json",
+    "original_sha256": "7f1508a9e521fb68308da79779a030a0438e51cdad9be2066500fd5436a75150",
+    "derivative": "docs/v2/m7/evidence/closure_attempts.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/validation_attempt01.json",
+    "public_target": "docs/v2/m7/evidence/validation_attempt01.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 13,
+    "target": "csr_c0_01/results.json",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/csr_c0_01.json",
+    "public_target": "docs/v2/m7/evidence/csr_c0_01.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 13,
+    "target": "csr_c1_01/results.json",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/csr_c1_01.json",
+    "public_target": "docs/v2/m7/evidence/csr_c1_01.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 13,
+    "target": "csr_control_done_01/results.json",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/csr_control_done_01.json",
+    "public_target": "docs/v2/m7/evidence/csr_control_done_01.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 13,
+    "target": "csr_control_owner_01/results.json",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/csr_control_owner_01.json",
+    "public_target": "docs/v2/m7/evidence/csr_control_owner_01.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 15,
+    "target": "rtl_measurements.csv",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/rtl_measurements.csv",
+    "public_target": "docs/v2/m7/evidence/rtl_measurements.csv",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 15,
+    "target": "rtl_measurements.json",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/rtl_measurements.json",
+    "public_target": "docs/v2/m7/evidence/rtl_measurements.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 17,
+    "target": "FORMAL_CONTRACT.md",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/host_formal_contract.txt",
+    "public_target": "docs/v2/m7/evidence/host_formal_contract.txt",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 21,
+    "target": "../m6a/README.md",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/m6a_summary.json",
+    "public_target": "docs/v2/m7/evidence/m6a_summary.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 21,
+    "target": "../m6b1/README.md",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/m6b1_provenance.json",
+    "public_target": "docs/v2/m7/evidence/m6b1_provenance.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 21,
+    "target": "../m6b3/VERIFICATION.md",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m6d/evidence/soc_provenance.json",
+    "public_target": "docs/v2/m6d/evidence/soc_provenance.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 25,
+    "target": "../m6a/COVERAGE_REPORT.md",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m6d/evidence/M6A_coverage.json",
+    "public_target": "docs/v2/m6d/evidence/M6A_coverage.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 27,
+    "target": "coverage_gap_inventory.json",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/coverage_gap_inventory.json",
+    "public_target": "docs/v2/m7/evidence/coverage_gap_inventory.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 27,
+    "target": "../m6b1/coverage.json",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/m6b1_coverage.json",
+    "public_target": "docs/v2/m7/evidence/m6b1_coverage.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "line": 27,
+    "target": "../m6b3/coverage.json",
+    "original_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "derivative": "docs/v2/m7/evidence/formal_gap_review.txt",
+    "replacement_target": "../../../../docs/v2/m6d/evidence/soc_coverage.json",
+    "public_target": "docs/v2/m6d/evidence/soc_coverage.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/host_formal_contract.txt",
+    "line": 3,
+    "target": "../../../rtl/v2/m5/soc_job_adapter_m5.sv",
+    "original_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "derivative": "docs/v2/m7/evidence/host_formal_contract.txt",
+    "replacement_target": "../../../../rtl/v2/m5/soc_job_adapter_m5.sv",
+    "public_target": "rtl/v2/m5/soc_job_adapter_m5.sv",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/host_formal_contract.txt",
+    "line": 5,
+    "target": "../../../formal/v2/m6c/host_properties.svh",
+    "original_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "derivative": "docs/v2/m7/evidence/host_formal_contract.txt",
+    "replacement_target": "../../../../formal/v2/m6c/host_properties.svh",
+    "public_target": "formal/v2/m6c/host_properties.svh",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/host_formal_contract.txt",
+    "line": 9,
+    "target": "host_bounded03/qualification.diff",
+    "original_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "derivative": "docs/v2/m7/evidence/host_formal_contract.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/host_qualification.diff",
+    "public_target": "docs/v2/m7/evidence/host_qualification.diff",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/host_formal_contract.txt",
+    "line": 9,
+    "target": "host_bounded03/results.json",
+    "original_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "derivative": "docs/v2/m7/evidence/host_formal_contract.txt",
+    "replacement_target": "../../../../docs/v2/m6d/evidence/host_formal.json",
+    "public_target": "docs/v2/m6d/evidence/host_formal.json",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/host_formal_contract.txt",
+    "line": 11,
+    "target": "host_bounded03/proof.log",
+    "original_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "derivative": "docs/v2/m7/evidence/host_formal_contract.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/host_proof.log",
+    "public_target": "docs/v2/m7/evidence/host_proof.log",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/host_formal_contract.txt",
+    "line": 11,
+    "target": "host_bounded03/cover_success.log",
+    "original_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "derivative": "docs/v2/m7/evidence/host_formal_contract.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/host_cover_success.log",
+    "public_target": "docs/v2/m7/evidence/host_cover_success.log",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/host_formal_contract.txt",
+    "line": 11,
+    "target": "host_bounded03/cover_owner_fault.log",
+    "original_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "derivative": "docs/v2/m7/evidence/host_formal_contract.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/host_cover_owner_fault.log",
+    "public_target": "docs/v2/m7/evidence/host_cover_owner_fault.log",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  },
+  {
+    "file": "docs/v2/m6d/evidence/host_formal_contract.txt",
+    "line": 11,
+    "target": "host_bounded03/cover_conservation_fault.log",
+    "original_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "derivative": "docs/v2/m7/evidence/host_formal_contract.txt",
+    "replacement_target": "../../../../docs/v2/m7/evidence/host_cover_conservation_fault.log",
+    "public_target": "docs/v2/m7/evidence/host_cover_conservation_fault.log",
+    "disposition": "Available historical evidence/source or explicitly scoped public summary; original remains immutable"
+  }
+]

@@ -1,0 +1,32 @@
+ 
+****************************************
+Report : area
+Design : flash_attn_soc_m6b1_COMPACT_DECODE_OUTPUT1_DEQUANT_LANES16
+Version: R-2020.09-SP4
+Date   : Fri Oct  9 23:32:41 2026
+****************************************
+
+Information: Updating design information... (UID-85)
+Warning: Design 'flash_attn_soc_m6b1_COMPACT_DECODE_OUTPUT1_DEQUANT_LANES16' contains 3 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+Library(s) Used:
+
+    gscl45nm (File: <TARGET_LIBRARY>)
+
+Number of ports:                       157605
+Number of nets:                        889476
+Number of cells:                       696936
+Number of combinational cells:         583662
+Number of sequential cells:             76522
+Number of macros/black boxes:               0
+Number of buf/inv:                     207073
+Number of references:                      14
+
+Combinational area:            1717244.722517
+Buf/Inv area:                   337363.337018
+Noncombinational area:          678481.087097
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:               2395725.809614
+Total area:                 undefined
+1

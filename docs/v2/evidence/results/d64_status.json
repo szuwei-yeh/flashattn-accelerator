@@ -1,0 +1,21 @@
+{
+  "status": "FROZEN_NO_RETRY_CURRENT_VM",
+  "full_SoC_Verilator_VCS": "PASS_RECORDED_M6B3",
+  "DC_analysis_elaboration_link": "PASS_RECORDED_M6B3_M6B4",
+  "d64_16_mapping": "RESOURCE-LIMITED",
+  "d64_256_mapping": "NOT RUN",
+  "matched_d64_PPA": "NOT AVAILABLE",
+  "valid_mapped_endpoints": 0,
+  "additional_d64_mapping_attempts_M6C": 0,
+  "peak_sampled_RSS_GiB": 12.003677,
+  "termination": "Watchdog SIGTERM during ordinary compile Pass1Mapping/core processing, not confirmed kernel OOM",
+  "references": [
+    "docs/v2/m6b3/README.md",
+    "docs/v2/m6b4/RESOURCE_REPORT.md",
+    "docs/v2/m6b4/resource_results.json",
+    "docs/v2/m6b4/SYNTHESIS_CONTRACT.md",
+    "docs/v2/m6b4/FALLBACK_PLAN.md",
+    "docs/v2/m6b4/transport_manifest.json"
+  ],
+  "resumption": "New immutable run tag, explicit larger-RAM authorization and feasibility audit; same verified source/top/geometry/library/constraints/memory policy/compile strategy within both endpoints. 32\u201364GiB is planning only, not measured requirement."
+}

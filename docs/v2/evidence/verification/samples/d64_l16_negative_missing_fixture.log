@@ -1,0 +1,2 @@
+RESOURCE lanes=16 expected=16 core_instances=1 physical_KV_heads=2
+M5D_CHECK missing fixture <WORK>/empty-fixtures/p0/k0.hex clock=20 phase=0 job=0 child_cycles=0

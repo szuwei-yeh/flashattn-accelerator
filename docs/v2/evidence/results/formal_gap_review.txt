@@ -1,0 +1,29 @@
+# Targeted safety evidence and remaining gaps
+
+| Property | Established evidence | Remaining scope |
+|---|---|---|
+| Host output ownership until ACK | Fresh two-state CSR/actual d16 adapter tests; early-owner-release simulator mutant rejected; 12-step adapter assertions/cover | Arbitrary illegal internal owner withdrawal in real SoC remains untested; no waiver |
+| Writeback conservation | Fresh adapter tests inject wrong words/bytes/AW/B/OKAY counts; bounded control assertions and conservation-fault cover | Actual AXI payload/channel conservation is not proved by abstract counter inputs |
+| Last successful B before DONE/IRQ | Fresh genuine four-state d16 warm/prefill exact capture monitors; premature-DONE Verilator mutant rejected; historical M6A/M6B.1/M6B.3 stalls/fault/reset monitors | CSR IRQ is outside new formal; no mapped equivalence, gate simulation or physical reset signoff |
+| Atomic K/V append publication | Historical genuine VCS K-only/K-V gap/V/pre-/post-publication reset and changed-data recovery; 24-step cache metadata proof | Proof assumes complete pairs and legal host inputs; prefill commit/capacity64 not reached at proof bound |
+| Reset/fault recovery | Historical integrated VCS reset/fault campaigns and fresh CSR reset-abort tests | Fatal read/write AXI errors still require common reset; no physical DRAM rollback or independent AXI recovery |
+
+## Fresh M6C execution
+
+Both compact0/1 original CSR/adapter suites passed lint, elaboration/build and real Verilator simulation: **21,682 checks /20 jobs each**. Mock child and writeback completions are explicit; these are not SoC inference tests. Logs/results: [baseline](csr_c0_01/results.json), [optimized](csr_c1_01/results.json). Two copied-DUT mutants fail for [premature DONE](csr_control_done_01/results.json) and [early owner release](csr_control_owner_01/results.json). Original functional RTL remains unchanged.
+
+Accepted activity capture04: genuine VCS four-state, actual M6B.1 d16/Q4:KV2 SoC, lanes16/256, compact1, modeled AXI latency0, population0 noncausal, initial internal SRAM X. Each runs N16 prefill followed by warm L16 decode, all valid external-memory words independently exact checked: **four successful commands /2,176 exact words total**. Host final-B/store/ownership, real cache/DMA and score assembly monitors remain enabled. [Measured cycles/traffic](rtl_measurements.csv), [identity/accounting](rtl_measurements.json). This is a narrow fresh sample, not a fresh full regression or append/reset campaign. Earlier captures and failed power-quality attempts remain preserved.
+
+New bounded host-control scope: [12-step proof/assumptions](FORMAL_CONTRACT.md). Twenty-four-step attempt timeout and full integrated formal remain INCONCLUSIVE. No dependencies installed.
+
+## Historical source-identical evidence retained
+
+[M6A](../m6a/README.md): 1,072 successful commands /318,720 exact words,126 fault cases,66 reset checkpoints, selected append/final-store/B-response boundaries and five real-VCS negative-control types. [M6B.1](../m6b1/README.md) verifies both d16 lane variants; [M6B.3](../m6b3/VERIFICATION.md) verifies d64 and d16 wrappers. M6B.3 d64 VCS:1,098 commands /1,317,888 words,126 faults,78 resets. Fresh full M2/M1/V1 regression was run in M6B.3; M6C preserves its source hashes and results, and does **not** relabel it as a new run.
+
+## Coverage is PARTIAL, not waived
+
+The actual [M6A URG reports](../m6a/COVERAGE_REPORT.md) merge six positive runs per traversal: DUT line92.82%, FSM53.85%, branch85.67/85.68%, condition80.15/80.13%, toggle82.41%. Defined functional-group aggregate95.83% is the average of three groups; CSR zero-response-stall bin is reachable but untested. Procedural monitors are not instrumented SVA coverage; the integrated SVA statistics scope is empty.
+
+[Gap inventory](coverage_gap_inventory.json) retains all312 missed FSM report rows,156 per variant:97 reset/error-recovery-untested,44 structurally unreachable **by inspection**,7 unsupported-configuration,8 unresolved. Repeated instance views are not unique transitions. No denominator changes or waivers. M6B.1/M6B.3 report their own per-profile coverage in [M6B.1 coverage](../m6b1/coverage.json) and [M6B.3 coverage](../m6b3/coverage.json); these are not merged with M6A. M6C gathers no new code/functional/SVA coverage database and claims no percentage improvement.
+
+Priority gaps remain integrated ownership/conservation guards, wider reset/fault phase coverage and legal random host protocols. The fresh module proof and negative controls strengthen the first two guards, but do not waive unhit integrated FSM arcs. Broad 100% coverage or another unbounded integrated proof is not justified for this bounded closure. Before asserting complete verification, use targeted integrated ownership/error guard evidence and an explicit boundary/assumption review.

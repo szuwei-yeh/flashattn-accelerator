@@ -1,0 +1,24 @@
+`verilator_config
+// Only the preserved unused M4 observation wire, shifted by one parameter line.
+lint_off -rule UNUSEDSIGNAL -file "*flash_attn_serial.sv" -lines 62
+
+// Functional filenames; verified module identifiers retain their original source identity.
+lint_off -rule DECLFILENAME -file "*rtl/v2/cache/kv_cache_banked_decode.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/compute/banked_tile_loader_decode.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/compute/flash_attn_core_decode.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/compute/online_softmax_masked.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/compute/tile_controller_decode.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/interface/dma_write_engine.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/interface/types_pkg.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/ppa_baseline/axi_lite_csr.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/ppa_baseline/flash_attn_serial.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/ppa_baseline/flash_attn_soc.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/ppa_baseline/gqa_output_packer.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/ppa_baseline/soc_job_adapter.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/soc/axi_lite_csr.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/soc/flash_attn_serial.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/soc/flash_attn_soc.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/soc/gqa_output_packer.sv"
+lint_off -rule DECLFILENAME -file "*rtl/v2/soc/soc_job_adapter.sv"
+lint_off -rule DECLFILENAME -file "*sim/v2/reference/tb_soc.sv"
+lint_off -rule DECLFILENAME -file "*sim/v2/soc/tb_soc.sv"

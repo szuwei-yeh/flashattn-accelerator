@@ -1,0 +1,6 @@
+{
+  "status": "FAIL_REPORT_GENERATION_ORDER",
+  "cause": "Link audit checked changed-files.json/validation.json before the same final validation routine emitted them.",
+  "source_or_report_identity_failure": false,
+  "remedy": "Defer only those two exact generated targets; verify existence after emission. All other source/hash/link checks unchanged."
+}

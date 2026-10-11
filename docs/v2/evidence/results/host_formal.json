@@ -1,0 +1,55 @@
+{
+  "status": "PASS_BOUNDED_MODULE_ONLY",
+  "depth_normalized_posedge_steps": 12,
+  "cover_depth": 12,
+  "assumptions": [
+    "First sampled step common reset asserted; subsequent reset unconstrained.",
+    "All child/DMA response and metadata ports arbitrary; no fairness or child completion assumed."
+  ],
+  "boundary": "Actual M5 host-adapter control only; package import replaced by qualified constants/types; no functional logic changed. Memories, real AXI writer, cache, compute and payload are outside.",
+  "source_sha256": {
+    "rtl/v2/m5/m5_types_pkg.sv": "5d8574f14239d5083ca4fd01cc2dd8ec9069350af4f6e3c465562a866c386a9c",
+    "rtl/v2/m5/soc_job_adapter_m5.sv": "0e632433d9ed0706f53560ea356b704896c7ce111a8f1875bf6038a36630649d",
+    "formal/v2/m6c/host_properties.svh": "0e43edd449f3ae318320e5a5439584ab99eb128f2b251cd60e50b721c2459c86"
+  },
+  "commands": [
+    {
+      "kind": "proof",
+      "exit": 0,
+      "seconds": 31.127133959002094,
+      "status": "PASS_BOUNDED",
+      "command": "yosys -Q -T -p read_verilog -formal -sv \"<REPO>/rtl/v2/m5/m5_types_pkg.sv\" \"<REPO>/notes/v2_m6c_2026-10-10/host_bounded03/host.sv\"; prep -top soc_job_adapter_m5; async2sync; dffunmap; flatten; opt_clean; sat -seq 12 -set-assumes -prove-asserts -verify -timeout 60",
+      "original_log_sha256": "0e4d51a878ca351b593bb6189f85e7d3c2bb42a658356e858a0fd02e0e995005",
+      "public_log_sha256": "380b17ac030772679cfc85711381a560e5c4ed5f8ffaa02cd7c56b772244f1fc"
+    },
+    {
+      "kind": "cover_success",
+      "exit": 0,
+      "seconds": 3.419564082985744,
+      "status": "REACHED",
+      "command": "yosys -Q -T -p read_verilog -formal -sv \"<REPO>/rtl/v2/m5/m5_types_pkg.sv\" \"<REPO>/notes/v2_m6c_2026-10-10/host_bounded03/host.sv\"; prep -top soc_job_adapter_m5; async2sync; dffunmap; flatten; opt_clean; sat -seq 12 -set-assumes -set-at 12 f_cover_success 1 -show phase -show success_event -timeout 30",
+      "original_log_sha256": "0e431b96870afaf2a6cf81eef3d19a6db2577bfeb639bc8ace3efc7d35bbe033",
+      "public_log_sha256": "9e8e8028f42e3f006452f3a3f1a64e7f47e747b2913fba0343b952b5a70c183b"
+    },
+    {
+      "kind": "cover_owner_fault",
+      "exit": 0,
+      "seconds": 3.4087612080038525,
+      "status": "REACHED",
+      "command": "yosys -Q -T -p read_verilog -formal -sv \"<REPO>/rtl/v2/m5/m5_types_pkg.sv\" \"<REPO>/notes/v2_m6c_2026-10-10/host_bounded03/host.sv\"; prep -top soc_job_adapter_m5; async2sync; dffunmap; flatten; opt_clean; sat -seq 12 -set-assumes -set-at 12 f_cover_owner_fault 1 -show phase -show fatal_kind -timeout 30",
+      "original_log_sha256": "8e84422f67464206719d658d5c586e6180f8790d029379af0b6857bc148ff3b7",
+      "public_log_sha256": "a4020ab446ca8ab2c68670d1d79edf52190075ee47222d5152eff950e3d51fc8"
+    },
+    {
+      "kind": "cover_conservation_fault",
+      "exit": 0,
+      "seconds": 3.3900865420000628,
+      "status": "REACHED",
+      "command": "yosys -Q -T -p read_verilog -formal -sv \"<REPO>/rtl/v2/m5/m5_types_pkg.sv\" \"<REPO>/notes/v2_m6c_2026-10-10/host_bounded03/host.sv\"; prep -top soc_job_adapter_m5; async2sync; dffunmap; flatten; opt_clean; sat -seq 12 -set-assumes -set-at 12 f_cover_conservation_fault 1 -show phase -show source_words -show expected_words -timeout 30",
+      "original_log_sha256": "1010c383335c7f15a7d168452402e0bbaf2c8355b33b4387136b4aa3e7330d54",
+      "public_log_sha256": "2fc0de23eb037c9ad175cd5c8bb7278796151113fac7c28bd173ff5262dab57a"
+    }
+  ],
+  "unbounded_proof": false,
+  "integrated_formal": "INCONCLUSIVE_HISTORICAL_UNCHANGED"
+}

@@ -1,0 +1,51 @@
+{
+  "base_release": "1f17b0eb08e3c3919a0e579ab8b1955146a6310a",
+  "base_parent": "3dd4f98f6126a07a1019c08cf5df82d9aade27df",
+  "branch": "release/v2-portfolio",
+  "M7_commit": null,
+  "pushed": false,
+  "audit_deliverables_sha256": {
+    "RECOMMENDED_FIXES.md": "d5def36d2c7827c5b489f47af0d3b716661b15ccd88f7aa2bef3b874a3895973",
+    "VERIFICATION_MATRIX.csv": "3d2f28479fe8ffa1dab65d3223f48a0bb413a5505d8eb8a43f3920ee5b23bca4",
+    "RELEASE_INTEGRITY.md": "3c3f7f50bef05673d4a08bb7cad5b7db3e3cf3d74696fb83ecf7ed36b54664df",
+    "AUDIT_PROVENANCE.json": "53ef4761f075cf85c017fc3efadfab6e5f49fa6503380c7342573cf78bf67b0f",
+    "PPA_CLAIM_REVIEW.md": "e6823f63bb126e745ca409574736bfb8a3b5b0634d98b6e3a0eba1114a59ded5",
+    "FINDINGS.md": "9975b3f0c206f31d5d36fdbdd63e731832c79eaf3bbad442ecad44d2cc610787",
+    "HIRING_MANAGER_REVIEW.md": "61c37186319d0fe996b306c2e558aab3d7d702158d128fa132769caba37b4ee0",
+    "FINAL_AUDIT_REPORT.md": "2c956cc97fc71c4bc8cddeb4654cdfbf7056aa66e06b27cc5670134f0d1f941d"
+  },
+  "production_RTL_changed": false,
+  "accepted_fixtures_golden_formal_historical_evidence_changed": false,
+  "source_checks": {
+    "production_M6B3_source_sha256": {
+      "entries": 23,
+      "errors": []
+    },
+    "measured_d16_M6B1_source_sha256": {
+      "entries": 23,
+      "errors": []
+    }
+  },
+  "fresh_safety_counts": {
+    "invocations": 120,
+    "successful_commands": 4224,
+    "exact_words": 3225600,
+    "fault_cases": 504,
+    "reset_checkpoints": 264,
+    "csr_checks": 204984,
+    "negative_controls": 8
+  },
+  "supplemental_receipt": "regression.json",
+  "measured_PPA_identity": "M6B.1 5b486419; current M6B.3 wrapper not newly mapped or equivalence-proved",
+  "raw_artifact_scope": "External <M7_RAW>; source/build/runtime archives remain separate from release payload",
+  "selected_public_logs": "sample_logs.json",
+  "owner_distribution_decision": "Portfolio review; reuse licensing remains pending",
+  "no_new_licensed_EDA_or_full_synthesis_power_jobs": true,
+  "remaining_limits": [
+    "Linux/new V2 GitHub Actions not executed",
+    "Complete integrated formal/coverage closure open",
+    "d64 PPA unavailable",
+    "Logical SRAM/ROM, retained electrical violations, no physical/reset signoff or mapped equivalence",
+    "Finite seeded timing, two deterministic populations, sampled common reset only"
+  ]
+}

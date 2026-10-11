@@ -1,0 +1,73 @@
+{
+  "status": "PASS",
+  "mutant": null,
+  "compact": 1,
+  "source_sha256": {
+    "rtl/v2/m5/m5_types_pkg.sv": "5d8574f14239d5083ca4fd01cc2dd8ec9069350af4f6e3c465562a866c386a9c",
+    "rtl/v2/m5/axi_lite_csr_m5.sv": "134882e16dd143aa18dafe1835f9d584ff06965796fd4b31865626d1d3dc4f0f",
+    "rtl/v2/m5/soc_job_adapter_m5.sv": "0e632433d9ed0706f53560ea356b704896c7ce111a8f1875bf6038a36630649d",
+    "sim/v2/m5b/tb_csr.sv": "80ceebdc82fd875df01880a53e84069af90ffe1c9b370522132cfc5a88403f42"
+  },
+  "commands": [
+    [
+      "verilator",
+      "--lint-only",
+      "--timing",
+      "-Wall",
+      "--top-module",
+      "tb_csr",
+      "-GCOMPACT=1",
+      "rtl/v2/m5/m5_types_pkg.sv",
+      "rtl/v2/m5/axi_lite_csr_m5.sv",
+      "rtl/v2/m5/soc_job_adapter_m5.sv",
+      "sim/v2/m5b/tb_csr.sv"
+    ],
+    [
+      "verilator",
+      "--binary",
+      "--timing",
+      "-Wall",
+      "--top-module",
+      "tb_csr",
+      "-GCOMPACT=1",
+      "--Mdir",
+      "<PRIVATE_BUILD>/obj",
+      "-j",
+      "2",
+      "rtl/v2/m5/m5_types_pkg.sv",
+      "rtl/v2/m5/axi_lite_csr_m5.sv",
+      "rtl/v2/m5/soc_job_adapter_m5.sv",
+      "sim/v2/m5b/tb_csr.sv"
+    ],
+    [
+      "<PRIVATE_BUILD>/obj/Vtb_csr"
+    ]
+  ],
+  "tool_version": "Verilator 5.046 2026-02-28 rev vUNKNOWN-built20260228",
+  "lint_exit": 0,
+  "build_exit": 0,
+  "simulation_exit": 0,
+  "seconds": {
+    "lint": 1.161,
+    "build": 39.741,
+    "simulation": 1.39
+  },
+  "private_build": "<PRIVATE_BUILD>",
+  "scope": "two-state CSR/adapter with validation/completion mock, not SoC inference",
+  "counts": {
+    "compact": 1,
+    "checks": 21682,
+    "reads": 1499,
+    "writes": 1464,
+    "jobs": 20,
+    "starts": 20,
+    "acks": 10,
+    "pack_starts": 12,
+    "AW": 1467,
+    "W": 1467,
+    "B": 1464,
+    "AR": 1502,
+    "R": 1501,
+    "cycles": 8385
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "status": "PASS_BOUNDED_M6A_SCOPE",
+  "gates": {
+    "environment": "PASS",
+    "M5D_checkpoint": "COMMITTED",
+    "integrated_smoke": "PASS",
+    "stateful_protocol": "PASS",
+    "reset_fault": "PASS",
+    "coverage_collection": "PASS",
+    "code_coverage_closure": "PARTIAL",
+    "new_formal": "NOT RUN",
+    "regression": "PASS"
+  },
+  "configuration": {
+    "HEAD_DIM": 16,
+    "DEQUANT_LANES": 256,
+    "Q_HEADS": 4,
+    "KV_HEADS": 2,
+    "KV_CAPACITY": 64,
+    "prefill_N": 16,
+    "decode_lengths": [
+      16,
+      17,
+      18
+    ],
+    "traversal": [
+      0,
+      1
+    ],
+    "AXI_latency": [
+      0,
+      20,
+      100
+    ]
+  },
+  "measured_summary": {
+    "vcs_totals": {
+      "commands": 1072,
+      "words": 318720,
+      "csr_checks": 51670,
+      "faults": 126,
+      "resets": 66,
+      "rejections": 36
+    },
+    "vcs_invocations": 14,
+    "matched_records": 66,
+    "negative_controls": 6,
+    "uncovered_fsm_rows": 312,
+    "fsm_classifications": {
+      "UNSUPPORTED_CONFIGURATION": 14,
+      "ERROR_RECOVERY_UNTESTED": 194,
+      "STRUCTURALLY_UNREACHABLE_BY_INSPECTION": 88,
+      "UNRESOLVED": 16
+    },
+    "uncovered_branch_pattern_rows": 1907,
+    "waivers": 0,
+    "coverage": [
+      {
+        "compact": 0,
+        "tests": 6,
+        "score": 81.79,
+        "line": 92.82,
+        "condition": 80.15,
+        "toggle": 82.41,
+        "fsm_transition": 53.85,
+        "branch": 85.67,
+        "functional_group": 95.83,
+        "boundary": "tb_m6a.h.u_dut",
+        "assertion_coverage": "NOT_AVAILABLE_NO_SVA"
+      },
+      {
+        "compact": 1,
+        "tests": 6,
+        "score": 81.79,
+        "line": 92.82,
+        "condition": 80.13,
+        "toggle": 82.41,
+        "fsm_transition": 53.85,
+        "branch": 85.68,
+        "functional_group": 95.83,
+        "boundary": "tb_m6a.h.u_dut",
+        "assertion_coverage": "NOT_AVAILABLE_NO_SVA"
+      }
+    ],
+    "scope": "Bounded integrated d16 Q4/KV2, 256 lanes; code coverage incomplete; no assertion coverage or formal credit from procedural monitors."
+  },
+  "verification_boundary": "tb_m6a.h.u_dut"
+}

@@ -1,0 +1,6 @@
+RESOURCE lanes=16 expected=16 core_instances=1 physical_KV_heads=2
+STORE_JOB id=1 op=0 length=16 core_stores=8192 result_stores=4096 cache_checks=256
+DQ_JOB id=1 op=0 length=16 lanes=16 compact=1 requests=4 issues=64 retires=64 words=1024 consumes=4 dq_wait=68 softmax_wait=212 update_cycles=4112 norm_cycles=4112
+HOST_JOB id=1 op=0 length=16 pop=0 latency=0 compact=1 dim=64 lanes=16 host_cycles=31699 request_cycles=31703 compute_cycles=24424 dma_wb_cycles=7269 wb_phase_cycles=7272 read_bytes=8192 write_bytes=16384 per_head_bytes=4096 ar=64 r=1024 aw=129 w=2048 b=129 okay=129 words=4096 cache_reads=256 cache_writes=256 copy_cycles=12288 array_runs=32 array_compute=1504 core_active=10648 irq_latency=0 phase0=0 phase1=2 phase2=365 phase3=2 phase4=359 phase5=4 phase6=743 phase7=4 phase8=10648 phase9=4096 phase10=4096 phase11=4096 phase12=4 phase13=4 phase14=1 phase15=0 h0_start=924 h0_end=6658 h0_core=2662 h1_start=6840 h1_end=12574 h1_core=2662 h2_start=12760 h2_end=18494 h2_core=2662 h3_start=18686 h3_end=24420 h3_core=2662 aw_stall=54 w_stall=675 b_wait=562 source_wait=3855 PASS
+M7_SAFETY seed=17 final_b_hold=37 held_edges=37 completion_edges=1 owner_edges=7429 publication_edges=1 head_edges=10648 PASS
+RESULT PASS M5D successful=1 exact_words=4096 csr_checks=48

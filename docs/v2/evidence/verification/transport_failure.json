@@ -1,0 +1,8 @@
+{
+  "status": "TRANSPORT_TIMEOUT",
+  "timeout_seconds": 60,
+  "tool_run_status": "PASS_TOOL_RUN_ALREADY_COMPLETE",
+  "cause": "Uncompressed report+104.8MB VCD transfer exceeded bounded transport timeout.",
+  "remedy": "Lossless gzip transport only; identical decompressed raw bytes/hashes. No PT rerun, no report/source mutation.",
+  "partial_reports_accepted": false
+}

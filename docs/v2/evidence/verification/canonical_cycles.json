@@ -1,0 +1,82 @@
+[
+  {
+    "dim": 16,
+    "lanes": 256,
+    "status": "PASS",
+    "host_warm_cycles": 1228,
+    "successful_commands": 5,
+    "exact_words": 2176,
+    "binary_sha256": "885a41f4dbf1be2d0aacb8d1012fdf95672434855b6c53850078bb6fd315482e",
+    "log": "canonical_d16_l256_retry.log",
+    "log_sha256": "5bb50fce79ec40796201fa87d7674388ec10dd17f7feb7253d70c801be01ffac",
+    "command": [
+      "<FRESH_BINARY>",
+      "<FIXTURES>",
+      "0",
+      "warm",
+      "",
+      "0",
+      "0"
+    ]
+  },
+  {
+    "dim": 16,
+    "lanes": 16,
+    "status": "PASS",
+    "host_warm_cycles": 1292,
+    "successful_commands": 5,
+    "exact_words": 2176,
+    "binary_sha256": "8d35ec1f40fd91e8866d50a70f99bfcb58d089b30e4a5c9df76f8d73b523e77f",
+    "log": "canonical_d16_l16_retry.log",
+    "log_sha256": "6a8a9d22ea1e4296826edaa4851dd0f0b46b5a97024dfeab0a033c602744bbc6",
+    "command": [
+      "<FRESH_BINARY>",
+      "<FIXTURES>",
+      "0",
+      "warm",
+      "",
+      "0",
+      "0"
+    ]
+  },
+  {
+    "dim": 64,
+    "lanes": 256,
+    "status": "PASS",
+    "host_warm_cycles": 4210,
+    "successful_commands": 5,
+    "exact_words": 8704,
+    "binary_sha256": "2e81bb07da9a994134961914e132632d03eb9111855b0631c7bba107ebde17f6",
+    "log": "canonical_d64_l256_retry.log",
+    "log_sha256": "f534f336f98d51a5d2548346f78e802faeaf9e1b6e910265b0e8e721f2ee7adc",
+    "command": [
+      "<FRESH_BINARY>",
+      "<FIXTURES>",
+      "0",
+      "warm",
+      "",
+      "0",
+      "0"
+    ]
+  },
+  {
+    "dim": 64,
+    "lanes": 16,
+    "status": "PASS",
+    "host_warm_cycles": 4272,
+    "successful_commands": 5,
+    "exact_words": 8704,
+    "binary_sha256": "95c5f7c8c6e907e946b1938d4c7357897bd429a33da506d623da3b685bc84ea7",
+    "log": "canonical_d64_l16_retry.log",
+    "log_sha256": "c9b1c45192f7ebfda9b785de5c762c96cf9952d95b5a26df11d132b10aa55453",
+    "command": [
+      "<FRESH_BINARY>",
+      "<FIXTURES>",
+      "0",
+      "warm",
+      "",
+      "0",
+      "0"
+    ]
+  }
+]

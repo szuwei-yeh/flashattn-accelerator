@@ -1,0 +1,77 @@
+{
+  "status": "PASS_MATCHED_CONDITIONS",
+  "SDC_normalized_sha256": "57b30baa43bc785cc3585d558748c982c5240a424fdf3438275c807165740081",
+  "SDC_only_excluded_field": "write_sdc creation timestamp; every remaining constraint byte identical",
+  "common_environment": {
+    "SYN_RUN_TAG": "m6b2_20261010T015435Z_compile",
+    "SYN_TOP_MODULE": "flash_attn_soc_m6b1",
+    "SYN_FILELIST": "syn/v2/m6b2/soc_macro.f",
+    "SYN_RUN_MODE": "compile",
+    "SYN_CLK_PERIOD": "10.0",
+    "SYN_IO_DELAY": "1.0",
+    "SYN_GIT_COMMIT": "5b48641988babf22383feda43258eaf73b0d6b33",
+    "SYN_GIT_DIRTY": "M6B.1 verified production hashes; committed integration"
+  },
+  "compiled_scripts_and_sources": "Same transport_manifest files for both endpoints, remote hashes rechecked before/after every process",
+  "library_sha256": "4968d1dba7ff9911cc51dfac7d8ea8b94fbab59d2f862f0531d7c774fb0a5791",
+  "hierarchy_area_parts": [
+    {
+      "instance": "u_engine/u_core",
+      "area256": 5083568.8735,
+      "area16": 1724610.8648,
+      "difference16_minus256": -3358958.0086999997
+    },
+    {
+      "instance": "u_engine/u_dma",
+      "area256": 4559.7188,
+      "area16": 4559.7188,
+      "difference16_minus256": 0.0
+    },
+    {
+      "instance": "u_engine/g_cache[0].u_cache",
+      "area256": 7772.0772,
+      "area16": 7772.0772,
+      "difference16_minus256": 0.0
+    },
+    {
+      "instance": "u_engine/g_cache[1].u_cache",
+      "area256": 7772.0772,
+      "area16": 7772.0772,
+      "difference16_minus256": 0.0
+    },
+    {
+      "instance": "u_csr",
+      "area256": 34090.8904,
+      "area16": 34056.1622,
+      "difference16_minus256": -34.72819999999774
+    },
+    {
+      "instance": "u_job",
+      "area256": 21026.5173,
+      "area16": 20938.2889,
+      "difference16_minus256": -88.22839999999997
+    },
+    {
+      "instance": "u_pack",
+      "area256": 3350.802,
+      "area16": 3350.802,
+      "difference16_minus256": 0.0
+    },
+    {
+      "instance": "u_write",
+      "area256": 11202.6602,
+      "area16": 11202.6602,
+      "difference16_minus256": 0.0
+    }
+  ],
+  "outside_core_standard_cell_area256": 674682.0941110002,
+  "outside_core_standard_cell_area16": 671114.9448139998,
+  "outside_core_area_delta16_minus256": -3567.1492970003746,
+  "interpretation": "Source functionality unchanged; CSR lane capability constant and in-context mapper timing optimization can change peripheral cell choices. Outside-core area is not identical; no mapped equivalence claim.",
+  "inputs_sha256": {
+    "docs/v2/m6b2/measurements.json": "129b8e364522cd13eca4bc165f4b627b316686878a483cc5c11d808c9bca5d31",
+    "docs/v2/m6b2/matched_attempt02/collected/queue_receipt.json": "2f73586b5dacc4f27723f499e16e7954abe98c63ffcfed5133002f575cd91d84",
+    "docs/v2/m6b2/hierarchy_l256.json": "c0cfac27e0c4e0e61850b9d0b44c66e9766ceed5656f7a792ea13e9aff70f153",
+    "docs/v2/m6b2/hierarchy_l16.json": "731c72ec7f1c75be1f06a240be6405f0447252bf20ec48928c4d2d2d63e5e6a1"
+  }
+}

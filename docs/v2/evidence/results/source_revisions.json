@@ -1,0 +1,402 @@
+{
+  "milestones": [
+    {
+      "path": "docs/v2/d64_readiness/provenance.json",
+      "sha256": "b3f7ed698d31a65c44cc70a22d0a6f43d0179d586ca52bb9308f0a54063a4728",
+      "status": "BLOCKED_ARCHITECTURE",
+      "HEAD": "5b48641988babf22383feda43258eaf73b0d6b33",
+      "source_hash_fields": [
+        "source_sha256",
+        "historical_resource_evidence_sha256",
+        "installed_vendor_document_sha256",
+        "extracted_vendor_text_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m1/provenance.json",
+      "sha256": "5e253506b04a56b813c944ddcccc389b525cea791b5868c232e829f718c7b6e5",
+      "status": "PASS",
+      "HEAD": "3dd4f98f6126a07a1019c08cf5df82d9aade27df",
+      "source_hash_fields": [
+        "accepted_binary_sha256",
+        "changed_files_sha256",
+        "functional_input_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2b/provenance.json",
+      "sha256": "ee926863d076afdaee6d46801a729405ca18a0c126245f9dfc2800a55e008e22",
+      "status": "PASS",
+      "HEAD": "17b74ed6c44485b41a9c4215edebdd52c75fbbff",
+      "source_hash_fields": [
+        "new_implementation_and_test_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2c1/provenance.json",
+      "sha256": "216a5a0c4a7ed293fa5b5350cf6562c5e4e539f7b1e2d0c0bcb7fd9eee2aa5f5",
+      "status": "PASS",
+      "HEAD": "17b74ed6c44485b41a9c4215edebdd52c75fbbff",
+      "source_hash_fields": [
+        "new_implementation_and_test_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2c2/provenance.json",
+      "sha256": "502460378f7d6e7bcbec411db2fcb0d91b9860acd6875e18103392fd1858de81",
+      "status": "PASS",
+      "HEAD": "see original",
+      "source_hash_fields": [
+        "evidence_sha256",
+        "measurement_sources",
+        "source_files_changed",
+        "source_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2c3/provenance.json",
+      "sha256": "28e9eeb13a115e19be45633a4d12a1413cc69756dcd34e8ce6bc3a62f036102f",
+      "status": "PASS",
+      "HEAD": "9483e065f785e19c41acffe450ac238d61cfd2f0",
+      "source_hash_fields": [
+        "acceptance_sha256",
+        "evidence_sha256",
+        "input_gate_sha256",
+        "source_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d1/provenance.json",
+      "sha256": "60f959cf552fdd169215e9bfa30a4cecfc3d8cc69e016449f86d26b173172681",
+      "status": "PASS",
+      "HEAD": "2f4f141f774ea8e6d1ec581011fe4ff89fc3a322",
+      "source_hash_fields": [
+        "acceptance_sha256",
+        "evidence_sha256",
+        "input_gate_sha256",
+        "instrumentation_and_analysis_source_sha256",
+        "prior_source_identity",
+        "unchanged_measurement_input_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d3a/provenance.json",
+      "sha256": "6eaf1c975629f4e1e844d391c585b76dab2aed71b7ae8d208bf88aa711e43bdc",
+      "status": "PASS",
+      "HEAD": "293f298034a63da648f23eb2a394beafe91f58ae",
+      "source_hash_fields": [
+        "source_sha256",
+        "evidence_sha256",
+        "measured_run_manifest_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d3b/provenance.json",
+      "sha256": "d777a8bf6e851e3799b67f80f0b3ac3c1e50bce6cdb0e9af6ee2d2544b2bc18d",
+      "status": "PASS",
+      "HEAD": "b1756e32c71a89d780bab920fd7a0ea6696ed22d",
+      "source_hash_fields": [
+        "source_sha256",
+        "evidence_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d3c/provenance.json",
+      "sha256": "995fed7b2a44e22a07e263c95401eab633bd6d3535f956b600d7c211bd968356",
+      "status": "BLOCKED",
+      "HEAD": "c393a5c1bcf039cd7980aa3c264c11cd032bf1bd",
+      "source_hash_fields": [
+        "prior_m2d3b_source_hashes_checked",
+        "source_bundle",
+        "current_flow_sha256",
+        "portable_evidence_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d3c_r1/provenance.json",
+      "sha256": "62bfdf4183c1339eab6a04053d27cc19d63a7ca5e31a797e9796d0137c64d015",
+      "status": "BLOCKED",
+      "HEAD": "c393a5c1bcf039cd7980aa3c264c11cd032bf1bd",
+      "source_hash_fields": [
+        "synthesis_source_manifest",
+        "evidence_sha256",
+        "current_r1_flow_and_test_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d3c_r2/provenance.json",
+      "sha256": "7670cfc82df651aa134dfbdecbf6712f7f2f19227a2ee0785f709ecf40313c3a",
+      "status": "PARTIAL",
+      "HEAD": "c393a5c1bcf039cd7980aa3c264c11cd032bf1bd",
+      "source_hash_fields": [
+        "inherited_r1_cache_sha256",
+        "gate_c_acceptance_sha256",
+        "functional_acceptance_sha256",
+        "mapped_transport_manifest_sha256",
+        "mapped_source_bundle_sha256",
+        "synthesis_source_and_flow",
+        "resource_blocker",
+        "gate_e_acceptance_sha256",
+        "resource_blocker_sha256",
+        "partial_pair_csv_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d3c_r3/provenance.json",
+      "sha256": "495465a44571474aac0bc294cfd38687ab87c87c8a1a537531097c2e832dd8b6",
+      "status": "RESOURCE-LIMITED",
+      "HEAD": "c393a5c1bcf039cd7980aa3c264c11cd032bf1bd",
+      "source_hash_fields": [
+        "frozen_r2_source_and_flow",
+        "inspected_r2_evidence_sha256",
+        "installed_vendor_document_sha256",
+        "resources_sha256",
+        "public_artifact_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d4/provenance.json",
+      "sha256": "ccf15ed44e74110cb3ba231f7e7afaa84f9fee7984a7d5615d7923a28a72fd28",
+      "status": "PARTIAL",
+      "HEAD": "516aeba48b3b98aab6e89cf2f8d4e82733360dda",
+      "source_hash_fields": [
+        "production_source_sha256",
+        "changed_files_manifest_sha256",
+        "negative_control_source_and_binary_hashes"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d5/provenance.json",
+      "sha256": "2aa0e51b11693a4a3411cd50ee4a17ce5302b60862609440d296df21c63aa519",
+      "status": "PARTIAL_RELEASE_READINESS",
+      "HEAD": "see original",
+      "source_hash_fields": [
+        "production_source_sha256",
+        "M2D4_checkpoint_manifest_sha256",
+        "changed_files_manifest_sha256",
+        "checks_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d5_r1/provenance.json",
+      "sha256": "9ea136ae1175c62fb2fbf384c84f773704a50ba21e9e1939faacb69971444928",
+      "status": "PARTIAL_RELEASE_READINESS",
+      "HEAD": "516aeba48b3b98aab6e89cf2f8d4e82733360dda",
+      "source_hash_fields": [
+        "production_source_sha256",
+        "original_checkpoint_manifest_sha256",
+        "existing_M2D5_manifest_sha256",
+        "browser_sources"
+      ]
+    },
+    {
+      "path": "docs/v2/m2d6/provenance.json",
+      "sha256": "6d11747351d532d36c95b1600082e52483b8490264235168fbb4add205a033cb",
+      "status": "PASS_LOCAL_SCOPE",
+      "HEAD": "see original",
+      "source_hash_fields": [
+        "changed_files_manifest_sha256",
+        "checks_sha256",
+        "compiled_production_sha256",
+        "compiled_test_sources_sha256",
+        "executed_orchestrator_sha256",
+        "final_orchestrator_sha256",
+        "oracle_sources_sha256",
+        "primary_results_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m3a/provenance.json",
+      "sha256": "10dad76c58134e42d1b9c6817e2a3818ac63a88a055504d583656a805d5b15e0",
+      "status": "PASS",
+      "HEAD": "516aeba48b3b98aab6e89cf2f8d4e82733360dda",
+      "source_hash_fields": [
+        "evidence_sha256",
+        "reproduction_scripts_sha256",
+        "source_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m3b/provenance.json",
+      "sha256": "6484af9fce53980e67b30c365a5d94aecaae43385b2e831062fcb23e802a03e3",
+      "status": "PASS",
+      "HEAD": "516aeba48b3b98aab6e89cf2f8d4e82733360dda",
+      "source_hash_fields": [
+        "evidence_sha256",
+        "reproduction_scripts_sha256",
+        "source_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m4/provenance.json",
+      "sha256": "b89e4e044c90d514c6235eeebfae2188e71a1457e4850e5294d6683da594335e",
+      "status": "PASS",
+      "HEAD": "516aeba48b3b98aab6e89cf2f8d4e82733360dda",
+      "source_hash_fields": [
+        "source_sha256",
+        "reproduction_sha256",
+        "acceptance_manifests_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m5a/provenance.json",
+      "sha256": "4addf2d0262e6205e49e049f4413bb01bef74d5ed5d55b1a4d3ca92a02fd6437",
+      "status": "M5A_ARCHITECTURE_PASS",
+      "HEAD": "see original",
+      "source_hash_fields": [
+        "reviewed_source_sha256",
+        "evidence_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m5b/provenance.json",
+      "sha256": "5f9c5b57903df6e939f93d6a921c49582884ed39d78d6cbd070c0a7a510a5994",
+      "status": "M5B_PASS_ISOLATED_CSR_ADAPTER",
+      "HEAD": "see original",
+      "source_hash_fields": [
+        "source_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m5c/provenance.json",
+      "sha256": "edb7dfcf1395b216096fc07ace0c2cca72a012146c85dfafd036432f32ba04b4",
+      "status": "PASS",
+      "HEAD": "see original",
+      "source_hash_fields": [
+        "source_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m5d/provenance.json",
+      "sha256": "709c59bf8db3199891d485bd55116db5008bfe71f7a9fa8d17f472ad2cdb0cf6",
+      "status": "FUNCTIONAL_PASS",
+      "HEAD": "cc32a4b7107b1adb799b48bdbe7daa9b8c712285",
+      "source_hash_fields": [
+        "source_sha256",
+        "new_source_tool_sha256",
+        "input_freeze_sha256",
+        "measurement_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m6a/provenance.json",
+      "sha256": "c1da53ec77b2e5e14b9e82fee385f81aa1ce78fe14519fe95e6f71834745af20",
+      "status": "PASS_BOUNDED_M6A_SCOPE",
+      "HEAD": "c1b50ba802e087d744eb00ebb0a871da2f7bdb59",
+      "source_hash_fields": [
+        "functional_source_revision",
+        "source_filelist",
+        "input_freeze_sha256",
+        "artifact_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m6b/provenance.json",
+      "sha256": "ba316a2bb7a75c06d73b1de56741582a8d3867a0afab6e9f24c9b2c44203c24a",
+      "status": "PARTIAL_SINGLE_ENDPOINT_COMPLETE",
+      "HEAD": "c97413b49818aa8d4c8069a9bc6535f470a2012c",
+      "source_hash_fields": [
+        "source_audit",
+        "resource_summary",
+        "functional_source_sha256",
+        "original_source_audit",
+        "actual_VCS_source_audit",
+        "original_resource_summary"
+      ]
+    },
+    {
+      "path": "docs/v2/m6b1/provenance.json",
+      "sha256": "0acbdc946404690f7fcee9a70a5cb10c0f18c4000a35f819ed8324f45cd09de6",
+      "status": "PASS",
+      "HEAD": "see original",
+      "source_hash_fields": [
+        "DC_library_sha256",
+        "source_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m6b2/provenance.json",
+      "sha256": "965c11f9d12e46a1a94624335233d1c2128929feb4942963cc1d4243815e5a36",
+      "status": "PASS",
+      "HEAD": "see original",
+      "source_hash_fields": [
+        "source_revision_description",
+        "source_and_flow_sha256",
+        "library_sha256",
+        "verified_production_source_sha256",
+        "verification_identity_sha256",
+        "queue_receipt_sha256",
+        "transport_manifest_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m6b3/provenance.json",
+      "sha256": "1aaa338c1810a1fbbce51e5aa06331d358bdf952945919260dc9769506d5def9",
+      "status": "PASS",
+      "HEAD": "4788d2b172fa336a0edc7603ca96eec71f839362",
+      "source_hash_fields": [
+        "checkpoint_manifest_sha256",
+        "input_freeze_sha256",
+        "accepted_M6B2_provenance_sha256",
+        "verified_production_source_sha256",
+        "new_source_and_flow_sha256",
+        "comparison_checks_sha256",
+        "cycle_comparison_sha256",
+        "coverage_sha256",
+        "regressions_sha256",
+        "short_DC_receipt_sha256",
+        "DC_summary_sha256",
+        "validation_sha256"
+      ]
+    },
+    {
+      "path": "docs/v2/m6b4/provenance.json",
+      "sha256": "37e053f0442a81b5c61be6eb2bd8f9ac8ac8945aec9cb4e7257b10df958a6126",
+      "status": "RESOURCE_LIMITED_NO_VALID_PPA",
+      "HEAD": "890f675d60472b78c1625b61efeb4febcea292be",
+      "source_hash_fields": [
+        "source_identity",
+        "resource_results",
+        "collected_queue_sha256",
+        "source_hash_alias_limitation"
+      ]
+    },
+    {
+      "path": "docs/v2/m6c/provenance.json",
+      "sha256": "732c45fc0b15eb417a86d2af2bd31ba6aafafbfc2355a3870372c0bbdb1ca0d5",
+      "status": "PARTIAL_OVERALL_VERIFICATION_CLOSURE",
+      "HEAD": "0ccf75e36dd0a56c5c809cffaa2606c01203e027",
+      "source_hash_fields": [
+        "production_source_sha256",
+        "historical_evidence_sha256",
+        "source_and_script_sha256"
+      ]
+    }
+  ],
+  "current_production_source_sha256": {
+    "rtl/v2/m5/m5_types_pkg.sv": "5d8574f14239d5083ca4fd01cc2dd8ec9069350af4f6e3c465562a866c386a9c",
+    "rtl/memory/sram_1r1w.sv": "c958106159d57ad7294753b085a9b339c373d2a96244042831f1e4baa9af4fd5",
+    "rtl/systolic/pe.sv": "40cd1bdee315ee16ffeaf46ecac35b8f6fc2d0f6e8e25ce1ba8fa92ff45e42eb",
+    "rtl/systolic/systolic_array.sv": "d86f54408d10e33e6786bfebdf602fc4a216e670ae39e221c2a469a8f04d339d",
+    "rtl/systolic/array_controller.sv": "0cf0cf337efdba71308037dd60d6e383104ef9242cd0e8ed0b9f2435da2a57bc",
+    "rtl/quantization/dequantizer.sv": "6ec665292432d32ea31d57df4065da58a6cf0e2de724e92fd9d3d0449cbc9f97",
+    "rtl/quantization/dequantizer_tile.sv": "07cd945cce2007753fbb7b57120a4470fd14508302bedce71276b718efdbb765",
+    "rtl/softmax/exp_lut.sv": "1f8f1d5ae96de4113501293ef464de14a9f15ced34ad64b6470e6d2fd608d411",
+    "rtl/memory/banked_scratchpad.sv": "90fa93cab878043847df0a4839dca410d6146609dd02f0b4f8e24a205cf56c0f",
+    "rtl/memory/output_buffer.sv": "e784cce001ca734f3ab53f56ba4eccc7c2835569a626b1009e388cba87e31daa",
+    "rtl/ctrl/addr_gen.sv": "192c6a77fc1d82289605db80e828622cb9ba556bf8768bf5c0cc2286d78d7383",
+    "rtl/interface/dma_engine_vec.sv": "db2c446b7edd8decaa4d0399eb736226c04248d4ed9856235f56d488de57870d",
+    "rtl/v2/m2c3/kv_cache_banked_decode_m2c3.sv": "fb3f4d65c6c7e5bb450c04bd64d7d8c62af81e39309059676dd93e59b9e02b05",
+    "rtl/v2/m2c3/online_softmax_masked_m2c3.sv": "13f8bd0d3e49eb32f7fc1c76d654a1caa67d81528ac9f36e4a3ddf04addf017a",
+    "rtl/v2/m2c3/tile_controller_decode_m2c3.sv": "4d33de35044db0f23bc0cf6ce978b2d4410ba7f4732a1589ac73881f75ecfa64",
+    "rtl/v2/m2c3/banked_tile_loader_decode_m2c3.sv": "1634c71575898b958f52cc1ee18ca421c343797512155d71fc973dde507c68da",
+    "rtl/v2/m3b/flash_attn_core_decode_m3b.sv": "cc663bafbfd8d67824716d072fad738659ae0704dfd3215af78eac5879893a4e",
+    "rtl/v2/m6b3/flash_attn_serial_m6b3.sv": "a244abaeb79810bb3c24ff48b24412a2934cdc1b2a4b440ef314289c12e35823",
+    "rtl/v2/m6b3/axi_lite_csr_m6b3.sv": "48374918ee44b156bbb085fdd0b10336861b24d430c5735a0ef85862ca458d70",
+    "rtl/v2/m6b3/soc_job_adapter_m6b3.sv": "00947b953da2e95ef7a9f4017c4657ffbb5589a301adb515a91b1ddb8aaec0f0",
+    "rtl/v2/m6b3/gqa_output_packer_m6b3.sv": "590af53e5ae9604afadc023bea276f33c485d378bb155f5cd0fe29cf569de363",
+    "rtl/v2/m5/dma_write_engine_m5.sv": "6583c9c900c5a3f1d0a83a9da701cea21356ea39c491ae5e03c28e57ab9ec09f",
+    "rtl/v2/m6b3/flash_attn_soc_m6b3.sv": "88e203d104fc74daeee8171cff267ff294dc8c605862273ee541bd5aef93a66c"
+  },
+  "source_check": "PASS; provenance statuses historical, no fresh test implied"
+}

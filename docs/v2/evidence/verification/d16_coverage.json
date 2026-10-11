@@ -1,0 +1,106 @@
+{
+  "status": "MEASURED_PARTIAL_COVERAGE",
+  "profiles": [
+    {
+      "profile": "stateful_l16c0_attempt01",
+      "scope": "Actual DUT subtree, three latencies; per-profile database, no cross-profile merge",
+      "score": 77.25,
+      "line": 95.96,
+      "condition": 79.94,
+      "toggle": 71.52,
+      "FSM": 48.31,
+      "branch": 90.55,
+      "report": "docs/v2/m6b1/vcs/stateful_l16c0_attempt01/urg/hierarchy.txt",
+      "sha256": "b27a29365c86547cfbfdee10cf97515a0f3ad8ec9f0447cc76311b87b888c356"
+    },
+    {
+      "profile": "stress_l16c0_attempt01",
+      "scope": "Actual DUT subtree, three latencies; per-profile database, no cross-profile merge",
+      "score": 78.93,
+      "line": 96.59,
+      "condition": 79.18,
+      "toggle": 73.74,
+      "FSM": 54.15,
+      "branch": 90.98,
+      "report": "docs/v2/m6b1/vcs/stress_l16c0_attempt01/urg/hierarchy.txt",
+      "sha256": "6a23d68fd6ea99dd57acd65b27c974ef0eb36f4be2704d91818cd9195806896a"
+    },
+    {
+      "profile": "stateful_l16c1_attempt01",
+      "scope": "Actual DUT subtree, three latencies; per-profile database, no cross-profile merge",
+      "score": 77.25,
+      "line": 95.96,
+      "condition": 79.91,
+      "toggle": 71.53,
+      "FSM": 48.31,
+      "branch": 90.57,
+      "report": "docs/v2/m6b1/vcs/stateful_l16c1_attempt01/urg/hierarchy.txt",
+      "sha256": "a312ab34d87f600aeab014a40a400cd152bdd097b0f609323fa6209a96825e8c"
+    },
+    {
+      "profile": "stress_l16c1_attempt01",
+      "scope": "Actual DUT subtree, three latencies; per-profile database, no cross-profile merge",
+      "score": 78.93,
+      "line": 96.59,
+      "condition": 79.16,
+      "toggle": 73.74,
+      "FSM": 54.15,
+      "branch": 91.0,
+      "report": "docs/v2/m6b1/vcs/stress_l16c1_attempt01/urg/hierarchy.txt",
+      "sha256": "2f4ccad96b05cde02a3cb634bb3d298770349a6fe40c35c6a44bda1ede131eb9"
+    },
+    {
+      "profile": "stateful_l256c0_attempt01",
+      "scope": "Actual DUT subtree, three latencies; per-profile database, no cross-profile merge",
+      "score": 77.31,
+      "line": 92.4,
+      "condition": 79.35,
+      "toggle": 81.24,
+      "FSM": 48.31,
+      "branch": 85.25,
+      "report": "docs/v2/m6b1/vcs/stateful_l256c0_attempt01/urg/hierarchy.txt",
+      "sha256": "f240ebf41e9e1fa9af5ec81963bf55b0e3e9edf460cc68e63c52ea927063575d"
+    },
+    {
+      "profile": "stress_l256c0_attempt01",
+      "scope": "Actual DUT subtree, three latencies; per-profile database, no cross-profile merge",
+      "score": 78.68,
+      "line": 92.83,
+      "condition": 78.69,
+      "toggle": 82.39,
+      "FSM": 53.85,
+      "branch": 85.62,
+      "report": "docs/v2/m6b1/vcs/stress_l256c0_attempt01/urg/hierarchy.txt",
+      "sha256": "f1937d4422ce17f587b46d59acfd2d0df0ce7d16f11a3d1782f6434b2873b2c0"
+    },
+    {
+      "profile": "stateful_l256c1_attempt01",
+      "scope": "Actual DUT subtree, three latencies; per-profile database, no cross-profile merge",
+      "score": 77.31,
+      "line": 92.4,
+      "condition": 79.33,
+      "toggle": 81.24,
+      "FSM": 48.31,
+      "branch": 85.26,
+      "report": "docs/v2/m6b1/vcs/stateful_l256c1_attempt01/urg/hierarchy.txt",
+      "sha256": "571d03e250ca99a53e6ab3cb7191916c120f8e698c53f90e0c16aed4a6d92b33"
+    },
+    {
+      "profile": "stress_l256c1_attempt01",
+      "scope": "Actual DUT subtree, three latencies; per-profile database, no cross-profile merge",
+      "score": 78.68,
+      "line": 92.83,
+      "condition": 78.67,
+      "toggle": 82.4,
+      "FSM": 53.85,
+      "branch": 85.64,
+      "report": "docs/v2/m6b1/vcs/stress_l256c1_attempt01/urg/hierarchy.txt",
+      "sha256": "bf10cdd187e0a1a17f04c194b523f6e2997b11a546e9156701b4d82bcfe5e453"
+    }
+  ],
+  "limits": [
+    "No merged coverage closure or waivers",
+    "Functional groups are distinct from DUT line/FSM metrics",
+    "New formal and mapped equivalence UNEXECUTED"
+  ]
+}

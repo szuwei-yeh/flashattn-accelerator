@@ -1,0 +1,19 @@
+# Historical navigation supplement
+
+This is a navigation-only derivative of the accepted [bounded SoC qualification text](../verification/host_formal_contract.txt). The [earlier original](../results/host_formal_contract.txt), original hashes and proof scope remain unchanged. This supplement records no new test or proof.
+
+> Navigation supplement for the bounded SoC qualification. The original accepted extract and SHA256 remain in the immutable source map. Links below resolve to included sources, historical logs/receipts or explicitly identified public summaries. No proof depth, result or measurement value was changed.
+
+# Host-adapter bounded control contract
+
+The production module is [soc_job_adapter_m5.sv](../../../../rtl/v2/ppa_baseline/soc_job_adapter.sv). frozen d16 PPA baseline's d16 SoC instantiates this exact module. This experiment does not prove the newer parameterized d64 adapter, CSR IRQ logic, cache payload or actual AXI write DMA.
+
+[Assertions](../../../../formal/v2/host/host_properties.svh) check successful output completion requires stable child output ownership, both source-retirement/final-response flags, no outstanding transaction, correct expected words/bytes and equal nonzero AW/B/OKAY-B counters. They also check fatal priority, sticky ERROR, cleared publication on fault, captured configuration immutability and ACK only after an accepted release.
+
+The first sampled step assumes common reset asserted. Later reset is arbitrary. Child completion, output metadata, source retirement, B-success flags and DMA counters are arbitrary input ports; there is no fairness assumption, legal-completion assumption or assertion that these inputs correspond to real AXI handshakes. SRAM, arithmetic, physical asynchronous-reset timing and inter-edge events are outside the proof. Yosys `async2sync` gives a normalized sampled-clock model.
+
+Native Yosys cannot parse this module's package `import`. A verification-only derivative qualifies seven package constants and `config_t`, then appends properties. Original production source is unchanged. [Exact derivative/diff](../verification/host_qualification.diff), [source hashes and commands](../results/host_formal.json) document this mechanical transformation. No signal is tied off, narrowed, blackboxed or constrained to force safety.
+
+Attempt01 failed on unquoted source paths containing spaces. Attempt02 corrected quoting and reached SAT but timed out at 24 steps / 60 solver seconds: **INCONCLUSIVE**, no counterexample or proof. Attempt03 uses the same safety assertions at **12 normalized steps**, with retained cover wires; proof PASS in 31.13 seconds. Successful output completion, ownership-loss fault and conservation fault each have a reachable witness at step12. [Proof](../verification/host_proof.log), [success cover](../verification/host_cover_success.log), [ownership cover](../verification/host_cover_owner_fault.log), [conservation cover](../verification/host_cover_conservation_fault.log).
+
+This shorter bounded result supplies evidence for short control sequences, not the timed-out 24-step obligation or unbounded correctness. Full integrated formal remains **INCONCLUSIVE**. The separate historical cache proof remains 24-step bounded PASS under its original legal-host/complete-pair assumptions; prefill commit is not reached at that bound. No historical proof or coverage denominator was rewritten.

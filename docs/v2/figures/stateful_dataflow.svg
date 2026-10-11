@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1230" viewBox="0 0 1200 1230" role="img" aria-labelledby="title desc">
+<title id="title">V2 stateful execution: separate prefill, append and decode commands</title>
+<desc id="desc">PREFILL and DECODE are two views of the same current SoC hardware; one host job is active at a time. PREFILL reads paired K/V for 16 tokens in both physical KV groups, then loads Q per serial head. Completed K/V pairs can supply prefill compute before valid sequence metadata is published at child completion. Prefill token sketches show the resulting valid logical positions after publication. DECODE loads only Q and reads committed resident K/V without modifying the cache. Its token sketch shows an L16 example; supported host decode lengths are 16, 17 and 18, at absolute query position L minus 1. Q0/Q1 share KV0 and Q2/Q3 share KV1. Four query heads are scheduled serially on one reused 16 by 16 systolic array for QK and PV; online softmax and normalization are summarized within the compute engine. Results remain owned in the child result buffer, are packed and sent through AXI output write DMA. Successful host DONE and enabled success IRQ wait for source retirement, the final accepted OKAY B response and no outstanding writes. ACK releases completed job ownership; it does not start computation or clear IRQ. A separate APPEND inset shows one new K/V token per group, with position L provisional during stores and valid only after complete pairs in both groups permit atomic L plus 1 publication. APPEND performs no Q load, compute or output writeback; it reaches DONE and enabled success IRQ after child completion and also requires host ACK. Appending to the L16 example produces L17. Logical token positions do not depict SRAM banks or storage geometry. HEAD_DIM is 16 or 64; cache capacity is 64. CLEAR invalidates metadata, not SRAM bits. Fatal AXI errors require common DUT and endpoint reset; external writes already completed are not rolled back. Arrows summarize routing and job lifetime, not simultaneous execution or port-level wiring.</desc>
+<!-- README presentation derivative; historical accepted figures remain unchanged.
+     Source references: docs/ARCHITECTURE.md, docs/v2/VERIFICATION.md,
+     rtl/v2/soc/{flash_attn_soc,flash_attn_serial,soc_job_adapter,
+     axi_lite_csr,gqa_output_packer}.sv,
+     rtl/v2/cache/kv_cache_banked_decode.sv,
+     rtl/v2/compute/flash_attn_core_decode.sv, rtl/systolic/array_controller.sv,
+     rtl/v2/interface/dma_write_engine.sv.
+     Reproduce with: python3 -B tools/v2/generate_stateful_dataflow.py -->
+<defs>
+<marker id="data-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L9 4.5 L0 9 Z" fill="#087e87"/></marker>
+<marker id="control-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L9 4.5 L0 9 Z" fill="#52647a"/></marker>
+</defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #152b4b; }
+.data { fill: none; stroke: #087e87; stroke-width: 3; stroke-linejoin: round; marker-end: url(#data-arrow); }
+.control { fill: none; stroke: #52647a; stroke-width: 3; stroke-dasharray: 6 5; stroke-linejoin: round; marker-end: url(#control-arrow); }
+</style>
+<rect width="1200" height="1230" fill="#ffffff"/>
+<text x="40" y="52" font-size="38" font-weight="bold" style="fill:#152b4b">V2 stateful execution</text>
+<text x="40" y="85" font-size="22" font-weight="normal" style="fill:#52647a">One active host job at a time · PREFILL / APPEND / DECODE are separate commands</text>
+<circle cx="963" cy="46" r="6" fill="#d9ad65"/>
+<text x="978" y="52" font-size="20" font-weight="normal" style="fill:#a66b16">Persistent state</text>
+<rect x="40" y="112" width="550" height="494" rx="15" fill="#fbfcfe" stroke="#dce5ed" stroke-width="1.4" />
+<text x="64" y="153" font-size="30" font-weight="bold" style="fill:#152b4b">Prefill</text>
+<text x="64" y="183" font-size="21" font-weight="normal" style="fill:#52647a">16 query rows / head · establish L = 16</text>
+<rect x="60" y="211" width="510" height="65" rx="11" fill="#f1f4f8" stroke="#b8c5d3" stroke-width="1.4" />
+<text x="315.0" y="239" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">Host → AXI4-Lite CSR</text>
+<text x="315.0" y="263" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">Configure + start PREFILL</text>
+<path class="control" d="M315 276 V322" data-route="host-command"/>
+<text x="329" y="306" font-size="19" font-weight="normal" style="fill:#52647a">captured job</text>
+<rect x="60" y="322" width="510" height="70" rx="11" fill="#edf6fa" stroke="#9dbccb" stroke-width="1.4" />
+<text x="315.0" y="350" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">External memory → AXI read DMA</text>
+<text x="315.0" y="374" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">Load K/V, then Q per head</text>
+<path class="data" d="M315 392 V412 H153 V436" data-route="q-scratchpad"/>
+<path class="data" d="M315 392 V412 H424 V436" data-route="kv-pairs"/>
+<text x="446" y="429" font-size="19" font-weight="bold" style="fill:#087e87">K / V</text>
+<text x="124" y="429" font-size="19" font-weight="bold" style="fill:#087e87">Q</text>
+<rect x="60" y="436" width="186" height="150" rx="11" fill="#edf6fa" stroke="#9dbccb" stroke-width="1.4" />
+<text x="153.0" y="471" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">Query Q</text>
+<text x="153.0" y="500" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">Scratchpad</text>
+<rect x="278" y="436" width="292" height="150" rx="11" fill="#fff4e2" stroke="#d9ad65" stroke-width="1.4" />
+<text x="424" y="467" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">Persistent KV cache</text>
+<text x="424" y="493" text-anchor="middle" font-size="18" font-weight="normal" style="fill:#52647a">16 valid tokens after publication</text>
+<text x="292" y="522" font-size="17" font-weight="normal" style="fill:#52647a">KV0</text>
+<rect x="335" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="0" data-valid="true"/>
+<rect x="348" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="1" data-valid="true"/>
+<rect x="361" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="2" data-valid="true"/>
+<rect x="374" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="3" data-valid="true"/>
+<rect x="387" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="4" data-valid="true"/>
+<rect x="400" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="5" data-valid="true"/>
+<rect x="413" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="6" data-valid="true"/>
+<rect x="426" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="7" data-valid="true"/>
+<rect x="439" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="8" data-valid="true"/>
+<rect x="452" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="9" data-valid="true"/>
+<rect x="465" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="10" data-valid="true"/>
+<rect x="478" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="11" data-valid="true"/>
+<rect x="491" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="12" data-valid="true"/>
+<rect x="504" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="13" data-valid="true"/>
+<rect x="517" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="14" data-valid="true"/>
+<rect x="530" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="15" data-valid="true"/>
+<text x="292" y="551" font-size="17" font-weight="normal" style="fill:#52647a">KV1</text>
+<rect x="335" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="0" data-valid="true"/>
+<rect x="348" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="1" data-valid="true"/>
+<rect x="361" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="2" data-valid="true"/>
+<rect x="374" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="3" data-valid="true"/>
+<rect x="387" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="4" data-valid="true"/>
+<rect x="400" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="5" data-valid="true"/>
+<rect x="413" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="6" data-valid="true"/>
+<rect x="426" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="7" data-valid="true"/>
+<rect x="439" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="8" data-valid="true"/>
+<rect x="452" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="9" data-valid="true"/>
+<rect x="465" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="10" data-valid="true"/>
+<rect x="478" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="11" data-valid="true"/>
+<rect x="491" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="12" data-valid="true"/>
+<rect x="504" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="13" data-valid="true"/>
+<rect x="517" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="14" data-valid="true"/>
+<rect x="530" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="15" data-valid="true"/>
+<text x="424" y="576" text-anchor="middle" font-size="18" font-weight="normal" style="fill:#52647a">Positions 0 … 15</text>
+<rect x="610" y="112" width="550" height="494" rx="15" fill="#fbfcfe" stroke="#dce5ed" stroke-width="1.4" />
+<text x="634" y="153" font-size="30" font-weight="bold" style="fill:#152b4b">Decode</text>
+<text x="634" y="183" font-size="21" font-weight="normal" style="fill:#52647a">1 query / head · query position L − 1</text>
+<rect x="630" y="211" width="510" height="65" rx="11" fill="#f1f4f8" stroke="#b8c5d3" stroke-width="1.4" />
+<text x="885.0" y="239" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">Host → AXI4-Lite CSR</text>
+<text x="885.0" y="263" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">Configure + start DECODE</text>
+<path class="control" d="M885 276 V322" data-route="host-command"/>
+<text x="899" y="306" font-size="19" font-weight="normal" style="fill:#52647a">captured job</text>
+<rect x="630" y="322" width="510" height="70" rx="11" fill="#edf6fa" stroke="#9dbccb" stroke-width="1.4" />
+<text x="885.0" y="350" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">External memory → AXI read DMA</text>
+<text x="885.0" y="374" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">Load Q only; no K/V append</text>
+<path class="data" d="M885 392 V412 H723 V436" data-route="q-scratchpad"/>
+<text x="694" y="429" font-size="19" font-weight="bold" style="fill:#087e87">Q</text>
+<rect x="630" y="436" width="186" height="150" rx="11" fill="#edf6fa" stroke="#9dbccb" stroke-width="1.4" />
+<text x="723.0" y="471" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">Query Q</text>
+<text x="723.0" y="500" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">Scratchpad</text>
+<rect x="848" y="436" width="292" height="150" rx="11" fill="#fff4e2" stroke="#d9ad65" stroke-width="1.4" />
+<text x="994" y="467" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">Persistent KV cache</text>
+<text x="994" y="493" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">Committed tokens, reused</text>
+<text x="862" y="522" font-size="17" font-weight="normal" style="fill:#52647a">KV0</text>
+<rect x="905" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="0" data-valid="true"/>
+<rect x="918" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="1" data-valid="true"/>
+<rect x="931" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="2" data-valid="true"/>
+<rect x="944" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="3" data-valid="true"/>
+<rect x="957" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="4" data-valid="true"/>
+<rect x="970" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="5" data-valid="true"/>
+<rect x="983" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="6" data-valid="true"/>
+<rect x="996" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="7" data-valid="true"/>
+<rect x="1009" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="8" data-valid="true"/>
+<rect x="1022" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="9" data-valid="true"/>
+<rect x="1035" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="10" data-valid="true"/>
+<rect x="1048" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="11" data-valid="true"/>
+<rect x="1061" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="12" data-valid="true"/>
+<rect x="1074" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="13" data-valid="true"/>
+<rect x="1087" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="14" data-valid="true"/>
+<rect x="1100" y="508" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="15" data-valid="true"/>
+<text x="862" y="551" font-size="17" font-weight="normal" style="fill:#52647a">KV1</text>
+<rect x="905" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="0" data-valid="true"/>
+<rect x="918" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="1" data-valid="true"/>
+<rect x="931" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="2" data-valid="true"/>
+<rect x="944" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="3" data-valid="true"/>
+<rect x="957" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="4" data-valid="true"/>
+<rect x="970" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="5" data-valid="true"/>
+<rect x="983" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="6" data-valid="true"/>
+<rect x="996" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="7" data-valid="true"/>
+<rect x="1009" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="8" data-valid="true"/>
+<rect x="1022" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="9" data-valid="true"/>
+<rect x="1035" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="10" data-valid="true"/>
+<rect x="1048" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="11" data-valid="true"/>
+<rect x="1061" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="12" data-valid="true"/>
+<rect x="1074" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="13" data-valid="true"/>
+<rect x="1087" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="14" data-valid="true"/>
+<rect x="1100" y="537" width="11" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="15" data-valid="true"/>
+<text x="994" y="576" text-anchor="middle" font-size="18" font-weight="normal" style="fill:#52647a">L = 16 example · no cache writes</text>
+<path class="data" d="M153 586 V630 H280 V652" data-route="shared-array"/>
+<path class="data" d="M424 586 V652" data-route="shared-array"/>
+<path class="data" d="M723 586 V652" data-route="shared-array"/>
+<path class="data" d="M994 586 V630 H920 V652" data-route="shared-array"/>
+<rect x="220" y="652" width="760" height="112" rx="11" fill="#e8f6f3" stroke="#83bfb7" stroke-width="1.4" />
+<text x="600" y="686" text-anchor="middle" font-size="28" font-weight="bold" style="fill:#152b4b">Shared compute engine · 4 serial Q heads</text>
+<text x="600" y="717" text-anchor="middle" font-size="22" font-weight="normal" style="fill:#52647a">One reused 16 × 16 array (QKᵀ + PV) · softmax + normalize</text>
+<text x="600" y="747" text-anchor="middle" font-size="21" font-weight="normal" style="fill:#52647a">Q0/Q1 → KV0 · Q2/Q3 → KV1</text>
+<path class="data" d="M300 764 V784 H190 V804" data-route="results-packer"/>
+<text x="318" y="791" font-size="20" font-weight="normal" style="fill:#087e87">normalized results</text>
+<rect x="40" y="804" width="300" height="102" rx="11" fill="#edf6fa" stroke="#9dbccb" stroke-width="1.4" />
+<text x="190.0" y="839" text-anchor="middle" font-size="22" font-weight="bold" style="fill:#152b4b">Result buffer → packer</text>
+<text x="190.0" y="868" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">AXI writeback → memory</text>
+<path class="data" d="M340 855 H375" data-route="writeback"/>
+<rect x="375" y="804" width="365" height="102" rx="11" fill="#f1f4f8" stroke="#b8c5d3" stroke-width="1.4" />
+<text x="557.5" y="835" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">Completion gate</text>
+<text x="557.5" y="862" text-anchor="middle" font-size="19" font-weight="normal" style="fill:#52647a">Source retired + final OKAY B</text>
+<text x="557.5" y="887" text-anchor="middle" font-size="19" font-weight="normal" style="fill:#52647a">No writes outstanding</text>
+<path class="control" d="M740 855 H775" data-route="host-completion"/>
+<rect x="775" y="804" width="190" height="102" rx="11" fill="#f1f4f8" stroke="#b8c5d3" stroke-width="1.4" />
+<text x="870.0" y="839" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">DONE / IRQ</text>
+<text x="870.0" y="868" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">IRQ if enabled</text>
+<path class="control" d="M965 855 H1000" data-route="host-ack"/>
+<rect x="1000" y="804" width="160" height="102" rx="11" fill="#f1f4f8" stroke="#b8c5d3" stroke-width="1.4" />
+<text x="1080.0" y="839" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#152b4b">Host ACK</text>
+<text x="1080.0" y="868" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">Release owner</text>
+<rect x="40" y="932" width="1120" height="176" rx="15" fill="#fbfcfe" stroke="#dce5ed" stroke-width="1.4" />
+<text x="64" y="966" font-size="24" font-weight="bold" style="fill:#152b4b">APPEND — separate host command</text>
+<text x="745" y="966" font-size="20" font-weight="normal" style="fill:#52647a">No Q load, compute or writeback</text>
+<rect x="60" y="986" width="170" height="85" rx="11" fill="#f1f4f8" stroke="#b8c5d3" stroke-width="1.4" />
+<text x="145.0" y="1021" text-anchor="middle" font-size="22" font-weight="bold" style="fill:#152b4b">Host / CSR</text>
+<text x="145.0" y="1050" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">Start APPEND</text>
+<path class="control" d="M230 1028 H265" data-route="host-command"/>
+<rect x="265" y="986" width="180" height="85" rx="11" fill="#edf6fa" stroke="#9dbccb" stroke-width="1.4" />
+<text x="355.0" y="1021" text-anchor="middle" font-size="22" font-weight="bold" style="fill:#152b4b">K/V read DMA</text>
+<text x="355.0" y="1050" text-anchor="middle" font-size="20" font-weight="normal" style="fill:#52647a">One token/group</text>
+<path class="data" d="M445 1028 H480" data-route="kv-pairs"/>
+<rect x="480" y="981" width="345" height="103" rx="11" fill="#fff4e2" stroke="#d9ad65" stroke-width="1.4" />
+<text x="652" y="1008" text-anchor="middle" font-size="22" font-weight="bold" style="fill:#152b4b">Paired K/V stores</text>
+<text x="493" y="1034" font-size="17" font-weight="normal" style="fill:#52647a">KV0</text>
+<rect x="539" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="0" data-valid="true"/>
+<rect x="551" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="1" data-valid="true"/>
+<rect x="563" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="2" data-valid="true"/>
+<rect x="575" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="3" data-valid="true"/>
+<rect x="587" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="4" data-valid="true"/>
+<rect x="599" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="5" data-valid="true"/>
+<rect x="611" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="6" data-valid="true"/>
+<rect x="623" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="7" data-valid="true"/>
+<rect x="635" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="8" data-valid="true"/>
+<rect x="647" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="9" data-valid="true"/>
+<rect x="659" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="10" data-valid="true"/>
+<rect x="671" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="11" data-valid="true"/>
+<rect x="683" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="12" data-valid="true"/>
+<rect x="695" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="13" data-valid="true"/>
+<rect x="707" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="14" data-valid="true"/>
+<rect x="719" y="1020" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="0" data-token="15" data-valid="true"/>
+<rect x="735" y="1020" width="13" height="17" rx="2" fill="#ffffff" stroke="#a66b16" stroke-width="1.4" stroke-dasharray="3 2" data-group="0" data-token="16" data-valid="false"/>
+<text x="755" y="1034" font-size="17" font-weight="normal" style="fill:#a66b16">L</text>
+<text x="493" y="1063" font-size="17" font-weight="normal" style="fill:#52647a">KV1</text>
+<rect x="539" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="0" data-valid="true"/>
+<rect x="551" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="1" data-valid="true"/>
+<rect x="563" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="2" data-valid="true"/>
+<rect x="575" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="3" data-valid="true"/>
+<rect x="587" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="4" data-valid="true"/>
+<rect x="599" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="5" data-valid="true"/>
+<rect x="611" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="6" data-valid="true"/>
+<rect x="623" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="7" data-valid="true"/>
+<rect x="635" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="8" data-valid="true"/>
+<rect x="647" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="9" data-valid="true"/>
+<rect x="659" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="10" data-valid="true"/>
+<rect x="671" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="11" data-valid="true"/>
+<rect x="683" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="12" data-valid="true"/>
+<rect x="695" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="13" data-valid="true"/>
+<rect x="707" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="14" data-valid="true"/>
+<rect x="719" y="1049" width="10" height="17" rx="2" fill="#e8be76" stroke="#d6a558" stroke-width="1.4" data-group="1" data-token="15" data-valid="true"/>
+<rect x="735" y="1049" width="13" height="17" rx="2" fill="#ffffff" stroke="#a66b16" stroke-width="1.4" stroke-dasharray="3 2" data-group="1" data-token="16" data-valid="false"/>
+<text x="755" y="1063" font-size="17" font-weight="normal" style="fill:#a66b16">L</text>
+<path class="data" d="M825 1028 H860" data-route="kv-publication"/>
+<rect x="860" y="981" width="280" height="103" rx="11" fill="#fff4e2" stroke="#d9ad65" stroke-width="1.4" />
+<text x="1000" y="1010" text-anchor="middle" font-size="22" font-weight="bold" style="fill:#152b4b">Atomic publish L + 1</text>
+<text x="1000" y="1036" text-anchor="middle" font-size="19" font-weight="normal" style="fill:#52647a">Both groups complete</text>
+<rect x="887" y="1048" width="26" height="20" rx="3" fill="#d6a558" stroke="#a66b16" stroke-width="1.4" data-group="0" data-token="16" data-valid="true"/>
+<text x="900" y="1063" text-anchor="middle" font-size="16" font-weight="bold" style="fill:#152b4b">L</text>
+<text x="920" y="1063" font-size="17" font-weight="normal" style="fill:#52647a">KV0</text>
+<rect x="1000" y="1048" width="26" height="20" rx="3" fill="#d6a558" stroke="#a66b16" stroke-width="1.4" data-group="1" data-token="16" data-valid="true"/>
+<text x="1013" y="1063" text-anchor="middle" font-size="16" font-weight="bold" style="fill:#152b4b">L</text>
+<text x="1033" y="1063" font-size="17" font-weight="normal" style="fill:#52647a">KV1</text>
+<text x="64" y="1095" font-size="18" font-weight="normal" style="fill:#52647a">New slot L stays provisional until publication (L = 16 → 17 shown).</text>
+<text x="863" y="1095" font-size="19" font-weight="normal" style="fill:#52647a">Then DONE / IRQ → ACK</text>
+<rect x="40" y="1132" width="1120" height="44" rx="11" fill="#fff4e2" stroke="#e8c998" stroke-width="1.4" />
+<text x="600" y="1161" text-anchor="middle" font-size="23" font-weight="bold" style="fill:#a66b16">Two physical KV groups retain state across healthy jobs + ACK</text>
+<text x="40" y="1207" font-size="20" font-weight="normal" style="fill:#52647a">Logical token positions, not SRAM banks. IRQ clear is separate from ACK; CLEAR invalidates metadata.</text>
+</svg>

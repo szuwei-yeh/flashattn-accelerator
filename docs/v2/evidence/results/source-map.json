@@ -1,0 +1,482 @@
+[
+  {
+    "source_path": "docs/v2/m2d3b/before_after.csv",
+    "source_sha256": "6c9be7e85d0049e730a5ef57f52b3edf3acb5fe41bfb8e376d17b231f7cd5b84",
+    "public_path": "docs/v2/m6d/evidence/decode_before_after.csv",
+    "public_sha256": "6c9be7e85d0049e730a5ef57f52b3edf3acb5fe41bfb8e376d17b231f7cd5b84",
+    "transformation": "identity",
+    "bytes": 1282007
+  },
+  {
+    "source_path": "docs/v2/m4/comparison.json",
+    "source_sha256": "1cb2ca72f54f06eedb96f2a745ed5f722c672d048c0fafa4568dda3e2245fbf0",
+    "public_path": "docs/v2/m6d/evidence/gqa_comparison.json",
+    "public_sha256": "1cb2ca72f54f06eedb96f2a745ed5f722c672d048c0fafa4568dda3e2245fbf0",
+    "transformation": "identity",
+    "bytes": 26076
+  },
+  {
+    "source_path": "docs/v2/m6b3/cycle_comparison.csv",
+    "source_sha256": "696981340128fe1f308b346c2d08161c7249034d5077c273a6a0fe37d9e149e7",
+    "public_path": "docs/v2/m6d/evidence/soc_cycles.csv",
+    "public_sha256": "696981340128fe1f308b346c2d08161c7249034d5077c273a6a0fe37d9e149e7",
+    "transformation": "identity",
+    "bytes": 81131
+  },
+  {
+    "source_path": "docs/v2/m6b3/provenance.json",
+    "source_sha256": "1aaa338c1810a1fbbce51e5aa06331d358bdf952945919260dc9769506d5def9",
+    "public_path": "docs/v2/m6d/evidence/soc_provenance.json",
+    "public_sha256": "1aaa338c1810a1fbbce51e5aa06331d358bdf952945919260dc9769506d5def9",
+    "transformation": "identity",
+    "bytes": 11174
+  },
+  {
+    "source_path": "docs/v2/m6b3/coverage.json",
+    "source_sha256": "344886901877e58d4e6e6022e0160aa478a0bbd81b95b688a2904058fb6af308",
+    "public_path": "docs/v2/m6d/evidence/soc_coverage.json",
+    "public_sha256": "344886901877e58d4e6e6022e0160aa478a0bbd81b95b688a2904058fb6af308",
+    "transformation": "identity",
+    "bytes": 2908
+  },
+  {
+    "source_path": "docs/v2/m6b2/ppa_comparison.csv",
+    "source_sha256": "84526c0c39ea61487b9458f6250168097fa79c734796df0c6e5fdfc136d2cf6e",
+    "public_path": "docs/v2/m6d/evidence/ppa.csv",
+    "public_sha256": "84526c0c39ea61487b9458f6250168097fa79c734796df0c6e5fdfc136d2cf6e",
+    "transformation": "identity",
+    "bytes": 832
+  },
+  {
+    "source_path": "docs/v2/m6b2/measurements.json",
+    "source_sha256": "129b8e364522cd13eca4bc165f4b627b316686878a483cc5c11d808c9bca5d31",
+    "public_path": "docs/v2/m6d/evidence/ppa.json",
+    "public_sha256": "129b8e364522cd13eca4bc165f4b627b316686878a483cc5c11d808c9bca5d31",
+    "transformation": "identity",
+    "bytes": 23985
+  },
+  {
+    "source_path": "docs/v2/m6b2/provenance.json",
+    "source_sha256": "965c11f9d12e46a1a94624335233d1c2128929feb4942963cc1d4243815e5a36",
+    "public_path": "docs/v2/m6d/evidence/ppa_provenance.json",
+    "public_sha256": "965c11f9d12e46a1a94624335233d1c2128929feb4942963cc1d4243815e5a36",
+    "transformation": "identity",
+    "bytes": 9825
+  },
+  {
+    "source_path": "docs/v2/m6c/power_comparison.csv",
+    "source_sha256": "f591d2baa169195262a9af1241df56ce1a2acb6931c220f259019d89119558bc",
+    "public_path": "docs/v2/m6d/evidence/power.csv",
+    "public_sha256": "f591d2baa169195262a9af1241df56ce1a2acb6931c220f259019d89119558bc",
+    "transformation": "identity",
+    "bytes": 1055
+  },
+  {
+    "source_path": "docs/v2/m6c/power_comparison.json",
+    "source_sha256": "e4b073ec281060571af31854f48ce93d13ea18b3c6a48abe766de7e716be42e5",
+    "public_path": "docs/v2/m6d/evidence/power.json",
+    "public_sha256": "e4b073ec281060571af31854f48ce93d13ea18b3c6a48abe766de7e716be42e5",
+    "transformation": "identity",
+    "bytes": 2648
+  },
+  {
+    "source_path": "docs/v2/m6c/provenance.json",
+    "source_sha256": "732c45fc0b15eb417a86d2af2bd31ba6aafafbfc2355a3870372c0bbdb1ca0d5",
+    "public_path": "docs/v2/m6d/evidence/closure_provenance.json",
+    "public_sha256": "732c45fc0b15eb417a86d2af2bd31ba6aafafbfc2355a3870372c0bbdb1ca0d5",
+    "transformation": "identity",
+    "bytes": 12777
+  },
+  {
+    "source_path": "docs/v2/m6c/d64_status.json",
+    "source_sha256": "7891662403fd5b8c407e0c2590f444d4e7888c14e96fc44eb1c4c5be25da107a",
+    "public_path": "docs/v2/m6d/evidence/d64_status.json",
+    "public_sha256": "7891662403fd5b8c407e0c2590f444d4e7888c14e96fc44eb1c4c5be25da107a",
+    "transformation": "identity",
+    "bytes": 1015
+  },
+  {
+    "source_path": "docs/v2/m2d4/cache_bounded/results.json",
+    "source_sha256": "cd1075f4948e97f54aaa917c0a91dc1317d90bdd8cd7db6b35f5e92cb8b0fb44",
+    "public_path": "docs/v2/m6d/evidence/cache_formal.json",
+    "public_sha256": "cd1075f4948e97f54aaa917c0a91dc1317d90bdd8cd7db6b35f5e92cb8b0fb44",
+    "transformation": "identity",
+    "bytes": 6433
+  },
+  {
+    "source_path": "docs/v2/m6c/FORMAL_CONTRACT.md",
+    "source_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "public_path": "docs/v2/m6d/evidence/host_formal_contract.txt",
+    "public_sha256": "2d6779bafc1e549a4ea38e55f89ed7b1ce02db0679d1dc855494389a9999e75a",
+    "transformation": "identity",
+    "bytes": 2714
+  },
+  {
+    "source_path": "docs/v2/m6c/VERIFICATION_GAPS.md",
+    "source_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "public_path": "docs/v2/m6d/evidence/formal_gap_review.txt",
+    "public_sha256": "1d93c3a40a0314f0c1af3e1f8df032fdc6704bafa70e0e6e99a66198cef7863b",
+    "transformation": "identity",
+    "bytes": 4869
+  },
+  {
+    "source_path": "docs/v2/m6c/ATTEMPTS.md",
+    "source_sha256": "7f1508a9e521fb68308da79779a030a0438e51cdad9be2066500fd5436a75150",
+    "public_path": "docs/v2/m6d/evidence/closure_attempts.txt",
+    "public_sha256": "7f1508a9e521fb68308da79779a030a0438e51cdad9be2066500fd5436a75150",
+    "transformation": "identity",
+    "bytes": 3103
+  },
+  {
+    "source_path": "docs/v2/m6b2/pair_audit.json",
+    "source_sha256": "569a298fadb8144a70bb1004b4a79480d3d6cd6cc42e9d668211c9bb697d1419",
+    "public_path": "docs/v2/m6d/evidence/pair_audit.json",
+    "public_sha256": "569a298fadb8144a70bb1004b4a79480d3d6cd6cc42e9d668211c9bb697d1419",
+    "transformation": "identity",
+    "bytes": 2955
+  },
+  {
+    "source_path": "docs/v2/m6a/coverage_c0/merge.json",
+    "source_sha256": "600c7f060c774c4ae30fe45eb0c62d6b59e2793fccbffded0869f0acd129b2f9",
+    "public_path": "docs/v2/m6d/evidence/M6A_coverage.json",
+    "public_sha256": "600c7f060c774c4ae30fe45eb0c62d6b59e2793fccbffded0869f0acd129b2f9",
+    "transformation": "identity",
+    "bytes": 1990
+  },
+  {
+    "source_path": "docs/v2/m6a/coverage_c1/merge.json",
+    "source_sha256": "39f5ad79874376045e8245788058ec8e8aced8ebf10de750089550347e6b5e0a",
+    "public_path": "docs/v2/m6d/evidence/M6A_coverage_optimized.json",
+    "public_sha256": "39f5ad79874376045e8245788058ec8e8aced8ebf10de750089550347e6b5e0a",
+    "transformation": "identity",
+    "bytes": 1990
+  },
+  {
+    "source_path": "docs/v2/m6c/host_bounded03/results.json",
+    "source_sha256": "b4dacbe945e45741aec2141747b60883fb76e6ce8899f8100ac93d5afc725c97",
+    "public_path": "docs/v2/m6d/evidence/host_formal.json",
+    "public_sha256": "b4dacbe945e45741aec2141747b60883fb76e6ce8899f8100ac93d5afc725c97",
+    "transformation": "identity",
+    "bytes": 3536
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/syn/runs/m6b2_20261010T015435Z_compile/l16c1/reports/qor.rpt",
+    "source_sha256": "11536958f60568bffa1bc5cfd98049dae8a8e635416c1b59378ab0700f8ece91",
+    "public_path": "docs/v2/m6d/evidence/dc_l16_qor.rpt",
+    "public_sha256": "11536958f60568bffa1bc5cfd98049dae8a8e635416c1b59378ab0700f8ece91",
+    "transformation": "identity",
+    "bytes": 2478
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/syn/runs/m6b2_20261010T015435Z_compile/l16c1/reports/timing_setup.rpt",
+    "source_sha256": "462ba93cd6170c3782b43bd83f1e6e570f058a83bbc329632dd94e505f1f6174",
+    "public_path": "docs/v2/m6d/evidence/dc_l16_timing_setup.rpt",
+    "public_sha256": "462ba93cd6170c3782b43bd83f1e6e570f058a83bbc329632dd94e505f1f6174",
+    "transformation": "identity",
+    "bytes": 144879
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/syn/runs/m6b2_20261010T015435Z_compile/l16c1/reports/mapped_structure.rpt",
+    "source_sha256": "0df334c4b921826cda544e437a7579a35bfa2e5341e8f99d34d1e9db8405e76d",
+    "public_path": "docs/v2/m6d/evidence/dc_l16_mapped_structure.rpt",
+    "public_sha256": "0df334c4b921826cda544e437a7579a35bfa2e5341e8f99d34d1e9db8405e76d",
+    "transformation": "identity",
+    "bytes": 30374
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/syn/runs/m6b2_20261010T015435Z_compile/l16c1/reports/clocks.rpt",
+    "source_sha256": "35bde2b33a39455afd6b9e8c6d12ee6207d9609d134ede36fd3f3b32a32dc6db",
+    "public_path": "docs/v2/m6d/evidence/dc_l16_clocks.rpt",
+    "public_sha256": "35bde2b33a39455afd6b9e8c6d12ee6207d9609d134ede36fd3f3b32a32dc6db",
+    "transformation": "identity",
+    "bytes": 646
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/runs/postcheck/l16c1/area.rpt",
+    "source_sha256": "be73a28d654b839911e7b1f7c1fe2d6b22398f664c547f52a05a5432b8e0c061",
+    "public_path": "docs/v2/m6d/evidence/dc_l16_area.rpt",
+    "public_sha256": "be73a28d654b839911e7b1f7c1fe2d6b22398f664c547f52a05a5432b8e0c061",
+    "transformation": "identity",
+    "bytes": 1236
+  },
+  {
+    "source_path": "docs/v2/m6c/power_l16_04/power.rpt",
+    "source_sha256": "457d4910c213d301ed5163ff8d9c1ff1d51d72068530f212cd18aa6f81dd77b8",
+    "public_path": "docs/v2/m6d/evidence/pt_l16_power.rpt",
+    "public_sha256": "457d4910c213d301ed5163ff8d9c1ff1d51d72068530f212cd18aa6f81dd77b8",
+    "transformation": "identity",
+    "bytes": 2165
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/syn/runs/m6b2_20261010T015435Z_compile/l256c1/reports/qor.rpt",
+    "source_sha256": "1d418083348f435aada6f87f7fc8b0f31308bfc69917b345eeeb42b2ef2567f1",
+    "public_path": "docs/v2/m6d/evidence/dc_l256_qor.rpt",
+    "public_sha256": "1d418083348f435aada6f87f7fc8b0f31308bfc69917b345eeeb42b2ef2567f1",
+    "transformation": "identity",
+    "bytes": 2479
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/syn/runs/m6b2_20261010T015435Z_compile/l256c1/reports/timing_setup.rpt",
+    "source_sha256": "d4516583edb542118da013b7edab95e6785e6fd6e0a2949e5de60e48e2e5759b",
+    "public_path": "docs/v2/m6d/evidence/dc_l256_timing_setup.rpt",
+    "public_sha256": "d4516583edb542118da013b7edab95e6785e6fd6e0a2949e5de60e48e2e5759b",
+    "transformation": "identity",
+    "bytes": 344720
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/syn/runs/m6b2_20261010T015435Z_compile/l256c1/reports/mapped_structure.rpt",
+    "source_sha256": "7ddef381d3c88240f83d351086021b14cc954a1a0afa2a8b9e3d2f9b30b8fc04",
+    "public_path": "docs/v2/m6d/evidence/dc_l256_mapped_structure.rpt",
+    "public_sha256": "7ddef381d3c88240f83d351086021b14cc954a1a0afa2a8b9e3d2f9b30b8fc04",
+    "transformation": "identity",
+    "bytes": 56100
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/syn/runs/m6b2_20261010T015435Z_compile/l256c1/reports/clocks.rpt",
+    "source_sha256": "dcfe744e4a648403e1711ce054f746d24d6e7d27c829dd9fb55ea65e01e63edb",
+    "public_path": "docs/v2/m6d/evidence/dc_l256_clocks.rpt",
+    "public_sha256": "dcfe744e4a648403e1711ce054f746d24d6e7d27c829dd9fb55ea65e01e63edb",
+    "transformation": "identity",
+    "bytes": 647
+  },
+  {
+    "source_path": "docs/v2/m6b2/matched_attempt02/collected/runs/postcheck/l256c1/area.rpt",
+    "source_sha256": "ba36825a5886a9fc96c3e969fc000312b358983e9b82e6ab1a251cf99d573d0a",
+    "public_path": "docs/v2/m6d/evidence/dc_l256_area.rpt",
+    "public_sha256": "ba36825a5886a9fc96c3e969fc000312b358983e9b82e6ab1a251cf99d573d0a",
+    "transformation": "identity",
+    "bytes": 1238
+  },
+  {
+    "source_path": "docs/v2/m6c/power_l256_04/power.rpt",
+    "source_sha256": "35dfe2ca9613afea3bd49e696f1db6024777981365aab5e6ce8c6dc9c50168a5",
+    "public_path": "docs/v2/m6d/evidence/pt_l256_power.rpt",
+    "public_sha256": "35dfe2ca9613afea3bd49e696f1db6024777981365aab5e6ce8c6dc9c50168a5",
+    "transformation": "identity",
+    "bytes": 2166
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l16_focus_warm/focus_latency0.log",
+    "source_sha256": "8c0813f5dcc146748a9c6ee8e20140f1bfc1f8e0ae7479eb409a133982478526",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l16_focus_warm/focus_latency0.log",
+    "public_sha256": "8c0813f5dcc146748a9c6ee8e20140f1bfc1f8e0ae7479eb409a133982478526",
+    "transformation": "identity",
+    "bytes": 4853
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l16_focus_warm/inventory.json",
+    "source_sha256": "24d2ddc357e004b4df35899702724f01bb6b5b1f87f8ec8f42fdd009944f1af5",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l16_focus_warm/inventory.json",
+    "public_sha256": "24d2ddc357e004b4df35899702724f01bb6b5b1f87f8ec8f42fdd009944f1af5",
+    "transformation": "identity",
+    "bytes": 816
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l16_focus_warm/oracle.log",
+    "source_sha256": "be9f0e75ef1b2f0ede00efb587053c23088a1b63a79b3451836db90d7f6aeb43",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l16_focus_warm/oracle.log",
+    "public_sha256": "be9f0e75ef1b2f0ede00efb587053c23088a1b63a79b3451836db90d7f6aeb43",
+    "transformation": "identity",
+    "bytes": 101
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l16_focus_warm/results.json",
+    "source_sha256": "da668ebfd73ec4b7840441770b5e79481ce04175354688da26495de1446ef2e3",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l16_focus_warm/results.json",
+    "public_sha256": "6cd7f2ec8a8e04477124ad8e7e76aecbc9470e17724210d623e5284b1b71b8a7",
+    "transformation": "replace local engineering root in command argv only; preserve all other JSON fields",
+    "bytes": 42162
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l16_focus_warm/warm_latency0.log",
+    "source_sha256": "112d12479c8de8c6bbe113155633e0fd5d05f65c9cf3296a15b70fa06d158c8c",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l16_focus_warm/warm_latency0.log",
+    "public_sha256": "112d12479c8de8c6bbe113155633e0fd5d05f65c9cf3296a15b70fa06d158c8c",
+    "transformation": "identity",
+    "bytes": 4849
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l256_focus_warm/focus_latency0.log",
+    "source_sha256": "f932825e165ebdd928677f10d6636637ef7fee6c4c3473910261205e878dcc06",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l256_focus_warm/focus_latency0.log",
+    "public_sha256": "f932825e165ebdd928677f10d6636637ef7fee6c4c3473910261205e878dcc06",
+    "transformation": "identity",
+    "bytes": 4850
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l256_focus_warm/inventory.json",
+    "source_sha256": "9e4223c93ea22c17d1402d65887e5aa400658527400730e2e66dad055d1d5b17",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l256_focus_warm/inventory.json",
+    "public_sha256": "9e4223c93ea22c17d1402d65887e5aa400658527400730e2e66dad055d1d5b17",
+    "transformation": "identity",
+    "bytes": 791
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l256_focus_warm/oracle.log",
+    "source_sha256": "be9f0e75ef1b2f0ede00efb587053c23088a1b63a79b3451836db90d7f6aeb43",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l256_focus_warm/oracle.log",
+    "public_sha256": "be9f0e75ef1b2f0ede00efb587053c23088a1b63a79b3451836db90d7f6aeb43",
+    "transformation": "identity",
+    "bytes": 101
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l256_focus_warm/results.json",
+    "source_sha256": "947db75727d19731d60a47157a0afbfdc1ee54a12c7f10cf6fce2a9b40aea31b",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l256_focus_warm/results.json",
+    "public_sha256": "2767b1280b0c5da14a3c06e139c7f940e3f6e41f9f41bd13528fcf462f634f62",
+    "transformation": "replace local engineering root in command argv only; preserve all other JSON fields",
+    "bytes": 42181
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l256_focus_warm/warm_latency0.log",
+    "source_sha256": "2294a27b56ca1aac95c50d9ad5ec256b5688655205a46585d459344465b05fae",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l256_focus_warm/warm_latency0.log",
+    "public_sha256": "2294a27b56ca1aac95c50d9ad5ec256b5688655205a46585d459344465b05fae",
+    "transformation": "identity",
+    "bytes": 4849
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l256_prefill/inventory.json",
+    "source_sha256": "9e4223c93ea22c17d1402d65887e5aa400658527400730e2e66dad055d1d5b17",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l256_prefill/inventory.json",
+    "public_sha256": "9e4223c93ea22c17d1402d65887e5aa400658527400730e2e66dad055d1d5b17",
+    "transformation": "identity",
+    "bytes": 791
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l256_prefill/oracle.log",
+    "source_sha256": "72f0eaf24b319c77e9ab4e9abbebd4b07be55e39b5fb9f99cf24b761d3a9040c",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l256_prefill/oracle.log",
+    "public_sha256": "72f0eaf24b319c77e9ab4e9abbebd4b07be55e39b5fb9f99cf24b761d3a9040c",
+    "transformation": "identity",
+    "bytes": 101
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l256_prefill/prefill_latency0.log",
+    "source_sha256": "6582560adbafa2370ce97667a17458b8851bdaec3ccdaff5cd6dd3683eccaddd",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l256_prefill/prefill_latency0.log",
+    "public_sha256": "6582560adbafa2370ce97667a17458b8851bdaec3ccdaff5cd6dd3683eccaddd",
+    "transformation": "identity",
+    "bytes": 1124
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d16_l256_prefill/results.json",
+    "source_sha256": "ee787f83c8def92d73dcae583f473562c932fe2e8a7d94f6bd5808bab21ebcb8",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d16_l256_prefill/results.json",
+    "public_sha256": "a53b6933d0ee8ea272e8a86be24704c66e6e29208b01b9812a750abe09037819",
+    "transformation": "replace local engineering root in command argv only; preserve all other JSON fields",
+    "bytes": 30037
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l16_focus_warm/focus_latency0.log",
+    "source_sha256": "b847c63c010d3d49dd391af42729cbfe0c4e3f13632b0450191fba3e91681803",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l16_focus_warm/focus_latency0.log",
+    "public_sha256": "b847c63c010d3d49dd391af42729cbfe0c4e3f13632b0450191fba3e91681803",
+    "transformation": "identity",
+    "bytes": 4939
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l16_focus_warm/inventory.json",
+    "source_sha256": "773a499d489bc71fca5be9fcf187c8803586cba65501761489738498867a1b36",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l16_focus_warm/inventory.json",
+    "public_sha256": "773a499d489bc71fca5be9fcf187c8803586cba65501761489738498867a1b36",
+    "transformation": "identity",
+    "bytes": 816
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l16_focus_warm/oracle.log",
+    "source_sha256": "eb22fa1906fdec06dfe8af7505b3ea2a839e8dafb687fa56a3d427ee2ea88e95",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l16_focus_warm/oracle.log",
+    "public_sha256": "eb22fa1906fdec06dfe8af7505b3ea2a839e8dafb687fa56a3d427ee2ea88e95",
+    "transformation": "identity",
+    "bytes": 101
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l16_focus_warm/results.json",
+    "source_sha256": "50b0ed6f01b2c1067575ea4f879283c803c512e594506cf5dbe752b5a00f3fc0",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l16_focus_warm/results.json",
+    "public_sha256": "0513a4212d5dc0a5215829bf167a1326886dff03fa93a9563e4a3257e70a36a2",
+    "transformation": "replace local engineering root in command argv only; preserve all other JSON fields",
+    "bytes": 42338
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l16_focus_warm/warm_latency0.log",
+    "source_sha256": "6cf8767b20110abea75651d7ae333464008662383b53c8f96ddda5580c57e176",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l16_focus_warm/warm_latency0.log",
+    "public_sha256": "6cf8767b20110abea75651d7ae333464008662383b53c8f96ddda5580c57e176",
+    "transformation": "identity",
+    "bytes": 4957
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l256_focus_warm/focus_latency0.log",
+    "source_sha256": "62934fb0dadc5078a2b8b3caabd8ea150f912a0ae6836ee380547d6532115c0d",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l256_focus_warm/focus_latency0.log",
+    "public_sha256": "62934fb0dadc5078a2b8b3caabd8ea150f912a0ae6836ee380547d6532115c0d",
+    "transformation": "identity",
+    "bytes": 4936
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l256_focus_warm/inventory.json",
+    "source_sha256": "0d8688dabe4e258f9994f012cf8f0af3a9250179244850f302a5e0a4858c2fa0",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l256_focus_warm/inventory.json",
+    "public_sha256": "0d8688dabe4e258f9994f012cf8f0af3a9250179244850f302a5e0a4858c2fa0",
+    "transformation": "identity",
+    "bytes": 791
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l256_focus_warm/oracle.log",
+    "source_sha256": "d5157077907ac9be3faaabd7c7b0b0affbb39f48e7bd4fd5f256803a31b9ded7",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l256_focus_warm/oracle.log",
+    "public_sha256": "d5157077907ac9be3faaabd7c7b0b0affbb39f48e7bd4fd5f256803a31b9ded7",
+    "transformation": "identity",
+    "bytes": 101
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l256_focus_warm/results.json",
+    "source_sha256": "4d0b7256959d50f15094f6bd32e60d116cff0361a7627e72a5b59707fc9606d2",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l256_focus_warm/results.json",
+    "public_sha256": "5bbecd0acfa943a597bf2eae9e3a69689a0339047907c58b51b3bb0cac2ec2b4",
+    "transformation": "replace local engineering root in command argv only; preserve all other JSON fields",
+    "bytes": 42359
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/d64_l256_focus_warm/warm_latency0.log",
+    "source_sha256": "c7dd599398148a7704353cde82910e80c8e13ad47c31d8589112063a5c95bed5",
+    "public_path": "docs/v2/m6d/evidence/quickstart/d64_l256_focus_warm/warm_latency0.log",
+    "public_sha256": "c7dd599398148a7704353cde82910e80c8e13ad47c31d8589112063a5c95bed5",
+    "transformation": "identity",
+    "bytes": 4957
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/wrapper_d16_l16_focus/focus_latency0.log",
+    "source_sha256": "8c0813f5dcc146748a9c6ee8e20140f1bfc1f8e0ae7479eb409a133982478526",
+    "public_path": "docs/v2/m6d/evidence/quickstart/wrapper_d16_l16_focus/focus_latency0.log",
+    "public_sha256": "8c0813f5dcc146748a9c6ee8e20140f1bfc1f8e0ae7479eb409a133982478526",
+    "transformation": "identity",
+    "bytes": 4853
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/wrapper_d16_l16_focus/inventory.json",
+    "source_sha256": "24d2ddc357e004b4df35899702724f01bb6b5b1f87f8ec8f42fdd009944f1af5",
+    "public_path": "docs/v2/m6d/evidence/quickstart/wrapper_d16_l16_focus/inventory.json",
+    "public_sha256": "24d2ddc357e004b4df35899702724f01bb6b5b1f87f8ec8f42fdd009944f1af5",
+    "transformation": "identity",
+    "bytes": 816
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/wrapper_d16_l16_focus/oracle.log",
+    "source_sha256": "3a6811b4013f4568f892a7ff3fe88518ba9a7c4f99cf25d58eaec4c802b505a9",
+    "public_path": "docs/v2/m6d/evidence/quickstart/wrapper_d16_l16_focus/oracle.log",
+    "public_sha256": "3a6811b4013f4568f892a7ff3fe88518ba9a7c4f99cf25d58eaec4c802b505a9",
+    "transformation": "identity",
+    "bytes": 101
+  },
+  {
+    "source_path": "docs/v2/m6d/smoke/wrapper_d16_l16_focus/results.json",
+    "source_sha256": "6d089c77f0105ee090eab55f446eb261cecff6a956be0953d092d29b793f5bf9",
+    "public_path": "docs/v2/m6d/evidence/quickstart/wrapper_d16_l16_focus/results.json",
+    "public_sha256": "b6cb1ba767431c4bbf80f51536e6a958bacec3fb5f18fa3177615a750dbe20de",
+    "transformation": "replace local engineering root in command argv only; preserve all other JSON fields",
+    "bytes": 35272
+  }
+]

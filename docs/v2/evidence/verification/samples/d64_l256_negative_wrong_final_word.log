@@ -1,0 +1,4 @@
+RESOURCE lanes=256 expected=256 core_instances=1 physical_KV_heads=2
+STORE_JOB id=1 op=0 length=16 core_stores=8192 result_stores=4096 cache_checks=256
+DQ_JOB id=1 op=0 length=16 lanes=256 compact=1 requests=4 issues=4 retires=4 words=1024 consumes=4 dq_wait=0 softmax_wait=148 update_cycles=4112 norm_cycles=4112
+M5C_CHECK corrupt/missing/duplicated byte or wrong head/word order clock=31762 phase=3 job=1 child_cycles=24126

@@ -1,0 +1,5 @@
+lanes,scope,op,length,host_cycles,compute_cycles,dma_wb_cycles,words,read_bytes,write_bytes,ar,r,aw,w,b,okay,cache_reads,cache_writes,copy_cycles,array_runs,array_compute,core_active,dq_wait,issues,retires,update_cycles,norm_cycles
+16,fresh_real_VCS_prefill_cache_population,0,16,8143,6258,1879,1024,2048,4096,16,256,33,512,33,33,64,64,3072,8,376,2860,68,64,64,1028,1028
+16,fresh_real_VCS_warm_decode,2,16,1292,1167,119,64,64,256,4,8,3,32,3,3,64,0,192,8,376,940,68,64,64,68,68
+256,fresh_real_VCS_prefill_cache_population,0,16,8079,6194,1879,1024,2048,4096,16,256,33,512,33,33,64,64,3072,8,376,2796,0,4,4,1028,1028
+256,fresh_real_VCS_warm_decode,2,16,1228,1103,119,64,64,256,4,8,3,32,3,3,64,0,192,8,376,876,0,4,4,68,68

@@ -1,0 +1,142 @@
+[
+  {
+    "raw_log": "safety_d16_l256_attempt01/prefill_latency0_seed17.log",
+    "original_sha256": "f4d8dc7665d3d9601ab0e6f89bb9c67dbcfc03c75d1e2bfc5a2a7e6af80bf302",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d16_l256_prefill_latency0_seed17.log",
+    "public_sha256": "f4d8dc7665d3d9601ab0e6f89bb9c67dbcfc03c75d1e2bfc5a2a7e6af80bf302",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d16_l256_attempt01/focus_latency0_seed17.log",
+    "original_sha256": "6c4885769a7f51b495d9dd8580837b8688c48af3f54e0b64342606f61212b45b",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d16_l256_focus_latency0_seed17.log",
+    "public_sha256": "6c4885769a7f51b495d9dd8580837b8688c48af3f54e0b64342606f61212b45b",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d16_l256_attempt01/negative_wrong_final_word.log",
+    "original_sha256": "ff87ded712c37152ec8361242bba55c609d342ff1810708698666c6064a11138",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d16_l256_negative_wrong_final_word.log",
+    "public_sha256": "ff87ded712c37152ec8361242bba55c609d342ff1810708698666c6064a11138",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d16_l256_attempt01/negative_missing_fixture.log",
+    "original_sha256": "c574eb0c3eb130c8f6ba979aaa888f003aa1a476e7490e400131162b6c0c1b99",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d16_l256_negative_missing_fixture.log",
+    "public_sha256": "c574eb0c3eb130c8f6ba979aaa888f003aa1a476e7490e400131162b6c0c1b99",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d16_l16/prefill_latency0_seed17.log",
+    "original_sha256": "f101d27caa0b666403004edf62614da121f4075b452a124923bbaf63cf0af329",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d16_l16_prefill_latency0_seed17.log",
+    "public_sha256": "f101d27caa0b666403004edf62614da121f4075b452a124923bbaf63cf0af329",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d16_l16/focus_latency0_seed17.log",
+    "original_sha256": "84a30d08e3c74dd010981c15cc011e167213e0b3c7df53ae64ed61197a7efa82",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d16_l16_focus_latency0_seed17.log",
+    "public_sha256": "84a30d08e3c74dd010981c15cc011e167213e0b3c7df53ae64ed61197a7efa82",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d16_l16/negative_wrong_final_word.log",
+    "original_sha256": "65b2da40eac1f138c240d000a52b5fc98f7b6931943b7b8c62710ea8a635d659",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d16_l16_negative_wrong_final_word.log",
+    "public_sha256": "65b2da40eac1f138c240d000a52b5fc98f7b6931943b7b8c62710ea8a635d659",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d16_l16/negative_missing_fixture.log",
+    "original_sha256": "67eede03f1ae146ba71ec93ea6e1433f1eb940f295d67b9a9ed5a10b73b6e0bf",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d16_l16_negative_missing_fixture.log",
+    "public_sha256": "67eede03f1ae146ba71ec93ea6e1433f1eb940f295d67b9a9ed5a10b73b6e0bf",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d64_l256/prefill_latency0_seed17.log",
+    "original_sha256": "5431bfea9c8125966d53c0d0e180b0496c0ab0384661cabc1435aced9da05c56",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d64_l256_prefill_latency0_seed17.log",
+    "public_sha256": "5431bfea9c8125966d53c0d0e180b0496c0ab0384661cabc1435aced9da05c56",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d64_l256/focus_latency0_seed17.log",
+    "original_sha256": "d71c2c832ad45a89e6bb3fda9f2189fb7f3297a24333e85ea3cffe203571e9e4",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d64_l256_focus_latency0_seed17.log",
+    "public_sha256": "d71c2c832ad45a89e6bb3fda9f2189fb7f3297a24333e85ea3cffe203571e9e4",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d64_l256/negative_wrong_final_word.log",
+    "original_sha256": "c5e7eafbf54a50827e9ee5444a43a8de664e98a0d799e210eeabcd513ef974c6",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d64_l256_negative_wrong_final_word.log",
+    "public_sha256": "c5e7eafbf54a50827e9ee5444a43a8de664e98a0d799e210eeabcd513ef974c6",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d64_l256/negative_missing_fixture.log",
+    "original_sha256": "c574eb0c3eb130c8f6ba979aaa888f003aa1a476e7490e400131162b6c0c1b99",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d64_l256_negative_missing_fixture.log",
+    "public_sha256": "c574eb0c3eb130c8f6ba979aaa888f003aa1a476e7490e400131162b6c0c1b99",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d64_l16/prefill_latency0_seed17.log",
+    "original_sha256": "93badeed4d65d5fda687ed1365688eaabd3b18ffd124f42dc6d62460134fb800",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d64_l16_prefill_latency0_seed17.log",
+    "public_sha256": "93badeed4d65d5fda687ed1365688eaabd3b18ffd124f42dc6d62460134fb800",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d64_l16/focus_latency0_seed17.log",
+    "original_sha256": "6c2546d8525b617d537f7ea8cb1b0fa59417d86671f655fd5ba8033b3442f1d0",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d64_l16_focus_latency0_seed17.log",
+    "public_sha256": "6c2546d8525b617d537f7ea8cb1b0fa59417d86671f655fd5ba8033b3442f1d0",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d64_l16/negative_wrong_final_word.log",
+    "original_sha256": "bb8e6b2177ef8689cca0f422ca06fbc29837b03107be2aa71e3754792edc70b4",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d64_l16_negative_wrong_final_word.log",
+    "public_sha256": "bb8e6b2177ef8689cca0f422ca06fbc29837b03107be2aa71e3754792edc70b4",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "safety_d64_l16/negative_missing_fixture.log",
+    "original_sha256": "67eede03f1ae146ba71ec93ea6e1433f1eb940f295d67b9a9ed5a10b73b6e0bf",
+    "public_path": "docs/v2/m7/evidence/m7_samples/d64_l16_negative_missing_fixture.log",
+    "public_sha256": "67eede03f1ae146ba71ec93ea6e1433f1eb940f295d67b9a9ed5a10b73b6e0bf",
+    "transformation": "identity; runner logs already redact staged paths"
+  },
+  {
+    "raw_log": "canonical_d16_l256_retry.log",
+    "original_sha256": "5bb50fce79ec40796201fa87d7674388ec10dd17f7feb7253d70c801be01ffac",
+    "public_path": "docs/v2/m7/evidence/m7_samples/canonical_d16_l256_retry.log",
+    "public_sha256": "5bb50fce79ec40796201fa87d7674388ec10dd17f7feb7253d70c801be01ffac",
+    "transformation": "identity"
+  },
+  {
+    "raw_log": "canonical_d16_l16_retry.log",
+    "original_sha256": "6a8a9d22ea1e4296826edaa4851dd0f0b46b5a97024dfeab0a033c602744bbc6",
+    "public_path": "docs/v2/m7/evidence/m7_samples/canonical_d16_l16_retry.log",
+    "public_sha256": "6a8a9d22ea1e4296826edaa4851dd0f0b46b5a97024dfeab0a033c602744bbc6",
+    "transformation": "identity"
+  },
+  {
+    "raw_log": "canonical_d64_l256_retry.log",
+    "original_sha256": "f534f336f98d51a5d2548346f78e802faeaf9e1b6e910265b0e8e721f2ee7adc",
+    "public_path": "docs/v2/m7/evidence/m7_samples/canonical_d64_l256_retry.log",
+    "public_sha256": "f534f336f98d51a5d2548346f78e802faeaf9e1b6e910265b0e8e721f2ee7adc",
+    "transformation": "identity"
+  },
+  {
+    "raw_log": "canonical_d64_l16_retry.log",
+    "original_sha256": "c9b1c45192f7ebfda9b785de5c762c96cf9952d95b5a26df11d132b10aa55453",
+    "public_path": "docs/v2/m7/evidence/m7_samples/canonical_d64_l16_retry.log",
+    "public_sha256": "c9b1c45192f7ebfda9b785de5c762c96cf9952d95b5a26df11d132b10aa55453",
+    "transformation": "identity"
+  }
+]

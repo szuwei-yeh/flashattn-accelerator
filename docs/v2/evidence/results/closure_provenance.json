@@ -1,0 +1,213 @@
+{
+  "milestone": "M6C",
+  "status": "PARTIAL_OVERALL_VERIFICATION_CLOSURE",
+  "timestamp_UTC": "2026-10-10T18:52:06.072931+00:00",
+  "branch": "v2/m0-baseline-model",
+  "HEAD": "0ccf75e36dd0a56c5c809cffaa2606c01203e027",
+  "checkpoint": {
+    "status": "COMMITTED_AUTHORIZED_LOCAL_ONLY",
+    "timestamp_UTC": "2026-10-10T18:11:10.262079+00:00",
+    "head": "0ccf75e36dd0a56c5c809cffaa2606c01203e027",
+    "parent": "890f675d60472b78c1625b61efeb4febcea292be",
+    "message": "synth(v2): checkpoint resource-safe d64 full-SoC mapping audit",
+    "count": 74,
+    "bytes": 6111067,
+    "committed_blobs_match_manifest": true,
+    "tracked_tree_clean": true,
+    "index_empty": true,
+    "push": false,
+    "new_M6C_committed": false
+  },
+  "functional_RTL_changed": false,
+  "production_source_sha256": {
+    "rtl/v2/m5/m5_types_pkg.sv": "5d8574f14239d5083ca4fd01cc2dd8ec9069350af4f6e3c465562a866c386a9c",
+    "rtl/memory/sram_1r1w.sv": "c958106159d57ad7294753b085a9b339c373d2a96244042831f1e4baa9af4fd5",
+    "rtl/systolic/pe.sv": "40cd1bdee315ee16ffeaf46ecac35b8f6fc2d0f6e8e25ce1ba8fa92ff45e42eb",
+    "rtl/systolic/systolic_array.sv": "d86f54408d10e33e6786bfebdf602fc4a216e670ae39e221c2a469a8f04d339d",
+    "rtl/systolic/array_controller.sv": "0cf0cf337efdba71308037dd60d6e383104ef9242cd0e8ed0b9f2435da2a57bc",
+    "rtl/quantization/dequantizer.sv": "6ec665292432d32ea31d57df4065da58a6cf0e2de724e92fd9d3d0449cbc9f97",
+    "rtl/quantization/dequantizer_tile.sv": "07cd945cce2007753fbb7b57120a4470fd14508302bedce71276b718efdbb765",
+    "rtl/softmax/exp_lut.sv": "1f8f1d5ae96de4113501293ef464de14a9f15ced34ad64b6470e6d2fd608d411",
+    "rtl/memory/banked_scratchpad.sv": "90fa93cab878043847df0a4839dca410d6146609dd02f0b4f8e24a205cf56c0f",
+    "rtl/memory/output_buffer.sv": "e784cce001ca734f3ab53f56ba4eccc7c2835569a626b1009e388cba87e31daa",
+    "rtl/ctrl/addr_gen.sv": "192c6a77fc1d82289605db80e828622cb9ba556bf8768bf5c0cc2286d78d7383",
+    "rtl/interface/dma_engine_vec.sv": "db2c446b7edd8decaa4d0399eb736226c04248d4ed9856235f56d488de57870d",
+    "rtl/v2/m2c3/kv_cache_banked_decode_m2c3.sv": "fb3f4d65c6c7e5bb450c04bd64d7d8c62af81e39309059676dd93e59b9e02b05",
+    "rtl/v2/m2c3/online_softmax_masked_m2c3.sv": "13f8bd0d3e49eb32f7fc1c76d654a1caa67d81528ac9f36e4a3ddf04addf017a",
+    "rtl/v2/m2c3/tile_controller_decode_m2c3.sv": "4d33de35044db0f23bc0cf6ce978b2d4410ba7f4732a1589ac73881f75ecfa64",
+    "rtl/v2/m2c3/banked_tile_loader_decode_m2c3.sv": "1634c71575898b958f52cc1ee18ca421c343797512155d71fc973dde507c68da",
+    "rtl/v2/m3b/flash_attn_core_decode_m3b.sv": "cc663bafbfd8d67824716d072fad738659ae0704dfd3215af78eac5879893a4e",
+    "rtl/v2/m6b1/flash_attn_serial_m6b1.sv": "f5defa81ef930d8f09566c8eb0f0cbce314b07b117162f380cc5cb2b21ae2acb",
+    "rtl/v2/m6b1/axi_lite_csr_m6b1.sv": "19df6402a608ee1dd2cf5123560b92df8e1b0c26cda9b8d8c71bcddbad3d2bb8",
+    "rtl/v2/m5/soc_job_adapter_m5.sv": "0e632433d9ed0706f53560ea356b704896c7ce111a8f1875bf6038a36630649d",
+    "rtl/v2/m5/gqa_output_packer_m5.sv": "a7da0c6f575cd61a07c234d86f2787d17e0ea2b3e9ea3be7b52b8b578799c164",
+    "rtl/v2/m5/dma_write_engine_m5.sv": "6583c9c900c5a3f1d0a83a9da701cea21356ea39c491ae5e03c28e57ab9ec09f",
+    "rtl/v2/m6b1/flash_attn_soc_m6b1.sv": "d39264cfbe70029cacd618d1958fa2c933483d740424674438ef21514cd8dcb0"
+  },
+  "d16_original_synthesis_HEAD": "5b48641988babf22383feda43258eaf73b0d6b33",
+  "historical_evidence_sha256": {
+    "docs/v2/m6b2/measurements.json": "129b8e364522cd13eca4bc165f4b627b316686878a483cc5c11d808c9bca5d31",
+    "docs/v2/m6b2/provenance.json": "965c11f9d12e46a1a94624335233d1c2128929feb4942963cc1d4243815e5a36",
+    "docs/v2/m6b2/matched_attempt02/generated_artifact_hashes.json": "e42efe6f589dfa1e8be81ce8f0cba5ad6df333a99a6bbf45d92de7aaf982b942",
+    "docs/v2/m6b3/provenance.json": "1aaa338c1810a1fbbce51e5aa06331d358bdf952945919260dc9769506d5def9",
+    "docs/v2/m6b3/coverage.json": "344886901877e58d4e6e6022e0160aa478a0bbd81b95b688a2904058fb6af308",
+    "docs/v2/m6b4/provenance.json": "37e053f0442a81b5c61be6eb2bd8f9ac8ac8945aec9cb4e7257b10df958a6126",
+    "docs/v2/m6b4/resource_results.json": "afdc1c17af2542717914ecd5e575c4b4866337cb99b7df2c3bcdb33ab519567a",
+    "docs/v2/m6a/uncovered_fsm.csv": "a9fd8824fab4cb79a2f2c1a081e0d4f3cfc3d9614648c297674aebb09e639b25",
+    "docs/v2/m6a/FORMAL_REVIEW.md": "6bb2f87f8c9252a570b675d66ace57b930076fdc73bde2d45d7f74b321ad8a57",
+    "docs/v2/m2d4/cache_bounded/results.json": "cd1075f4948e97f54aaa917c0a91dc1317d90bdd8cd7db6b35f5e92cb8b0fb44"
+  },
+  "prior_input_freeze": "docs/v2/m6c/INPUT_FREEZE.json",
+  "navigation_changes": "docs/v2/m6c/navigation_changes.json",
+  "d64_status": {
+    "status": "FROZEN_NO_RETRY_CURRENT_VM",
+    "full_SoC_Verilator_VCS": "PASS_RECORDED_M6B3",
+    "DC_analysis_elaboration_link": "PASS_RECORDED_M6B3_M6B4",
+    "d64_16_mapping": "RESOURCE-LIMITED",
+    "d64_256_mapping": "NOT RUN",
+    "matched_d64_PPA": "NOT AVAILABLE",
+    "valid_mapped_endpoints": 0,
+    "additional_d64_mapping_attempts_M6C": 0,
+    "peak_sampled_RSS_GiB": 12.003677,
+    "termination": "Watchdog SIGTERM during ordinary compile Pass1Mapping/core processing, not confirmed kernel OOM",
+    "references": [
+      "docs/v2/m6b3/README.md",
+      "docs/v2/m6b4/RESOURCE_REPORT.md",
+      "docs/v2/m6b4/resource_results.json",
+      "docs/v2/m6b4/SYNTHESIS_CONTRACT.md",
+      "docs/v2/m6b4/FALLBACK_PLAN.md",
+      "docs/v2/m6b4/transport_manifest.json"
+    ],
+    "resumption": "New immutable run tag, explicit larger-RAM authorization and feasibility audit; same verified source/top/geometry/library/constraints/memory policy/compile strategy within both endpoints. 32\u201364GiB is planning only, not measured requirement."
+  },
+  "d16_generated_artifacts": [
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l16c1/artifacts/constraints.sdc",
+      "bytes": 21336,
+      "sha256": "358e7589c22f14e28bf8d11ae3f8755ba6ae986ef8a7e414a428c56629341905"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l16c1/artifacts/mapped.ddc",
+      "bytes": 38051840,
+      "sha256": "ed3226a3a80cbfe33aa33ef49b6bb8d35121afed241a14da6fba61ed6fbbed60"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l16c1/artifacts/mapped.v",
+      "bytes": 50436729,
+      "sha256": "9578caf881be9e7b53715b6edfbd7dc0904eace13825164dda6eb027306e07a6"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l256c1/artifacts/constraints.sdc",
+      "bytes": 21336,
+      "sha256": "5bb8df37d96ac2af5b3c912b699ef379870a3bc42122afd8e968abe566eb93ec"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l256c1/artifacts/mapped.ddc",
+      "bytes": 89079808,
+      "sha256": "d7cf87347f4b5496a9bff61c72e1879a6e250e89c376867808182cc48e753045"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l256c1/artifacts/mapped.v",
+      "bytes": 122680144,
+      "sha256": "899adea69045c04dbd58b5e47157cfddf01155be054e1ce67cedf34211e9bbc3"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_elab/l16c1/artifacts/elaborated.ddc",
+      "bytes": 19193344,
+      "sha256": "051538ef4fc432393dc2fd558edbe5482449c8290f9076da0c4f882f8ff767d4"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_elab/l256c1/artifacts/elaborated.ddc",
+      "bytes": 16350720,
+      "sha256": "12d84aedfd229de63bdbd7d4797111e1eb1a9ec6e454c24294ccc8fd08f94ee5"
+    }
+  ],
+  "power": {
+    "status": "PASS_MATCHED_ONE_WORKLOAD_STANDARD_CELL_ESTIMATES",
+    "classification": "MEASURED_ACTIVITY_AND_ESTIMATED_PRELAYOUT_STANDARD_CELL_POWER_ENERGY",
+    "comparison": "docs/v2/m6c/power_comparison.json",
+    "reports": [
+      "docs/v2/m6c/power_l256_04",
+      "docs/v2/m6c/power_l16_04"
+    ],
+    "excluded_attempts": [
+      "activity01 bad timing",
+      "activity02/03 incomplete array capture",
+      "power_l16_01 no activity annotation",
+      "power_l16_02 rejected annotation quality"
+    ],
+    "PrimeTime": "R-2020.09-SP5-1",
+    "VCS": "V-2023.12-SP2_Full64",
+    "library_sha256": "4968d1dba7ff9911cc51dfac7d8ea8b94fbab59d2f862f0531d7c774fb0a5791",
+    "same_flow_sha256": {
+      "syn/v2/m6c/pt_power.tcl": "ec51ec4291bd21fbdb6a39adf1f44dca30cb3ddbb75dca44c6bd6d74eeed42ad",
+      "syn/v2/m6c/monitor_pt.py": "86866e1da2bcdfd726304a16da08df8d92e9b7354e64c65e71fbdf413ce63a72",
+      "tools/v2/m6c/normalize_activity.py": "d04595236ca2640325b6a15421a064652968bf57b0fd5be9b9d6b3adbe260573"
+    },
+    "workload": "population0 noncausal warm d16 L16, Q4:KV2, compact1, AXI latency0; after N16 prefill; only accepted command through finalB/DONE window",
+    "physical_memory_energy": false,
+    "system_energy": false
+  },
+  "targeted_verification": {
+    "fresh_VCS_commands": 4,
+    "fresh_VCS_exact_words": 2176,
+    "scope": "Accepted activity04 both lanes; prefill and warm L16 only",
+    "fresh_CSR_checks": 43364,
+    "fresh_CSR_mock_child_jobs": 40,
+    "negative_controls": [
+      "premature_done: EXPECTED_FAIL",
+      "early_owner_release: EXPECTED_FAIL"
+    ],
+    "bounded_host": "PASS_BOUNDED_MODULE_ONLY",
+    "host_depth": 12,
+    "host_bound24": "INCONCLUSIVE_TIMEOUT",
+    "cache_formal": "HISTORICAL_PASS_BOUNDED24_UNDER_ORIGINAL_ASSUMPTIONS",
+    "integrated_formal": "INCONCLUSIVE_HISTORICAL_UNCHANGED",
+    "coverage": "PARTIAL_HISTORICAL_METRICS_NO_NEW_MERGE",
+    "fresh_full_M2_M1_V1_regression": "NOT RUN; source-identical accepted M6B3 results preserved"
+  },
+  "execution": {
+    "full_synthesis": 0,
+    "d64_mapping": 0,
+    "new_features": 0,
+    "dependencies_installed": 0,
+    "active_EDA_after_completion": 0,
+    "push": false,
+    "M6C_committed": false,
+    "active_execution_budget_hours": 4
+  },
+  "source_and_script_sha256": {
+    "tools/v2/m6c/sanitize_new_csr.py": "dc381b906aa32eb00092db9f1d29e77511c592986a2a8e0b55a49c1496352890",
+    "tools/v2/m6c/prepare_activity.py": "a233720d76f549f523d31d0c5170fc8cb58c2c3a79400cb5413ed83a9d77f63a",
+    "tools/v2/m6c/run_host_formal.py": "4db8a81e17e16bcbd67f5f1e4e6e47937af56416e8d204863e397b3ee8619cdd",
+    "tools/v2/m6c/qualify_pt.py": "5b02f4eb4d1515de3a7ff605bbf4b6b08438601aa290dac77b329ac81a08998b",
+    "tools/v2/m6c/residual_review.py": "5087aa4667d34728a33b84de3bafe04f3ef3b84fe17924e65d4fd0148caa65a8",
+    "tools/v2/m6c/checkpoint.py": "83afb803c99eb3a9a5b62a2573d8626c2a64e52f8f4220ebfc2520f5dbeeb78a",
+    "tools/v2/m6c/compare_power.py": "52073a8c222a9c5e77a51d80dd11aa19f3cab380b62c0a70c789f8f441713698",
+    "tools/v2/m6c/capture_activity.py": "f03829515afc601e8c79dc2c3730b46b5b2b7c491f31a334f114239672f00ef3",
+    "tools/v2/m6c/update_navigation.py": "37245ca33df22a4b91624f5d90e40fd301ed8294410a89b05463b6dbe2cf2507",
+    "tools/v2/m6c/validate.py": "3c79823e58b74eece67fe87dd56e1141dfb2418c4e493ec92f95058c701fdd4e",
+    "tools/v2/m6c/common.py": "2b22899a31d0995f729c77dcc63e3e5e3a57cce3527bfb692b426988bd482f6e",
+    "tools/v2/m6c/launch_power.py": "69d876ad112d5184907fc400752f99c8fe67eb77257495175b79ec2240d26f83",
+    "tools/v2/m6c/poll_power.py": "11913e20e4fd6fd23260bc2bd36bc13f8534edaf352ef6506694d89cc1af00a9",
+    "tools/v2/m6c/provenance.py": "2ac39295696f936dfe64e092e406457b806153f098bb672fdb19ae5690f87f6e",
+    "tools/v2/m6c/normalize_activity.py": "d04595236ca2640325b6a15421a064652968bf57b0fd5be9b9d6b3adbe260573",
+    "tools/v2/m6c/preserve_activity.py": "495f1a8a5511de2b1c2eca45141e41fde2730507ef79de1458dc0ea315b4eeb3",
+    "tools/v2/m6c/report.py": "36f267a9600bdb66f4de4275debc77bd57629b940455c476b219453654e7e464",
+    "tools/v2/m6c/collect_power.py": "27d493f1cc5a3464f4d8362708280d4bc27cbcad8e9f2c855390a9e1171cee32",
+    "tools/v2/m6c/analyze_power.py": "9f0ea1678b65e4d046a6a1a7aa3a139446d4027814233c3979477245a6ae9fef",
+    "tools/v2/m6c/preflight.py": "470720620c85b517cf96525cbb8ab0d362278d13298cc361935bfc11913f6456",
+    "syn/v2/m6c/qualify_pt.tcl": "2e909d209c9d650f2d1dc30fb75c27b3ef5578b0ec5681fae110347ad17118fd",
+    "syn/v2/m6c/pt_power.tcl": "ec51ec4291bd21fbdb6a39adf1f44dca30cb3ddbb75dca44c6bd6d74eeed42ad",
+    "syn/v2/m6c/monitor_pt.py": "86866e1da2bcdfd726304a16da08df8d92e9b7354e64c65e71fbdf413ce63a72",
+    "sim/v2/m6c/tb_activity_four_state.sv": "5d501a3ee8ba91ad21c2658f0b1a50f84342f71b7ecc58b08e1794de24fb397b",
+    "formal/v2/m6c/host_properties.svh": "0e43edd449f3ae318320e5a5439584ab99eb128f2b251cd60e50b721c2459c86"
+  },
+  "known_limitations": [
+    "One warm d16 power workload only; standard cells, no physical memories/system power.",
+    "Prelayout and retained max-cap/asynchronous-reset model limitations; no achieved Fmax/electrical signoff.",
+    "Bounded module proof abstracts actual child/DMA/CSR/cache; full integrated proof remains inconclusive.",
+    "Coverage remains partial without waivers; no fresh broad regression or public CI.",
+    "d64 matched mapping unavailable; current VM no retry."
+  ]
+}

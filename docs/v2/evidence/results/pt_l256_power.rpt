@@ -1,0 +1,51 @@
+****************************************
+Report : Averaged Power
+	-verbose
+	-nosplit
+Design : flash_attn_soc_m6b1_COMPACT_DECODE_OUTPUT1_DEQUANT_LANES256
+Version: R-2020.09-SP5-1
+Date   : Sat Oct 10 11:42:32 2026
+****************************************
+
+Library(s) Used:
+
+    gscl45nm (File: <TARGET_LIBRARY>)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+<no wire load model is set>
+
+Power-specific unit information :
+    Voltage Units = 1 V
+    Capacitance Units = 1 pf
+    Time Units = 1 ns
+    Dynamic Power Units = 1 W
+    Leakage Power Units = 1 W
+
+
+
+  Attributes
+  ----------
+      i  -  Including register clock pin internal power
+      u  -  User defined power group
+
+                        Internal             Switching            Leakage              Total
+Power Group             Power                Power                Power                Power               (     %)   Attrs
+----------------------------------------------------------------------------------------------------------------------------
+clock_network           1.38708055e-01       0.00000000e+00       0.00000000e+00       1.38708055e-01      (75.89%)   i
+register                9.05617722e-04       1.67342423e-05       5.98976575e-03       6.91211782e-03      ( 3.78%)   
+combinational           8.07228684e-03       6.54735416e-03       2.25233603e-02       3.71429995e-02      (20.32%)   
+sequential              0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)   
+memory                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)   
+io_pad                  0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)   
+black_box               0.00000000e+00       0.00000000e+00       0.00000000e+00       0.00000000e+00      ( 0.00%)   
+
+  Net Switching Power  = 6.56408817e-03        ( 3.59%)
+  Cell Internal Power  = 1.47685960e-01        (80.81%)
+  Cell Leakage Power   = 2.85131261e-02        (15.60%)
+                         -------------------------
+Total Power            = 1.82763174e-01       (100.00%)
+
+1

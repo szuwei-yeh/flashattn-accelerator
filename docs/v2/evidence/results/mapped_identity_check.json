@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "count": 8,
+  "artifacts": [
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l16c1/artifacts/constraints.sdc",
+      "bytes": 21336,
+      "sha256": "358e7589c22f14e28bf8d11ae3f8755ba6ae986ef8a7e414a428c56629341905",
+      "fresh_local_check": "PASS"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l16c1/artifacts/mapped.ddc",
+      "bytes": 38051840,
+      "sha256": "ed3226a3a80cbfe33aa33ef49b6bb8d35121afed241a14da6fba61ed6fbbed60",
+      "fresh_local_check": "PASS"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l16c1/artifacts/mapped.v",
+      "bytes": 50436729,
+      "sha256": "9578caf881be9e7b53715b6edfbd7dc0904eace13825164dda6eb027306e07a6",
+      "fresh_local_check": "PASS"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l256c1/artifacts/constraints.sdc",
+      "bytes": 21336,
+      "sha256": "5bb8df37d96ac2af5b3c912b699ef379870a3bc42122afd8e968abe566eb93ec",
+      "fresh_local_check": "PASS"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l256c1/artifacts/mapped.ddc",
+      "bytes": 89079808,
+      "sha256": "d7cf87347f4b5496a9bff61c72e1879a6e250e89c376867808182cc48e753045",
+      "fresh_local_check": "PASS"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_compile/l256c1/artifacts/mapped.v",
+      "bytes": 122680144,
+      "sha256": "899adea69045c04dbd58b5e47157cfddf01155be054e1ce67cedf34211e9bbc3",
+      "fresh_local_check": "PASS"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_elab/l16c1/artifacts/elaborated.ddc",
+      "bytes": 19193344,
+      "sha256": "051538ef4fc432393dc2fd558edbe5482449c8290f9076da0c4f882f8ff767d4",
+      "fresh_local_check": "PASS"
+    },
+    {
+      "path": "syn/runs/m6b2_20261010T015435Z_elab/l256c1/artifacts/elaborated.ddc",
+      "bytes": 16350720,
+      "sha256": "12d84aedfd229de63bdbd7d4797111e1eb1a9ec6e454c24294ccc8fd08f94ee5",
+      "fresh_local_check": "PASS"
+    }
+  ],
+  "private_files_published": false,
+  "new_synthesis": false
+}

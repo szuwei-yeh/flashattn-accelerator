@@ -114,3 +114,53 @@ jobs:
           path: |
             sim/verilator/obj_dequant_*/**/*.log
             sim/verilator/obj_dequant_reports/*.json
+
+  v2:
+    name: V2 SoC d${{ matrix.dim }} / ${{ matrix.lanes }} lanes
+    runs-on: ubuntu-24.04
+    needs: simulator
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        dim: [16, 64]
+        lanes: [256, 16]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install bounded verification dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ make
+          python -m pip install numpy==2.2.6
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: verilator-toolchain
+          path: ${{ runner.temp }}/verilator-package
+      - name: Activate verified simulator
+        run: |
+          mkdir -p "$RUNNER_TEMP/verilator"
+          tar -xzf "$RUNNER_TEMP/verilator-package/verilator.tar.gz" -C "$RUNNER_TEMP/verilator"
+          echo "$RUNNER_TEMP/verilator/bin" >> "$GITHUB_PATH"
+          echo "VERILATOR_ROOT=$RUNNER_TEMP/verilator/share/verilator" >> "$GITHUB_ENV"
+      - name: Check release integrity and failure detectors
+        if: matrix.dim == 16 && matrix.lanes == 256
+        run: |
+          python tools/v2/validate_release.py --output "$RUNNER_TEMP/release-validation.json"
+          python tools/v2/test_validate_release.py
+      - name: Fresh V2 prefill and stateful host sequence with negative controls
+        run: >-
+          python -B tools/v2/verify.py
+          --dim ${{ matrix.dim }} --lanes ${{ matrix.lanes }} --compact 1
+          --scopes prefill,focus --latencies 0 --seeds 0,17 --final-b-hold 37
+          --output-dir "$RUNNER_TEMP/v2-results"
+      - name: Preserve V2 logs, exact counts and source identity
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: v2-d${{ matrix.dim }}-l${{ matrix.lanes }}
+          path: |
+            ${{ runner.temp }}/v2-results
+            ${{ runner.temp }}/release-validation.json

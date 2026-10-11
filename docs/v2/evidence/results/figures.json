@@ -1,0 +1,17 @@
+{
+  "status": "GENERATED_FROM_ACCEPTED_EXTRACTS",
+  "data_sha256": "eb8c8925d2d4b8b0406f43f6ec26ece216bf144c209de360df12826da146cb11",
+  "evidence_source_map_sha256": "b93aad457accdc619edd4a262c6c9782d4778629c7ac1bd1fe4c5877b9558398",
+  "figures": {
+    "docs/v2/m6d/figures/decode_cycles.svg": "bbd11cd14fd75b7dd4e711123956035d2c8cdce56da8fe8a152f8631d812b44b",
+    "docs/v2/m6d/figures/dequantizer_sharing.svg": "25f45fe72b4b39dc694badbfc4f8bbd50c4d7f3bfc2c36e4b5990961d3677739",
+    "docs/v2/m6d/figures/gqa_traffic.svg": "61d86dab2a2314e818a76e98f76c867846375656a0ba643ae1b6a390da24e542",
+    "docs/v2/m6d/figures/output_traversal.svg": "dac64f8fa939662fb708d01cca414f01ccb1229d528f864ef50f0465601ffd22",
+    "docs/v2/m6d/figures/soc_architecture.svg": "16f4a15a7955fa7754a903846868fc1030dfbced7be1c61b8090ae346fe6aed4",
+    "docs/v2/m6d/figures/soc_area.svg": "0fcd82154decee6b98d21f607490719edc18ab741fb8b7379c205d4b1c416619",
+    "docs/v2/m6d/figures/soc_energy.svg": "f19e541ab66e2a39fa91501faf0bdb3ed255461410a256637affbe83afbc2add",
+    "docs/v2/m6d/figures/stateful_sequence.svg": "f9fb6bb673a0e108b448252a1fdc0bfd1fd2a7a4bdf00e8bfbbe66e4576a8e57"
+  },
+  "plot_tool": "matplotlib 3.7.1",
+  "diagrams": "native SVG; engineering interpretation of verified RTL, not new measurement"
+}

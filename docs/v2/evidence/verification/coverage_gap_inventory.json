@@ -1,0 +1,20 @@
+{
+  "source": "docs/v2/m6a/uncovered_fsm.csv",
+  "total_report_rows": 312,
+  "per_variant": {
+    "0": {
+      "UNSUPPORTED_CONFIGURATION": 7,
+      "ERROR_RECOVERY_UNTESTED": 97,
+      "STRUCTURALLY_UNREACHABLE_BY_INSPECTION": 44,
+      "UNRESOLVED": 8
+    },
+    "1": {
+      "UNSUPPORTED_CONFIGURATION": 7,
+      "ERROR_RECOVERY_UNTESTED": 97,
+      "STRUCTURALLY_UNREACHABLE_BY_INSPECTION": 44,
+      "UNRESOLVED": 8
+    }
+  },
+  "waivers": 0,
+  "new_coverage_database": false
+}

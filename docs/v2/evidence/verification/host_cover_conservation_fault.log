@@ -1,0 +1,661 @@
+
+-- Running command `read_verilog -formal -sv "<REPO>/rtl/v2/m5/m5_types_pkg.sv" "<REPO>/notes/v2_m6c_2026-10-10/host_bounded03/host.sv"; prep -top soc_job_adapter_m5; async2sync; dffunmap; flatten; opt_clean; sat -seq 12 -set-assumes -set-at 12 f_cover_conservation_fault 1 -show phase -show source_words -show expected_words -timeout 30' --
+
+1. Executing Verilog-2005 frontend: <REPO>/rtl/v2/m5/m5_types_pkg.sv
+Parsing formal SystemVerilog input from `<REPO>/rtl/v2/m5/m5_types_pkg.sv' to AST representation.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: <REPO>/notes/v2_m6c_2026-10-10/host_bounded03/host.sv
+Parsing formal SystemVerilog input from `<REPO>/notes/v2_m6c_2026-10-10/host_bounded03/host.sv' to AST representation.
+Generating RTLIL representation for module `\soc_job_adapter_m5'.
+Successfully finished Verilog frontend.
+
+3. Executing PREP pass.
+
+3.1. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1.1. Analyzing design hierarchy..
+Top module:  \soc_job_adapter_m5
+
+3.1.2. Analyzing design hierarchy..
+Top module:  \soc_job_adapter_m5
+Removed 0 unused modules.
+Module soc_job_adapter_m5 directly or indirectly contains formal properties -> setting "keep" attribute.
+
+3.2. Executing PROC pass (convert processes to netlists).
+
+3.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 6 switch rules as full_case in process $proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117 in module soc_job_adapter_m5.
+Marked 13 switch rules as full_case in process $proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44 in module soc_job_adapter_m5.
+Removed a total of 0 dead cases.
+
+3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 3 redundant assignments.
+Promoted 20 assignments to connections.
+
+3.2.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:129$240'.
+  Set init value: \f_past_valid = 1'0
+
+3.2.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+
+3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~36 debug messages>
+
+3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:129$240'.
+Creating decoders for process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+     1/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:150$214_EN
+     2/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:149$212_EN
+     3/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:148$210_EN
+     4/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:146$208_EN
+     5/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:145$202_EN
+     6/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:143$200_EN
+     7/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:140$193_EN
+     8/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:139$189_EN
+     9/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:138$185_EN
+    10/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:137$183_EN
+    11/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:136$177_EN
+    12/13: $assert$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:134$172_EN
+    13/13: $assume$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:132$170_EN
+Creating decoders for process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+     1/32: $0\snapshots[415:0] [415:384]
+     2/32: $0\snapshots[415:0] [383:352]
+     3/32: $0\snapshots[415:0] [351:320]
+     4/32: $0\snapshots[415:0] [319:288]
+     5/32: $0\snapshots[415:0] [287:256]
+     6/32: $0\snapshots[415:0] [255:224]
+     7/32: $0\snapshots[415:0] [223:192]
+     8/32: $2$fordecl_block$1.i[31:0]$128
+     9/32: $0\snapshots[415:0] [191:160]
+    10/32: $0\snapshots[415:0] [159:128]
+    11/32: $0\snapshots[415:0] [127:96]
+    12/32: $0\snapshots[415:0] [95:64]
+    13/32: $0\snapshots[415:0] [63:32]
+    14/32: $0\snapshots[415:0] [31:0]
+    15/32: $2$fordecl_block$3.i[31:0]$129
+    16/32: $1$fordecl_block$1.i[31:0]$121
+    17/32: $0\pack_start[0:0]
+    18/32: $0\child_ack[0:0]
+    19/32: $0\child_start[0:0]
+    20/32: $0\wb_cycles[31:0]
+    21/32: $0\job_cycles[31:0]
+    22/32: $0\response_seen[0:0]
+    23/32: $0\source_seen[0:0]
+    24/32: $0\active[440:0]
+    25/32: $1$fordecl_block$3.i[31:0]$122
+    26/32: $0\write_error_addr[31:0]
+    27/32: $0\error_code[31:0]
+    28/32: $0\job_id[31:0]
+    29/32: $0\output_bytes[31:0]
+    30/32: $0\output_committed[0:0]
+    31/32: $0\compute_done[0:0]
+    32/32: $0\phase[2:0]
+Creating decoders for process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+     1/13: $6\fatal_kind[31:0]
+     2/13: $5\fatal_kind[31:0]
+     3/13: $4\fatal_kind[31:0]
+     4/13: $3\fatal_kind[31:0]
+     5/13: $2\fatal_kind[31:0]
+     6/13: $1\fatal_kind[31:0]
+     7/13: $7\reject_reason[31:0]
+     8/13: $6\reject_reason[31:0]
+     9/13: $5\reject_reason[31:0]
+    10/13: $4\reject_reason[31:0]
+    11/13: $3\reject_reason[31:0]
+    12/13: $2\reject_reason[31:0]
+    13/13: $1\reject_reason[31:0]
+
+3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\soc_job_adapter_m5.\command_ok' from process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+No latch inferred for signal `\soc_job_adapter_m5.\reject_reason' from process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+No latch inferred for signal `\soc_job_adapter_m5.\success_event' from process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+No latch inferred for signal `\soc_job_adapter_m5.\fatal_event' from process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+No latch inferred for signal `\soc_job_adapter_m5.\reject_event' from process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+No latch inferred for signal `\soc_job_adapter_m5.\fatal_now' from process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+No latch inferred for signal `\soc_job_adapter_m5.\finish_now' from process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+No latch inferred for signal `\soc_job_adapter_m5.\release_requested' from process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+No latch inferred for signal `\soc_job_adapter_m5.\fatal_kind' from process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+
+3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\soc_job_adapter_m5.\f_past_valid' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+  created $dff cell `$procdff$835' with positive edge clock.
+Creating register for signal `\soc_job_adapter_m5.$past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:142$5$0' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+  created $dff cell `$procdff$836' with positive edge clock.
+Creating register for signal `\soc_job_adapter_m5.$past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:143$6$0' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+  created $dff cell `$procdff$837' with positive edge clock.
+Creating register for signal `\soc_job_adapter_m5.$past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:143$7$0' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+  created $dff cell `$procdff$838' with positive edge clock.
+Creating register for signal `\soc_job_adapter_m5.$past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:144$8$0' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+  created $dff cell `$procdff$839' with positive edge clock.
+Creating register for signal `\soc_job_adapter_m5.$past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:148$9$0' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+  created $dff cell `$procdff$840' with positive edge clock.
+Creating register for signal `\soc_job_adapter_m5.$past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:149$10$0' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+  created $dff cell `$procdff$841' with positive edge clock.
+Creating register for signal `\soc_job_adapter_m5.$past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:150$11$0' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+  created $dff cell `$procdff$842' with positive edge clock.
+Creating register for signal `\soc_job_adapter_m5.\child_start' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$847' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\child_ack' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$852' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\pack_start' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$857' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\phase' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$862' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\compute_done' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$867' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\output_committed' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$872' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\output_bytes' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$877' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\job_id' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$882' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\error_code' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$887' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\write_error_addr' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$892' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\snapshots' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$897' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\active' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$902' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\source_seen' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$907' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\response_seen' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$912' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\job_cycles' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$917' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.\wb_cycles' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $adff cell `$procdff$922' with positive edge clock and positive level reset.
+Creating register for signal `\soc_job_adapter_m5.$fordecl_block$1.i' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $dff cell `$procdff$929' with positive edge clock.
+Creating register for signal `\soc_job_adapter_m5.$fordecl_block$3.i' using process `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+  created $dff cell `$procdff$936' with positive edge clock.
+
+3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:129$240'.
+Found and cleaned up 9 empty switches in `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+Removing empty process `soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:130$161'.
+Found and cleaned up 14 empty switches in `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+Removing empty process `soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:81$117'.
+Found and cleaned up 13 empty switches in `\soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+Removing empty process `soc_job_adapter_m5.$proc$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:48$44'.
+Cleaned up 36 empty switches.
+
+3.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module soc_job_adapter_m5.
+<suppressed ~56 debug messages>
+
+3.3. Executing FUTURE pass.
+
+3.4. Executing OPT_EXPR pass (perform const folding).
+Optimizing module soc_job_adapter_m5.
+
+3.5. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \soc_job_adapter_m5..
+Removed 27 unused cells and 348 unused wires.
+<suppressed ~28 debug messages>
+
+3.6. Executing CHECK pass (checking for obvious problems).
+Checking module soc_job_adapter_m5...
+Found and reported 0 problems.
+
+3.7. Executing OPT pass (performing simple optimizations).
+
+3.7.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module soc_job_adapter_m5.
+
+3.7.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\soc_job_adapter_m5'.
+Computing hashes of 448 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+Computing hashes of 402 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+Computing hashes of 395 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+Computing hashes of 390 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+Computing hashes of 388 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+<suppressed ~180 debug messages>
+Removed a total of 60 cells.
+
+3.7.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \soc_job_adapter_m5..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$711.
+    dead port 1/2 on $mux $procmux$708.
+    dead port 1/2 on $mux $procmux$705.
+    dead port 1/2 on $mux $procmux$702.
+    dead port 2/2 on $mux $procmux$749.
+    dead port 2/2 on $mux $procmux$728.
+    dead port 1/2 on $mux $procmux$747.
+    dead port 1/2 on $mux $procmux$726.
+    dead port 2/2 on $mux $procmux$830.
+    dead port 2/2 on $mux $procmux$824.
+    dead port 1/2 on $mux $procmux$723.
+    dead port 2/2 on $mux $procmux$740.
+    dead port 1/2 on $mux $procmux$822.
+    dead port 2/2 on $mux $procmux$815.
+    dead port 1/2 on $mux $procmux$813.
+    dead port 2/2 on $mux $procmux$713.
+    dead port 2/2 on $mux $procmux$810.
+    dead port 1/2 on $mux $procmux$720.
+    dead port 1/2 on $mux $procmux$738.
+    dead port 2/2 on $mux $procmux$803.
+    dead port 1/2 on $mux $procmux$801.
+    dead port 1/2 on $mux $procmux$735.
+    dead port 1/2 on $mux $procmux$798.
+    dead port 2/2 on $mux $procmux$791.
+    dead port 1/2 on $mux $procmux$789.
+    dead port 1/2 on $mux $procmux$786.
+    dead port 2/2 on $mux $procmux$783.
+    dead port 2/2 on $mux $procmux$776.
+    dead port 1/2 on $mux $procmux$774.
+    dead port 1/2 on $mux $procmux$771.
+    dead port 2/2 on $mux $procmux$768.
+    dead port 1/2 on $mux $procmux$765.
+    dead port 2/2 on $mux $procmux$755.
+Removed 33 multiplexer ports.
+<suppressed ~384 debug messages>
+
+3.7.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \soc_job_adapter_m5.
+Performed a total of 0 changes.
+
+3.7.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\soc_job_adapter_m5'.
+Computing hashes of 355 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+Computing hashes of 348 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+Computing hashes of 342 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+Computing hashes of 341 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+<suppressed ~42 debug messages>
+Removed a total of 14 cells.
+
+3.7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \soc_job_adapter_m5..
+Removed 0 unused cells and 107 unused wires.
+<suppressed ~1 debug messages>
+
+3.7.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module soc_job_adapter_m5.
+
+3.7.8. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.7.9. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \soc_job_adapter_m5..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~331 debug messages>
+
+3.7.10. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \soc_job_adapter_m5.
+Performed a total of 0 changes.
+
+3.7.11. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\soc_job_adapter_m5'.
+Computing hashes of 341 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+Removed a total of 0 cells.
+
+3.7.12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \soc_job_adapter_m5..
+
+3.7.13. Executing OPT_EXPR pass (perform const folding).
+Optimizing module soc_job_adapter_m5.
+
+3.7.14. Finished fast OPT passes. (There is nothing left to do.)
+
+3.8. Executing WREDUCE pass (reducing word size of cells).
+Removed top 19 bits (of 32) from mux cell soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:41$18 ($mux).
+Removed top 21 bits (of 32) from mux cell soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:42$20 ($mux).
+Removed top 20 bits (of 33) from mux cell soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:43$22 ($mux).
+Removed top 1 bits (of 33) from port A of cell soc_job_adapter_m5.$add$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:43$23 ($add).
+Removed top 20 bits (of 33) from port B of cell soc_job_adapter_m5.$add$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:43$23 ($add).
+Removed top 2 bits (of 3) from port B of cell soc_job_adapter_m5.$eq$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:51$45 ($eq).
+Removed top 1 bits (of 3) from port B of cell soc_job_adapter_m5.$eq$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:60$62 ($eq).
+Removed top 19 bits (of 32) from port B of cell soc_job_adapter_m5.$ne$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:72$95 ($ne).
+Removed top 31 bits (of 32) from mux cell soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:97$130 ($mux).
+Removed top 31 bits (of 32) from port B of cell soc_job_adapter_m5.$add$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:97$131 ($add).
+Removed top 31 bits (of 32) from mux cell soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:100$153 ($mux).
+Removed top 31 bits (of 32) from port B of cell soc_job_adapter_m5.$add$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:100$154 ($add).
+Removed top 30 bits (of 32) from port B of cell soc_job_adapter_m5.$eq$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:104$155 ($eq).
+Removed top 19 bits (of 32) from mux cell soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:109$156 ($mux).
+Removed top 1 bits (of 3) from port B of cell soc_job_adapter_m5.$ne$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:113$157 ($ne).
+Removed top 7 bits (of 16) from mux cell soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:138$187 ($mux).
+Removed top 7 bits (of 16) from port B of cell soc_job_adapter_m5.$eq$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:138$188 ($eq).
+Removed top 21 bits (of 32) from port B of cell soc_job_adapter_m5.$eq$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:139$190 ($eq).
+Removed top 19 bits (of 32) from port B of cell soc_job_adapter_m5.$eq$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:139$191 ($eq).
+Removed top 1 bits (of 3) from port B of cell soc_job_adapter_m5.$eq$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:156$228 ($eq).
+Removed top 21 bits (of 32) from port B of cell soc_job_adapter_m5.$ne$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:156$236 ($ne).
+Removed top 30 bits (of 32) from port B of cell soc_job_adapter_m5.$eq$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:156$238 ($eq).
+Removed top 1 bits (of 3) from port B of cell soc_job_adapter_m5.$procmux$683_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell soc_job_adapter_m5.$procmux$684_CMP0 ($eq).
+Removed top 30 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$699 ($mux).
+Removed top 30 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$717 ($mux).
+Removed top 30 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$732 ($mux).
+Removed top 30 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$744 ($mux).
+Removed top 30 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$753 ($mux).
+Removed top 30 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$758 ($mux).
+Removed top 29 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$762 ($mux).
+Removed top 29 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$780 ($mux).
+Removed top 29 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$795 ($mux).
+Removed top 30 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$808 ($mux).
+Removed top 29 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$819 ($mux).
+Removed top 29 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$828 ($mux).
+Removed top 29 bits (of 32) from mux cell soc_job_adapter_m5.$procmux$833 ($mux).
+Removed top 7 bits (of 16) from wire soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:138$187_Y.
+Removed top 19 bits (of 32) from wire soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:109$156_Y.
+Removed top 31 bits (of 32) from wire soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:100$153_Y.
+Removed top 31 bits (of 32) from wire soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:97$130_Y.
+Removed top 30 bits (of 32) from wire soc_job_adapter_m5.$6\fatal_kind[31:0].
+Removed top 30 bits (of 32) from wire soc_job_adapter_m5.$5\fatal_kind[31:0].
+Removed top 30 bits (of 32) from wire soc_job_adapter_m5.$4\fatal_kind[31:0].
+Removed top 30 bits (of 32) from wire soc_job_adapter_m5.$3\fatal_kind[31:0].
+Removed top 30 bits (of 32) from wire soc_job_adapter_m5.$2\fatal_kind[31:0].
+Removed top 29 bits (of 32) from wire soc_job_adapter_m5.$7\reject_reason[31:0].
+Removed top 29 bits (of 32) from wire soc_job_adapter_m5.$6\reject_reason[31:0].
+Removed top 29 bits (of 32) from wire soc_job_adapter_m5.$5\reject_reason[31:0].
+Removed top 30 bits (of 32) from wire soc_job_adapter_m5.$4\reject_reason[31:0].
+Removed top 29 bits (of 32) from wire soc_job_adapter_m5.$3\reject_reason[31:0].
+Removed top 29 bits (of 32) from wire soc_job_adapter_m5.$2\reject_reason[31:0].
+Removed top 20 bits (of 33) from wire soc_job_adapter_m5.$ternary$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:43$22_Y.
+Removed top 30 bits (of 32) from wire soc_job_adapter_m5.fatal_kind.
+Removed top 21 bits (of 32) from wire soc_job_adapter_m5.expected_words.
+Removed top 19 bits (of 32) from wire soc_job_adapter_m5.expected_bytes.
+
+3.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \soc_job_adapter_m5..
+Removed 0 unused cells and 19 unused wires.
+<suppressed ~1 debug messages>
+
+3.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.11. Executing OPT pass (performing simple optimizations).
+
+3.11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module soc_job_adapter_m5.
+
+3.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\soc_job_adapter_m5'.
+Computing hashes of 341 cells of `\soc_job_adapter_m5'.
+Finding duplicate cells in `\soc_job_adapter_m5'.
+Removed a total of 0 cells.
+
+3.11.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \soc_job_adapter_m5..
+
+3.11.4. Finished fast OPT passes.
+
+3.12. Executing SORT pass.
+
+3.13. Printing statistics.
+
+=== soc_job_adapter_m5 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      340 wires
+     8105 wire bits
+       59 public wires
+     2497 public wire bits
+       40 ports
+     1921 port bits
+      341 cells
+        6   $add
+       16   $adff
+       13   $check
+        8   $dff
+       19   $eq
+        1   $gt
+       43   $logic_and
+       20   $logic_not
+       27   $logic_or
+      176   $mux
+        8   $ne
+        1   $pmux
+        3   $reduce_bool
+
+3.14. Executing CHECK pass (checking for obvious problems).
+Checking module soc_job_adapter_m5...
+Found and reported 0 problems.
+
+4. Executing ASYNC2SYNC pass.
+Replacing soc_job_adapter_m5.$procdff$847 ($adff): ARST=\rst_n, D=$0\child_start[0:0], Q=\child_start
+Replacing soc_job_adapter_m5.$procdff$852 ($adff): ARST=\rst_n, D=$0\child_ack[0:0], Q=\child_ack
+Replacing soc_job_adapter_m5.$procdff$857 ($adff): ARST=\rst_n, D=$0\pack_start[0:0], Q=\pack_start
+Replacing soc_job_adapter_m5.$procdff$862 ($adff): ARST=\rst_n, D=$0\phase[2:0], Q=\phase
+Replacing soc_job_adapter_m5.$procdff$867 ($adff): ARST=\rst_n, D=$0\compute_done[0:0], Q=\compute_done
+Replacing soc_job_adapter_m5.$procdff$872 ($adff): ARST=\rst_n, D=$0\output_committed[0:0], Q=\output_committed
+Replacing soc_job_adapter_m5.$procdff$877 ($adff): ARST=\rst_n, D=$0\output_bytes[31:0], Q=\output_bytes
+Replacing soc_job_adapter_m5.$procdff$882 ($adff): ARST=\rst_n, D=$0\job_id[31:0], Q=\job_id
+Replacing soc_job_adapter_m5.$procdff$887 ($adff): ARST=\rst_n, D=$0\error_code[31:0], Q=\error_code
+Replacing soc_job_adapter_m5.$procdff$892 ($adff): ARST=\rst_n, D=$0\write_error_addr[31:0], Q=\write_error_addr
+Replacing soc_job_adapter_m5.$procdff$897 ($adff): ARST=\rst_n, D=$0\snapshots[415:0], Q=\snapshots
+Replacing soc_job_adapter_m5.$procdff$902 ($adff): ARST=\rst_n, D=$0\active[440:0], Q=\active
+Replacing soc_job_adapter_m5.$procdff$907 ($adff): ARST=\rst_n, D=$0\source_seen[0:0], Q=\source_seen
+Replacing soc_job_adapter_m5.$procdff$912 ($adff): ARST=\rst_n, D=$0\response_seen[0:0], Q=\response_seen
+Replacing soc_job_adapter_m5.$procdff$917 ($adff): ARST=\rst_n, D=$0\job_cycles[31:0], Q=\job_cycles
+Replacing soc_job_adapter_m5.$procdff$922 ($adff): ARST=\rst_n, D=$0\wb_cycles[31:0], Q=\wb_cycles
+
+5. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+6. Executing FLATTEN pass (flatten design).
+
+7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \soc_job_adapter_m5..
+Removed 39 unused cells and 39 unused wires.
+<suppressed ~40 debug messages>
+
+8. Executing SAT pass (solving SAT problems in the circuit).
+Using SAT solver `minisat`.
+
+Setting up time step 1:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$1032 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$1028 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$1026 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$1022 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$1020 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$1016 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$1014 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$1010 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$1008 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$1004 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$1002 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$998 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$996 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$992 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$990 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$986 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$984 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$980 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$978 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$974 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$972 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$968 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$966 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$962 = 1'0
+Import set-constraint from init attribute: $auto$async2sync.cc:116:execute$960 = 1'1
+Import set-constraint from init attribute: $auto$async2sync.cc:107:execute$956 = 1'0
+Import set-constraint from init attribute: \f_past_valid = 1'0
+Final init constraint equation: { \f_past_valid $auto$async2sync.cc:107:execute$956 $auto$async2sync.cc:116:execute$960 $auto$async2sync.cc:107:execute$962 $auto$async2sync.cc:116:execute$966 $auto$async2sync.cc:107:execute$968 $auto$async2sync.cc:116:execute$972 $auto$async2sync.cc:107:execute$974 $auto$async2sync.cc:116:execute$978 $auto$async2sync.cc:107:execute$980 $auto$async2sync.cc:116:execute$984 $auto$async2sync.cc:107:execute$986 $auto$async2sync.cc:116:execute$990 $auto$async2sync.cc:107:execute$992 $auto$async2sync.cc:116:execute$996 $auto$async2sync.cc:107:execute$998 $auto$async2sync.cc:116:execute$1002 $auto$async2sync.cc:107:execute$1004 $auto$async2sync.cc:116:execute$1008 $auto$async2sync.cc:107:execute$1010 $auto$async2sync.cc:116:execute$1014 $auto$async2sync.cc:107:execute$1016 $auto$async2sync.cc:116:execute$1020 $auto$async2sync.cc:107:execute$1022 $auto$async2sync.cc:116:execute$1026 $auto$async2sync.cc:107:execute$1028 $auto$async2sync.cc:116:execute$1032 } = 27'001010101010101010101010101
+
+Setting up time step 2:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 3:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 4:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 5:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 6:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 7:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 8:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 9:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 10:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 11:
+Final constraint equation: { } = { }
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+
+Setting up time step 12:
+Import set-constraint for this timestep: \f_cover_conservation_fault = 1'1
+Final constraint equation: \f_cover_conservation_fault = 1'1
+Imported 399 cells to SAT database.
+Import constraint from assume cell: $auto$async2sync.cc:116:execute$1032 when $auto$async2sync.cc:107:execute$1028.
+Import show expression: \phase
+Import show expression: \source_words
+Import show expression: \expected_words
+
+Solving problem with 714774 variables and 1897280 clauses..
+SAT solving finished - model found:
+
+  Time Signal Name                                                                                                                             Dec       Hex                                                                                                                                                                                                                                                                                                                                                                                                                                                          Bin
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  init $auto$async2sync.cc:107:execute$1004                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$1010                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$1016                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$1022                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$1028                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$956                                                                                                       0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$962                                                                                                       0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$968                                                                                                       0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$974                                                                                                       0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$980                                                                                                       0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$986                                                                                                       0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$992                                                                                                       0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:107:execute$998                                                                                                       0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:116:execute$1002                                                                                                      1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$1008                                                                                                      1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$1014                                                                                                      1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$1020                                                                                                      1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$1026                                                                                                      1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$1032                                                                                                      1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$960                                                                                                       1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$966                                                                                                       1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$972                                                                                                       1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$978                                                                                                       1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$984                                                                                                       1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$990                                                                                                       1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:116:execute$996                                                                                                       1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                            1
+  init $auto$async2sync.cc:253:execute$1034                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:253:execute$1036                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:253:execute$1038                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:253:execute$1040                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                          000
+  init $auto$async2sync.cc:253:execute$1042                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:253:execute$1044                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:253:execute$1046                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                             00000000000000000000000000000000
+  init $auto$async2sync.cc:253:execute$1048                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                             00000000000000000000000000000000
+  init $auto$async2sync.cc:253:execute$1050                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                             00000000000000000000000000000000
+  init $auto$async2sync.cc:253:execute$1052                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                             00000000000000000000000000000000
+  init $auto$async2sync.cc:253:execute$1054                                                                                                     --        --                             00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  init $auto$async2sync.cc:253:execute$1056                                                                                                     --        --    000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  init $auto$async2sync.cc:253:execute$1058                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:253:execute$1060                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $auto$async2sync.cc:253:execute$1062                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                             00000000000000000000000000000000
+  init $auto$async2sync.cc:253:execute$1064                                                                                                      0         0                                                                                                                                                                                                                                                                                                                                                                                                                             00000000000000000000000000000000
+  init $past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:142$5$0                 0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:143$6$0                 0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:143$7$0                --        --    111110101011111001111111011111111111111111111111111111111111100110011111111111111111111111111111111111111111111111111111111111111111111111111111110111111110111111111111111111111111111111101111111111110111111111111111111111111111101111000000000001110000111111111001111110111111100101111111110110010001101000110111111111111111111111111110111011111111111110111111111111111101111111101110011011111111011111111111111111100011111111111010111111011
+  init $past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:144$8$0                 0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:148$9$0                 0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:149$10$0                0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init $past$<LOCAL_HOME>/Documents/ASIC$20Career/flashattn-accelerator/notes/v2_m6c_2026-10-10/host_bounded03/host.sv:150$11$0                0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  init \f_past_valid                                                                                                                             0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                            0
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     1 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+     1 \phase                                                                                                                                    0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                          000
+     1 \source_words                                                                                                                    -281282037  ef3bfa0b                                                                                                                                                                                                                                                                                                                                                                                                                             11101111001110111111101000001011
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     2 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+     2 \phase                                                                                                                                    0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                          000
+     2 \source_words                                                                                                                          1024       400                                                                                                                                                                                                                                                                                                                                                                                                                             00000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     3 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+     3 \phase                                                                                                                                    0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                          000
+     3 \source_words                                                                                                                   -2147482624  80000400                                                                                                                                                                                                                                                                                                                                                                                                                             10000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     4 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+     4 \phase                                                                                                                                    0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                          000
+     4 \source_words                                                                                                                   -2147482624  80000400                                                                                                                                                                                                                                                                                                                                                                                                                             10000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     5 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+     5 \phase                                                                                                                                    0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                          000
+     5 \source_words                                                                                                                   -2147482624  80000400                                                                                                                                                                                                                                                                                                                                                                                                                             10000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     6 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+     6 \phase                                                                                                                                    0         0                                                                                                                                                                                                                                                                                                                                                                                                                                                          000
+     6 \source_words                                                                                                                   -2147482624  80000400                                                                                                                                                                                                                                                                                                                                                                                                                             10000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     7 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+     7 \phase                                                                                                                                    1         1                                                                                                                                                                                                                                                                                                                                                                                                                                                          001
+     7 \source_words                                                                                                                   -2147482624  80000400                                                                                                                                                                                                                                                                                                                                                                                                                             10000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     8 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+     8 \phase                                                                                                                                    2         2                                                                                                                                                                                                                                                                                                                                                                                                                                                          010
+     8 \source_words                                                                                                                   -2147482624  80000400                                                                                                                                                                                                                                                                                                                                                                                                                             10000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     9 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+     9 \phase                                                                                                                                    2         2                                                                                                                                                                                                                                                                                                                                                                                                                                                          010
+     9 \source_words                                                                                                                   -2147482624  80000400                                                                                                                                                                                                                                                                                                                                                                                                                             10000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    10 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+    10 \phase                                                                                                                                    2         2                                                                                                                                                                                                                                                                                                                                                                                                                                                          010
+    10 \source_words                                                                                                                   -2147482624  80000400                                                                                                                                                                                                                                                                                                                                                                                                                             10000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    11 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+    11 \phase                                                                                                                                    3         3                                                                                                                                                                                                                                                                                                                                                                                                                                                          011
+    11 \source_words                                                                                                                          1024       400                                                                                                                                                                                                                                                                                                                                                                                                                             00000000000000000000010000000000
+  ---- ------------------------------------------------------------------------------------------------------------------------------- ----------- ---------                                                                                                                                                    ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    12 \expected_words                                                                                                                        1024       400                                                                                                                                                                                                                                                                                                                                                                                                                                                  10000000000
+    12 \phase                                                                                                                                    3         3                                                                                                                                                                                                                                                                                                                                                                                                                                                          011
+    12 \source_words                                                                                                                         -1025  fffffbff                                                                                                                                                                                                                                                                                                                                                                                                                             11111111111111111111101111111111

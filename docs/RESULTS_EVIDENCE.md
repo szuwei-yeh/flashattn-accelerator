@@ -1,3 +1,15 @@
+# Results and evidence entry point
+
+The current V2 engineering summary is [measured results](RESULTS.md),with [claim-to-evidence mapping](v2/evidence/README.md),[verification limitations](LIMITATIONS.md) and [reproduction](REPRODUCIBILITY.md).
+
+V1 and each V2 milestone remain separate experiments. The original detailed results entry point is preserved byte-for-byte in the approved M6C checkpointcff052a. Accepted RTL,reports,fixtures,failed attempts and provenance have not changed. [Revision history](HISTORY.md) identifies the exact measured source mapping.
+
+The public candidate exposes compact immutable derivatives and original hashes. Full raw evidence and licensed/private artifacts remain local; no public-package claim of complete archive hydration or independently rerun PPA is made. [Release audit](RELEASE.md)
+
+## Preserved public V1 evidence
+
+The following original V1 content retains its experiment scope and anchor targets.
+
 # FlashAttention results evidence
 
 Navigation: [documentation index](README.md).

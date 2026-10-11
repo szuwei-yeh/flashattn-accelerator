@@ -1,0 +1,5 @@
+RESOURCE lanes=256 expected=256 core_instances=1 physical_KV_heads=2
+STORE_JOB id=1 op=0 length=16 core_stores=2048 result_stores=1024 cache_checks=64
+DQ_JOB id=1 op=0 length=16 lanes=256 compact=1 requests=4 issues=4 retires=4 words=1024 consumes=4 dq_wait=0 softmax_wait=148 update_cycles=1028 norm_cycles=1028
+HOST_JOB id=1 op=0 length=16 pop=0 latency=0 compact=1 dim=16 lanes=256 host_cycles=8079 request_cycles=8080 compute_cycles=6194 dma_wb_cycles=1879 wb_phase_cycles=1882 read_bytes=2048 write_bytes=4096 per_head_bytes=1024 ar=16 r=256 aw=33 w=512 b=33 okay=33 words=1024 cache_reads=64 cache_writes=64 copy_cycles=3072 array_runs=8 array_compute=376 core_active=2796 irq_latency=0 phase0=0 phase1=2 phase2=76 phase3=2 phase4=76 phase5=4 phase6=153 phase7=4 phase8=2796 phase9=1024 phase10=1024 phase11=1024 phase12=4 phase13=4 phase14=1 phase15=0 h0_start=195 h0_end=1662 h0_core=699 h1_start=1705 h1_end=3172 h1_core=699 h2_start=3215 h2_end=4682 h2_core=699 h3_start=4723 h3_end=6190 h3_core=699 aw_stall=24 w_stall=342 b_wait=0 source_wait=992 PASS
+RESULT PASS M5D successful=1 exact_words=1024 csr_checks=48

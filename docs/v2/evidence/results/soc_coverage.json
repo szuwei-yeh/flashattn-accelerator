@@ -1,0 +1,101 @@
+{
+  "status": "MEASURED_PARTIAL_NO_WAIVERS",
+  "profiles": [
+    {
+      "profile": "d16_l16_c1_stateful",
+      "dim": 16,
+      "lanes": 16,
+      "score": 77.25,
+      "line": 95.96,
+      "condition": 79.91,
+      "toggle": 71.53,
+      "FSM": 48.31,
+      "branch": 90.57,
+      "report": "docs/v2/m6b3/vcs/d16_l16_c1_stateful/urg/hierarchy.txt",
+      "sha256": "f40e6e691978748319a80e70cb2099550a707b7336c3faa56c1d9549195985c8"
+    },
+    {
+      "profile": "d16_l256_c1_stateful",
+      "dim": 16,
+      "lanes": 256,
+      "score": 77.31,
+      "line": 92.4,
+      "condition": 79.33,
+      "toggle": 81.24,
+      "FSM": 48.31,
+      "branch": 85.26,
+      "report": "docs/v2/m6b3/vcs/d16_l256_c1_stateful/urg/hierarchy.txt",
+      "sha256": "d284539603272e0a7722d0c7795d18ed97f5003feadcd7bb29db191abed3dc85"
+    },
+    {
+      "profile": "d64_l16_c1_stateful",
+      "dim": 64,
+      "lanes": 16,
+      "score": 78.01,
+      "line": 96.25,
+      "condition": 80.5,
+      "toggle": 72.83,
+      "FSM": 48.92,
+      "branch": 91.55,
+      "report": "docs/v2/m6b3/vcs/d64_l16_c1_stateful/urg/hierarchy.txt",
+      "sha256": "40c4b95e5ac9f60a80651374f77c6bc7905302a99761f8bd3a67e3bb2faca220"
+    },
+    {
+      "profile": "d64_l16_c1_stress",
+      "dim": 64,
+      "lanes": 16,
+      "score": 79.69,
+      "line": 96.88,
+      "condition": 79.78,
+      "toggle": 75.0,
+      "FSM": 54.77,
+      "branch": 92.03,
+      "report": "docs/v2/m6b3/vcs/d64_l16_c1_stress/urg/hierarchy.txt",
+      "sha256": "862097fb532aaa8136fb4a753b526cba71954b8444d1727b27c69677b66c96b1"
+    },
+    {
+      "profile": "d64_l256_c1_stateful",
+      "dim": 64,
+      "lanes": 256,
+      "score": 79.48,
+      "line": 94.66,
+      "condition": 82.87,
+      "toggle": 81.9,
+      "FSM": 48.92,
+      "branch": 89.03,
+      "report": "docs/v2/m6b3/vcs/d64_l256_c1_stateful/urg/hierarchy.txt",
+      "sha256": "e9e327587a4dec4aa709b7170ba831a4e9194fc1ac3d3ba35b2a012fdf73cd73"
+    },
+    {
+      "profile": "d64_l256_c1_stress",
+      "dim": 64,
+      "lanes": 256,
+      "score": 80.85,
+      "line": 95.09,
+      "condition": 82.23,
+      "toggle": 83.04,
+      "FSM": 54.46,
+      "branch": 89.43,
+      "report": "docs/v2/m6b3/vcs/d64_l256_c1_stress/urg/hierarchy.txt",
+      "sha256": "d41b946d03793c364f6a6aedb5140ac89baaf3e81f70ced299bae8224cf44ed2"
+    },
+    {
+      "profile": "focus_d64_l16_attempt01",
+      "dim": 64,
+      "lanes": 16,
+      "score": 75.01,
+      "line": 96.1,
+      "condition": 71.16,
+      "toggle": 69.32,
+      "FSM": 48.62,
+      "branch": 89.88,
+      "report": "docs/v2/m6b3/vcs/focus_d64_l16_attempt01/urg/hierarchy.txt",
+      "sha256": "58d1b76d4daf5aa4a91b5a599b68b8a85102e1673494c43f1586640e5551925e"
+    }
+  ],
+  "limits": [
+    "Per-profile actual DUT subtree; no merged closure",
+    "No new formal or mapped equivalence",
+    "Functional coverage is distinct from line/FSM"
+  ]
+}
