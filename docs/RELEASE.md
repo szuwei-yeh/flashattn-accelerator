@@ -39,6 +39,12 @@ while original module identifiers remain intact; assertions and numerical checks
 are unchanged. Fresh V1 N64/d16 core/top causal/noncausal smoke passed four
 invocations, with top latency models0/20/100. Eight accepted SVGs reproduced
 byte-for-byte; the new stateful-flow SVG also reproduced deterministically.
+The README online-softmax figure also reproduces byte-for-byte. Its ideal
+recurrence passed304 independent row comparisons and rejected a missing-rescale
+control in both dimensions. Existing scalar reference tests and L16/17/18 tail
+traces pass; the documented255/256 precision example remains intact. These
+figure checks supplement existing evidence; they are not a new RTL regression,
+coverage measurement, floating-point equivalence proof or licensed EDA result.
 Strict release validation and17 corruption/default-inventory tests pass locally.
 No licensed EDA, mapping or physical validation was rerun.
 

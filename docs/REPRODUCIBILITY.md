@@ -70,6 +70,19 @@ validator checks [manifest-v2](../release/manifest-v2.json) and the immutable v1
 
 ## Figure reproduction
 
+The current README online-softmax and stateful-flow figures use Python's standard
+library. Render copies outside the source tree:
+
+```sh
+v2_figure_dir="$(mktemp -d)"
+python3 -B tools/v2/generate_online_softmax.py --output "$v2_figure_dir/online_softmax.svg"
+python3 -B tools/v2/generate_stateful_dataflow.py --output "$v2_figure_dir/stateful_dataflow.svg"
+```
+
+The online-softmax diagram distinguishes ideal recurrences from fixed-point RTL,
+including masked tails and the raw-denominator/capped-PV-weight distinction.
+Its generator checks source reference anchors; it does not prove RTL correctness.
+
 With matplotlib 3.7.1 for accepted byte reproduction:
 
 ```sh

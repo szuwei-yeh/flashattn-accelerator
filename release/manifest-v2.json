@@ -27,8 +27,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "ff1d9d26084f4820ad8c62ea65e16715d4a18f701b5b28f387f655944465ebd7",
-      "bytes": 22473,
+      "sha256": "d9e7dc9563ecd255f1b21e40f3c4e36afa4c00d961e1b4ff68efd7bc37113a0b",
+      "bytes": 23302,
       "mode": "100644"
     },
     {
@@ -645,14 +645,14 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "d4816413392a08937de2d7e5b7b153cc6c05be4500028a04b82bce12a9d79720",
-      "bytes": 6586,
+      "sha256": "48a4b4f89f1e05030460a2facbee1fdc2f7e84aaf97b2532e002d6f004804d2f",
+      "bytes": 7052,
       "mode": "100644"
     },
     {
       "path": "docs/REPRODUCIBILITY.md",
-      "sha256": "feeeee72ceadcb615a50f73d9610c3d64c090a971b66139da2c0e24d91d7145b",
-      "bytes": 5794,
+      "sha256": "aac9d910c58be4858c6eebf52a73709a4406d407d90be03efa69f8f367b8ca13",
+      "bytes": 6396,
       "mode": "100644"
     },
     {
@@ -1667,6 +1667,12 @@
       "path": "docs/v2/figures/gqa_traffic.svg",
       "sha256": "61d86dab2a2314e818a76e98f76c867846375656a0ba643ae1b6a390da24e542",
       "bytes": 8655,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/figures/online_softmax.svg",
+      "sha256": "a33b1ac5cef3d1a424cfe00b527524b0db7094b2589082265e1718dac9dc3959",
+      "bytes": 19713,
       "mode": "100644"
     },
     {
@@ -2805,14 +2811,20 @@
     },
     {
       "path": "tools/v2/README.md",
-      "sha256": "9cc6c44675da66e1fa670732e32dcbf3872d54c40697904d5ae7faf6c9f65240",
-      "bytes": 2093,
+      "sha256": "89d6eb8722af8f723e911801cd070d2b65f5a40348a619989e561b64c6f25566",
+      "bytes": 2399,
       "mode": "100644"
     },
     {
       "path": "tools/v2/generate_figures.py",
       "sha256": "05b974cfa4073a3f34609744af48e742405a41005a48141394f3ba48d4c15c86",
       "bytes": 7942,
+      "mode": "100644"
+    },
+    {
+      "path": "tools/v2/generate_online_softmax.py",
+      "sha256": "9185b3b9f8cbbdb123e15ffd8e6ab2bb772636e0058b385cf945c8deb9c13ec9",
+      "bytes": 10645,
       "mode": "100644"
     },
     {
