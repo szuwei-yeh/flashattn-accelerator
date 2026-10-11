@@ -245,6 +245,24 @@ geometry and interface scope, separate from the V2 host SoC.
 [V1 results and evidence](docs/RESULTS_EVIDENCE.md) ·
 [Engineering documentation](docs/README.md)
 
+### Historical V1 — cycle milestones and dequantizer tradeoffs
+
+Both figures show **single-head N64 V1 measurements**, noncausal, at zero
+modeled read latency. Cycles cover `start → done`, excluding host setup,
+output readout and AXI output writeback. Each d16/d64 panel uses its own axis scale.
+
+![Historical V1 cycle milestones: scalar memory, vector and banks, K/V prefetch and fused update for N64 d16/d64](docs/figures/cycle-milestones.svg)
+
+The four successive 256-lane stages show how data movement and fused output
+updates reduce cycles. [Cycle data](docs/figures/cycle-milestones.csv) ·
+[Historical measurement scope](docs/RESULTS_EVIDENCE.md)
+
+![Historical V1 optimization stages and alternative 32/16-lane dequantizer configurations, with a separate N64/d16 area tradeoff](docs/figures/cycle-optimization-stages.png)
+
+The 32- and 16-lane rows are **alternative configurations of the fused design**.
+The area tradeoff is the separate matched **N64/d16** synthesis experiment;
+d64 bars show RTL cycles only. [Dequantizer experiment](docs/DEQUANT_EXPERIMENT.md)
+
 <details>
 <summary>V1 architecture and the evolution to V2</summary>
 
@@ -280,11 +298,9 @@ The two versions use different workload geometries and interfaces; each reported
 </details>
 
 <details>
-<summary>V1 optimization figures, exact results and reproduction</summary>
+<summary>V1 exact optimization results and reproduction</summary>
 
 ### Original V1 optimization results
-
-![Preserved V1 optimization milestones and alternative dequantizer configurations](docs/figures/cycle-optimization-stages.png)
 
 | Optimization | Improvement | Test conditions / baseline |
 |---|---|---|
