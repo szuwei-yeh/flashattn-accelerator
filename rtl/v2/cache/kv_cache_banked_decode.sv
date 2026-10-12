@@ -1,4 +1,4 @@
-// M2C.3 bounded d16/d64 cache. The only physical K/V SRAMs in the inference DUT.
+// Two banked K/V stores for one persistent d16/d64 KV group; capacity 64 tokens.
 `timescale 1ns/1ps
 module kv_cache_banked_decode_m2c3 #(parameter int HEAD_DIM=16) (
     input logic clk, rst_n,

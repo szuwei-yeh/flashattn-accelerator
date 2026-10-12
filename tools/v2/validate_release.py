@@ -41,6 +41,59 @@ def payload(root):
                   and '.git' not in p.parts and '__pycache__' not in p.parts)
 
 
+# Exact four-file/nine-span authorization, independent of the mutable inventory.
+# Changing this digest is a validator policy change, not a manifest refresh.
+COMMENT_CONTRACT_SHA256 = '18cb91d9787b3d336727997b4fe4881c035a1f37560e2826aa80461d15c8f4a3'
+COMMENT_DIRECTIVE = re.compile(r'\b(?:verilator|synthesis|synopsys|pragma|translate_off|translate_on|lint_off|lint_on)\b', re.I)
+
+
+def reverse_comment_spans(data, row):
+    """Invert exact whole-line comments; preserve every other byte and line."""
+    lines = data.splitlines(keepends=True)
+    previous_end = 0
+    for op in row['replacements']:
+        old, new = op['from'].encode(), op['to'].encode()
+        old_lines, new_lines = old.splitlines(keepends=True), new.splitlines(keepends=True)
+        start = op['line'] - 1
+        if (op['count'] != 1 or not old_lines or len(old_lines) != len(new_lines)
+                or not old.endswith(b'\n') or not new.endswith(b'\n')
+                or start < previous_end or start + len(new_lines) > len(lines)):
+            raise ValueError('comment span geometry: ' + row['to'])
+        for line in old_lines + new_lines:
+            if (not line.lstrip(b' \t').startswith(b'//') or b'\r' in line
+                    or COMMENT_DIRECTIVE.search(line.decode())):
+                raise ValueError('comment span is not an ordinary comment: ' + row['to'])
+        # Position and unique occurrence are both required; never global replace.
+        if (b''.join(lines[start:start + len(new_lines)]) != new
+                or data.count(new) != 1):
+            raise ValueError('comment span position or ambiguity: ' + row['to'])
+        lines[start:start + len(new_lines)] = old_lines
+        previous_end = start + len(new_lines)
+    return b''.join(lines)
+
+
+def comment_originals(root, records, baseline_rows, moves):
+    """Only the pinned contract can reconstruct sources for historical checks."""
+    encoded = json.dumps(records, sort_keys=True, separators=(',', ':')).encode()
+    if hashlib.sha256(encoded).hexdigest() != COMMENT_CONTRACT_SHA256:
+        raise ValueError('unapproved comment contract')
+    originals = {}
+    for row in records:
+        old, new = row['from'], row['to']
+        if (not safe_name(old) or not safe_name(new) or new in originals
+                or old not in baseline_rows or new != moves.get(old, old)
+                or row['original_sha256'] != baseline_rows[old]['sha256']):
+            raise ValueError('comment source identity: ' + str(new))
+        data = (root / new).read_bytes()
+        if hashlib.sha256(data).hexdigest() != row['current_sha256']:
+            raise ValueError('comment current source hash: ' + new)
+        original = reverse_comment_spans(data, row)
+        if hashlib.sha256(original).hexdigest() != row['original_sha256']:
+            raise ValueError('comment original source hash: ' + new)
+        originals[new] = original
+    return originals
+
+
 def anchors(text):
     found = set(re.findall(r'<a\s+(?:name|id)=[\"\']([^\"\']+)', text))
     seen = {}
@@ -68,6 +121,7 @@ def validate(root, inventory=DEFAULT_INVENTORY):
         moves, patches, retired = {}, {}, set()
         editorial = set()
         filename_config = set()
+        comments, reconstructed_comments = [], {}
         archived_verified = 0
         baseline = read(MANIFEST)
         baseline_rows = {x['path']: x for x in baseline['files']}
@@ -153,11 +207,19 @@ def validate(root, inventory=DEFAULT_INVENTORY):
                         fail('filename_config_policy', old)
                     else:
                         filename_config.add(new)
+            if 'comment_only_derivatives' in layout:
+                comments = layout['comment_only_derivatives']
+                try:
+                    reconstructed_comments = comment_originals(root, comments, baseline_rows, moves)
+                except (ValueError, KeyError, TypeError, OSError) as exc:
+                    fail('comment_derivative_contract', str(exc))
         def relocated(name):
             return moves.get(name, name)
         def original_bytes(path):
             data = path.read_bytes()
             rel = str(path.relative_to(root))
+            if rel in reconstructed_comments:
+                data = reconstructed_comments[rel]
             if rel in filename_config:
                 renamed = sorted(new for old, new in moves.items()
                                  if old.endswith('.sv') and
@@ -365,7 +427,12 @@ def validate(root, inventory=DEFAULT_INVENTORY):
                 'archived_references_resolved_by_explicit_ledger': len(used),
                 'privacy_pattern_hits': len(privacy), 'archived_preparation_records': len(retired),
                 'local_archives_verified': archived_verified, 'path_only_derivatives': len(patches), 'errors': errors,
-                'limits': 'No external URL checks, licensed EDA reruns, Linux execution or verification closure implied. Historical links use immutable original context and explicit mapping; raw text is preserved.'}
+                'comment_only_derivatives': len(reconstructed_comments),
+                'comment_source_hashes': {row['to']: {
+                    'current_sha256': row['current_sha256'],
+                    'original_sha256': hashlib.sha256(reconstructed_comments[row['to']]).hexdigest()}
+                    for row in comments if row['to'] in reconstructed_comments},
+                'limits': 'Historical source checks invert only pinned comment spans and declared path translations. No external URL checks, licensed EDA reruns, Linux execution or verification closure implied. Historical links use immutable original context and explicit mapping; raw text is preserved.'}
     except (OSError, ValueError, KeyError, TypeError) as exc:
         fail('validation_structure_error', str(exc))
         return {'status': 'FAIL', 'errors': errors}

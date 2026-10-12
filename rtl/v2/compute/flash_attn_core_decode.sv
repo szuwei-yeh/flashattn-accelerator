@@ -1,4 +1,4 @@
-// M2C.3 variable L, d64: the original optimized array/dequant/softmax/output datapath.
+// d16/d64 shared QK/PV attention core; KV tiles load in the foreground (prefetch disabled).
 // K/V are external persistent banked SRAMs. N16 prefill activates16 rows; decode activates row0.
 `timescale 1ns/1ps
 module flash_attn_core_decode_m3b #(
@@ -80,7 +80,7 @@ module flash_attn_core_decode_m3b #(
     end
 
     // =========================================================
-    // 1. Tile Controller (banked prefetch variant) + Addr Gen
+    // 1. Foreground tile/phase controller and address generation
     // =========================================================
     logic        cnt_en, cnt_clr, cnt_done, legacy_cnt_done;
     logic        ld_start, ld_mode, fsm_ld_done;
@@ -192,8 +192,8 @@ module flash_attn_core_decode_m3b #(
         .k_global_offset(k_global_offset),
         .v_global_offset(dummy_v_off)
     );
-    // Decode-only terminal count. Preserve every original leaf and all prefill
-    // schedules. The existing delayed write retires in the next controller state.
+    // With COMPACT_DECODE_OUTPUT=1, one accepted decode query visits its owned row; otherwise traverse all rows.
+    // Delayed SRAM writes retire in the following controller state.
     logic compact_output_selected;
     assign compact_output_selected = COMPACT_DECODE_OUTPUT && ((HEAD_DIM == 16) || (HEAD_DIM == 64))
                                    && !prefill_reg && (query_rows_reg == 5'd1)

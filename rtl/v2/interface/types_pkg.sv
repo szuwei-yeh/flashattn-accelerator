@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 package m5_types_pkg;
-    // Fixed M5A geometry; packed scale lanes preserve signed INT16 bit patterns.
-    // Cast individual scale lanes with $signed at the future M4 connection.
+    // Fixed 4Q:2KV host geometry; packed scales preserve signed INT16 bit patterns.
+    // Cast individual scale lanes with $signed at the serial-engine interface.
     typedef struct packed {
         logic [1:0] op;
         logic causal,replace_cache;

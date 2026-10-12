@@ -27,11 +27,11 @@ The eight historical figures additionally need matplotlib; the accepted renderer
 was matplotlib 3.7.1. Other versions may render different bytes. That generator
 requires a new output directory and cannot overwrite accepted figures.
 
-The approved current `soc_architecture.svg`, `memory_banking.svg` and
-`shared_compute_timeline.svg` under `docs/v2/figures/` are canonical reviewed SVG
+The current `soc_architecture.svg`, `memory_banking.svg` and
+`shared_compute_timeline.svg` under `docs/v2/figures/` are canonical SVG
 assets maintained directly. This historical generator does not reproduce them;
 its SoC output corresponds to the preserved original artifact. Do not copy
-historical outputs over the approved current assets.
+historical outputs over the current assets.
 
 All generated outputs belong outside the public source tree or in ignored build
 directories. No tool substitutes a new run for historical licensed evidence.

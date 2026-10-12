@@ -1,34 +1,34 @@
 // ============================================================
-//  tile_controller_banked_prefetch.sv — banked FSM WITH KV double-buffering.
+//  Tile/phase controller for foreground-loaded d16/d64 attention.
 //
-//  New variant of tile_controller_banked.sv that restores the baseline-style
-//  KV prefetch / ping-pong double buffer on the banked-scratchpad path, WITHOUT
-//  touching the already-green tile_controller_banked.sv.
+//  The banked tile loader is reusable; this V2 controller selects
+//  foreground-only operation and never launches KV prefetch.
+//  Q and paired K/V loads share that loader and cannot overlap.
 //
-//  What changed vs tile_controller_banked.sv (everything else is identical):
-//    - New handshake to the core:
-//        pf_start       : 1-cycle pulse — start prefetching the NEXT KV tile
-//                         into the shadow registers (via the shared loader).
-//        pf_rdy         : shadow holds a complete next tile (from the core).
-//        kv_swap_banks  : 1-cycle pulse — copy shadow → active KV registers.
-//    - S_UPDATE_SOFTMAX now fires pf_start (and latches pf_pending) for the next
-//      non-skipped, RESIDENT KV tile, exactly like baseline tile_controller.sv.
-//    - S_CHECK_INNER decides between: causal-skip spin / prefetch-consume /
-//      normal reload — and NEVER falls back to S_LOAD_KV while a prefetch is in
-//      flight (the banked path has a SINGLE shared loader, so overlapping a
-//      foreground load with a prefetch load would corrupt the active tile).
-//    - New S_PF_WAIT state: after advancing tile_col once, wait for pf_rdy, then
-//      swap and skip S_LOAD_KV.  Stalling here does NOT re-advance tile_col.
+//  Foreground loading:
+//    - Load Q before processing the query pass.
+//    - Wait for complete resident K/V pairs before loading a KV tile.
+//    - Reload K/V when advancing to the next eligible tile.
+//    - Skip above-diagonal tiles when causal masking permits.
 //
-//  Residency gate (kv_tiles_ready) semantics are unchanged: a prefetch is only
-//  launched for a tile that is already resident; if the next tile is not yet
-//  resident, no prefetch fires and S_CHECK_INNER takes the normal S_LOAD_KV path
-//  (which stalls on the same residency gate) — correctness is latency-independent.
+//  Shared-array compute sequence:
+//    - Accumulate all QK feature chunks before publishing scores.
+//    - Wait for softmax weights before starting PV.
+//    - Follow each PV output-feature chunk with a fused output update.
+//    - Normalize output chunks after the final KV tile.
 //
-//  This variant also fuses output rescale and PV accumulation into one SRAM
-//  traversal.  Its compute flow is QK → softmax → PV → fused update; the fused
-//  enable tells output_buffer to preserve the original rescale truncation before
-//  adding the scaled PV value.
+//  Retained prefetch interface (inactive in V2):
+//    - pf_start would request a next-tile load into shadow registers.
+//    - pf_rdy indicates a complete shadow tile.
+//    - kv_swap_banks would copy shadow K/V into active registers.
+//    - The launch guard is constant false; pf_pending stays clear.
+//    - Prefetch-consume/wait states are retained but not entered.
+//    - Simulation guards reject prefetch or bank-swap activity.
+//
+//  Fused output update:
+//    - Rescale prior output and add PV in one SRAM traversal.
+//    - Preserve rescale truncation before adding scaled PV values.
+//    - Completion must allow registered output writes to retire.
 // ============================================================
 `timescale 1ns/1ps
 
@@ -63,7 +63,7 @@ module tile_controller_decode_m2c3 #(
     output logic        ld_mode,    // 0 = Q load, 1 = KV load
     input  logic        ld_done,    // FOREGROUND loader finished (core de-muxes)
 
-    // KV prefetch double-buffer handshake (new)
+    // Retained KV prefetch handshake; inactive in this controller.
     output logic        pf_start,       // 1-cycle pulse: prefetch next KV tile → shadow
     output logic [15:0] pf_tile_col,    // tile_col of the tile being prefetched
     input  logic        pf_rdy,         // shadow holds a complete next tile
@@ -263,8 +263,8 @@ module tile_controller_decode_m2c3 #(
                     end
                 end
 
-                // Send scores to softmax; on exp_out_valid launch the prefetch of
-                // the next non-skipped, resident KV tile into the shadow buffer.
+                // Publish scores to softmax; start PV when weights are ready.
+                // The retained prefetch launch remains disabled.
                 S_UPDATE_SOFTMAX: begin
                     softmax_tile_valid <= 1'b1;
                     softmax_tile_start <= is_first_kv;
@@ -273,8 +273,8 @@ module tile_controller_decode_m2c3 #(
                         softmax_tile_valid <= 1'b0;
                         array_started      <= 1'b0;
                         cnt_clr            <= 1'b1;
-                        // Fire prefetch only if the next tile exists (not last, not
-                        // above-diagonal) AND is already resident in the scratchpad.
+                        // Retained residency-qualified prefetch branch.
+                        // The constant-false guard keeps V2 foreground-only.
                         if (1'b0 && next_tile_valid && next_tile_resident) begin // foreground only
                             pf_start   <= 1'b1;
                             pf_pending <= 1'b1;

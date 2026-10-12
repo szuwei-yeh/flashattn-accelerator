@@ -2,9 +2,9 @@
 
 The current V2 engineering summary is [measured results](RESULTS.md),with [claim-to-evidence mapping](v2/evidence/README.md),[verification limitations](LIMITATIONS.md) and [reproduction](REPRODUCIBILITY.md).
 
-V1 and each V2 milestone remain separate experiments. The original detailed results entry point is preserved byte-for-byte in the approved M6C checkpointcff052a. Accepted RTL,reports,fixtures,failed attempts and provenance have not changed. [Revision history](HISTORY.md) identifies the exact measured source mapping.
+V1 and V2 results retain separate experiment baselines and source identities. The original detailed results document is preserved byte-for-byte at checkpoint `cff052a`. RTL, reports, fixtures, failed attempts and provenance retain their recorded identities. [Revision history](HISTORY.md) identifies the exact measured source mapping.
 
-The public candidate exposes compact immutable derivatives and original hashes. Full raw evidence and licensed/private artifacts remain local; no public-package claim of complete archive hydration or independently rerun PPA is made. [Release audit](RELEASE.md)
+The public repository includes evidence extracts and original hashes. Complete raw evidence and licensed/private artifacts remain local; independent PPA reruns require the original artifacts and licensed tools. [Release scope](RELEASE.md)
 
 ## Preserved public V1 evidence
 

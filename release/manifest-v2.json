@@ -21,8 +21,8 @@
     },
     {
       "path": "DISTRIBUTION.md",
-      "sha256": "6f1d392082fd4548efb9a628dab65dba1edae82a2afdea8f8f3fdb20c64852fe",
-      "bytes": 813,
+      "sha256": "c173b2754853977a43fa5d559b75bd1b91ca05309a76c96e6b88d57b6855ae23",
+      "bytes": 248,
       "mode": "100644"
     },
     {
@@ -597,8 +597,8 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "sha256": "31064086c1ee222f0928ced5b48f02b2995ed9d01875dd973f311058ef77e4a3",
-      "bytes": 4928,
+      "sha256": "f1f809708ccc8227108f198f2a27a56ebebcda5e2dcd9618e847ec0591cb20e7",
+      "bytes": 5038,
       "mode": "100644"
     },
     {
@@ -651,8 +651,8 @@
     },
     {
       "path": "docs/REPRODUCIBILITY.md",
-      "sha256": "b993016d8da40f59f43d48832536cba16c58e5259772aed763a32cd495584f59",
-      "bytes": 6914,
+      "sha256": "08c6e15d337c48d3749a0ab8aebcad544a89bc5e6e576d08eb89ae348d22ed72",
+      "bytes": 7815,
       "mode": "100644"
     },
     {
@@ -663,8 +663,8 @@
     },
     {
       "path": "docs/RESULTS_EVIDENCE.md",
-      "sha256": "471ea59801e4e784f46db37e4fed60830a21cb6b931acc8ad84819e549cdea4a",
-      "bytes": 16210,
+      "sha256": "c26e83ab6265b77c4377c94fbbb8f91286b8b292fee0782fdbccc93c7542d2f7",
+      "bytes": 16205,
       "mode": "100644"
     },
     {
@@ -923,6 +923,12 @@
       "path": "docs/figures/render.py",
       "sha256": "c20516e64fb8f433ece675e5e9e81ec4718df0b529e0467bfa50433597687aee",
       "bytes": 9068,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/history/historical_distribution.md",
+      "sha256": "6f1d392082fd4548efb9a628dab65dba1edae82a2afdea8f8f3fdb20c64852fe",
+      "bytes": 813,
       "mode": "100644"
     },
     {
@@ -1893,8 +1899,8 @@
     },
     {
       "path": "release/layout-v2.json",
-      "sha256": "b7be6122e4bd4eec6a123886b7cd5f23a5a0ccfc34205b42650e77b3cb369052",
-      "bytes": 51329,
+      "sha256": "b17bece6cb29f48d662c09bb12090f5ba38442c63fb55e5b24a930468dabac25",
+      "bytes": 59841,
       "mode": "100644"
     },
     {
@@ -2151,7 +2157,7 @@
     },
     {
       "path": "rtl/v2/cache/kv_cache_banked_decode.sv",
-      "sha256": "fb3f4d65c6c7e5bb450c04bd64d7d8c62af81e39309059676dd93e59b9e02b05",
+      "sha256": "9948210aec4e76a0c27dd3de5de3b073a667953400c7e41db09aba0dad5a6406",
       "bytes": 6743,
       "mode": "100644"
     },
@@ -2163,8 +2169,8 @@
     },
     {
       "path": "rtl/v2/compute/flash_attn_core_decode.sv",
-      "sha256": "cc663bafbfd8d67824716d072fad738659ae0704dfd3215af78eac5879893a4e",
-      "bytes": 28473,
+      "sha256": "f6414a13e03a0a3b23b788c8c88f49ceb55890ea5c5013205c28621063125450",
+      "bytes": 28501,
       "mode": "100644"
     },
     {
@@ -2175,8 +2181,8 @@
     },
     {
       "path": "rtl/v2/compute/tile_controller_decode.sv",
-      "sha256": "4d33de35044db0f23bc0cf6ce978b2d4410ba7f4732a1589ac73881f75ecfa64",
-      "bytes": 17464,
+      "sha256": "9fb5828d271487fca2419ac539892135724b22417d6ff5753cb82c8218b1569a",
+      "bytes": 16950,
       "mode": "100644"
     },
     {
@@ -2187,8 +2193,8 @@
     },
     {
       "path": "rtl/v2/interface/types_pkg.sv",
-      "sha256": "5d8574f14239d5083ca4fd01cc2dd8ec9069350af4f6e3c465562a866c386a9c",
-      "bytes": 649,
+      "sha256": "04a54d4460721cf5b3d26c6e3035e3b3993fa1466088d179a472cecac9945bb6",
+      "bytes": 655,
       "mode": "100644"
     },
     {
@@ -2829,8 +2835,8 @@
     },
     {
       "path": "tools/v2/README.md",
-      "sha256": "b7f15b16501fe0e5bf9156c227e6007ab4776a881d9ca9f0adc42970524323a9",
-      "bytes": 2810,
+      "sha256": "9622a31e57a846221ada42a61079890da58eb970147e50bb4d0cea6cb661fd29",
+      "bytes": 2783,
       "mode": "100644"
     },
     {
@@ -2871,14 +2877,14 @@
     },
     {
       "path": "tools/v2/test_validate_release.py",
-      "sha256": "5f3f58de01be340e36c72b05d75cf80b8494ee30396a002708e1408c3a88dc30",
-      "bytes": 8658,
+      "sha256": "cb1437d3012534ab7a2100b4ff2074e920e0d84ba6552f23b51c1f375f5af200",
+      "bytes": 16700,
       "mode": "100644"
     },
     {
       "path": "tools/v2/validate_release.py",
-      "sha256": "b8aecef253bf2f681358c58391a60f3d0c2897579bdb76c67b9251a32a4e2682",
-      "bytes": 20265,
+      "sha256": "986cc8db50b3dca86ea36ca82f1b9b1d1fb1c9130e693c43538a9bd2c66bbc24",
+      "bytes": 24166,
       "mode": "100644"
     },
     {

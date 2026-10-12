@@ -165,6 +165,139 @@ class ReleaseControls(unittest.TestCase):
         p.write_text(json.dumps(value))
         self.rejected('path_patch_policy')
 
+    def rehash(self, relative):
+        p = self.root / relative
+        manifest = self.root / self.inventory
+        value = json.loads(manifest.read_text())
+        row = next(x for x in value['files'] if x['path'] == relative)
+        row.update(sha256=hashlib.sha256(p.read_bytes()).hexdigest(), bytes=p.stat().st_size)
+        manifest.write_text(json.dumps(value))
+
+    def comment_records(self):
+        return json.loads((self.root / 'release/layout-v2.json').read_text())['comment_only_derivatives']
+
+    def test_exact_comment_reconstruction_and_unchanged_lines(self):
+        records = self.comment_records()
+        self.assertEqual(len(records), 4)
+        self.assertEqual(sum(len(x['replacements']) for x in records), 9)
+        for row in records:
+            with self.subTest(path=row['to']):
+                data = (self.root / row['to']).read_bytes()
+                original = checks.reverse_comment_spans(data, row)
+                self.assertEqual(hashlib.sha256(data).hexdigest(), row['current_sha256'])
+                self.assertEqual(hashlib.sha256(original).hexdigest(), row['original_sha256'])
+                current_lines, original_lines = data.splitlines(keepends=True), original.splitlines(keepends=True)
+                self.assertEqual(len(current_lines), len(original_lines))
+                authorized = {i for op in row['replacements']
+                              for i in range(op['line'] - 1, op['line'] - 1 + len(op['to'].splitlines()))}
+                for i, (before, after) in enumerate(zip(original_lines, current_lines)):
+                    if i not in authorized:
+                        self.assertEqual(before, after, (row['to'], i + 1))
+        result = checks.validate(self.root)
+        self.assertEqual(result['status'], 'PASS', result['errors'])
+        self.assertEqual(result['comment_only_derivatives'], 4)
+
+    def test_registered_source_corruption_after_inventory_rehash(self):
+        for row in self.comment_records():
+            with self.subTest(path=row['to']):
+                p = self.root / row['to']
+                original = p.read_bytes()
+                try:
+                    p.write_bytes(original + b'// Unregistered comment.\n')
+                    self.rehash(row['to'])
+                    self.rejected('comment_derivative_contract')
+                finally:
+                    p.write_bytes(original)
+                    self.rehash(row['to'])
+
+    def test_comment_contract_cannot_expand_through_inventory_rehash(self):
+        p = self.root / 'release/layout-v2.json'
+        original = p.read_bytes()
+        for mutation in ('extra_file', 'extra_span', 'code', 'directive', 'assertion',
+                         'forged_current_hash', 'forged_original_hash', 'wrong_base', 'duplicate_file'):
+            with self.subTest(mutation=mutation):
+                value = json.loads(original)
+                records = value['comment_only_derivatives']
+                if mutation == 'extra_file':
+                    forged = dict(records[0]); forged['to'] = 'rtl/v2/soc/flash_attn_soc.sv'; records.append(forged)
+                elif mutation == 'extra_span':
+                    records[0]['replacements'].append(dict(line=2, count=1, **{'from':'// old\n', 'to':'// new\n'}))
+                elif mutation in ('code', 'directive', 'assertion'):
+                    records[0]['replacements'][0]['to'] = {
+                        'code':'assign ready = 1;\n',
+                        'directive':'// verilator lint_off WIDTH\n',
+                        'assertion':'assert (ready);\n'}[mutation]
+                elif mutation == 'forged_current_hash': records[0]['current_sha256'] = '0' * 64
+                elif mutation == 'forged_original_hash': records[0]['original_sha256'] = '0' * 64
+                elif mutation == 'wrong_base': records[0]['base_commit'] = '0' * 40
+                else: records.append(dict(records[0]))
+                p.write_text(json.dumps(value))
+                self.rehash('release/layout-v2.json')
+                self.rejected('comment_derivative_contract')
+        p.write_bytes(original)
+
+    def test_missing_comment_contract_cannot_bypass_historical_hashes(self):
+        p = self.root / 'release/layout-v2.json'
+        value = json.loads(p.read_text())
+        del value['comment_only_derivatives']
+        p.write_text(json.dumps(value))
+        self.rehash('release/layout-v2.json')
+        self.rejected('protected_source_or_evidence_hash')
+
+    def test_executable_and_directive_corruption_in_registered_source(self):
+        relative = 'rtl/v2/compute/tile_controller_decode.sv'
+        p = self.root / relative; original = p.read_bytes()
+        variants = [original.replace(b'parameter int TILE_SIZE = 16', b'parameter int TILE_SIZE = 8', 1),
+                    original.replace(b'input  logic clk,', b'input  logic clk_changed,', 1),
+                    original.replace(b'if (1\'b0 && next_tile_valid', b'if (1\'b1 && next_tile_valid', 1),
+                    original.replace(b'`timescale 1ns/1ps', b'`timescale 10ns/1ps', 1),
+                    original.replace(b'/* verilator lint_off UNUSEDPARAM */', b'/* verilator lint_off WIDTH */', 1),
+                    original + b'// synthesis translate_off\n',
+                    original + b'assert (1);\n']
+        for index, data in enumerate(variants):
+            with self.subTest(mutation=index):
+                self.assertNotEqual(data, original)
+                p.write_bytes(data); self.rehash(relative)
+                self.rejected('comment_derivative_contract')
+
+    def test_comment_span_ambiguity_and_wrong_position(self):
+        row = self.comment_records()[0]
+        data = (self.root / row['to']).read_bytes()
+        with self.assertRaisesRegex(ValueError, 'ambiguity'):
+            checks.reverse_comment_spans(data + row['replacements'][0]['to'].encode(), row)
+        forged = json.loads(json.dumps(row)); forged['replacements'][0]['line'] += 1
+        with self.assertRaisesRegex(ValueError, 'position'):
+            checks.reverse_comment_spans(data, forged)
+
+    def test_span_cannot_contain_code_or_tool_directives(self):
+        for text in ('assign ready = 1;\n', '// synthesis translate_off\n',
+                     '// verilator lint_off WIDTH\n', '// synopsys full_case\n',
+                     '// pragma coverage off\n', 'assert (ready);\n', '`define FLAG 1\n'):
+            with self.subTest(span=text):
+                row = dict(to='test.sv', replacements=[dict(line=1, count=1, **{'from':'// old\n', 'to':text})])
+                with self.assertRaisesRegex(ValueError, 'ordinary comment'):
+                    checks.reverse_comment_spans(text.encode(), row)
+
+    def test_comment_span_geometry_and_overlap(self):
+        for changes in ({'line':0}, {'count':2}, {'from':'// old\n// extra\n'},
+                        {'to':'// new'}, {'to':'// new\r\n'}):
+            with self.subTest(changes=changes):
+                op = dict(line=1, count=1, **{'from':'// old\n', 'to':'// new\n'}); op.update(changes)
+                with self.assertRaises(ValueError):
+                    checks.reverse_comment_spans(op['to'].encode(), dict(to='test.sv', replacements=[op]))
+        op = dict(line=1, count=1, **{'from':'// old\n', 'to':'// new\n'})
+        with self.assertRaisesRegex(ValueError, 'geometry'):
+            checks.reverse_comment_spans(b'// new\n', dict(to='test.sv', replacements=[op, op]))
+
+    def test_git_free_export_cli_passes(self):
+        self.assertFalse((self.root / '.git').exists())
+        with tempfile.TemporaryDirectory(prefix='v2-export-report-') as out:
+            output = pathlib.Path(out) / 'result.json'
+            result = subprocess.run([sys.executable, '-B', str(self.root / 'tools/v2/validate_release.py'),
+                                     '--output', str(output)], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(json.loads(output.read_text())['comment_only_derivatives'], 4)
+
     def test_cli_exits_nonzero_on_failure(self):
         (self.root / 'rtl/v2/soc/soc.f').unlink()
         # Put the report outside the checked snapshot, avoiding an undeclared-file side effect.

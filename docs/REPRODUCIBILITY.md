@@ -60,7 +60,7 @@ python3 -B sim/verilator/run_dequant_sweep.py --dim 16 --lanes 256 --smoke --job
 V1 CI history certifies its recorded source/scope, not new V2 execution.
 Historical [curated-source quick-start receipts](v2/evidence/results/quickstart_results.json) and
 [bounded SoC qualification campaign](v2/evidence/verification/verification.json) retain their original sources,
-counts and tool identities. The original curation regressions are separately recorded in
+counts and tool identities. The original public-package regressions are separately recorded in
 [verification-v1](../release/verification-v1.json); current layout checks are summarized
 in [release scope](RELEASE.md#current-functional-layout-checks).
 [Source-to-public ledger](v2/evidence/results/source-map.json) keeps original and public
@@ -68,10 +68,25 @@ SHA256s; the [original path mapping](../release/path-map-v1.json) plus
 [layout-v2](../release/layout-v2.json) identify current locations. The default release
 validator checks [manifest-v2](../release/manifest-v2.json) and the immutable v1 evidence lock.
 
+## Comment-only source identities
+
+The four V2 files registered in `comment_only_derivatives` in
+[layout-v2](../release/layout-v2.json) contain nine ordinary comment updates.
+Each record pins the current raw SHA256, original SHA256 and exact line-preserving
+comment spans. The [release validator](../tools/v2/validate_release.py) separately
+pins the complete contract; refreshing the publication manifest cannot expand it.
+
+Validation reverses those spans in memory before checking the unchanged historical
+source and evidence locks. Every other source byte, including tool directives and
+assertions, is preserved. This reconstruction works in a Git-free export without
+duplicate historical source files. Fresh RTL runs hash and qualify the current raw
+sources. Historical simulation, formal, coverage, synthesis and power receipts
+retain their original source identities; they do not qualify the new raw hashes.
+
 ## Figure reproduction
 
-The approved current `soc_architecture.svg`, `memory_banking.svg` and
-`shared_compute_timeline.svg` under `docs/v2/figures/` are canonical reviewed SVG
+The current `soc_architecture.svg`, `memory_banking.svg` and
+`shared_compute_timeline.svg` under `docs/v2/figures/` are canonical SVG
 assets maintained directly. The historical generator does not reproduce these
 three assets; do not replace them with generated historical artwork.
 
@@ -98,7 +113,7 @@ All eight historical plots/diagrams use bundled accepted data. The original SoC
 output is now named `historical_soc_architecture.svg` and corresponds to the
 [preserved historical artifact](v2/figures/historical_soc_architecture.svg), not the
 current SoC drawing. Other matplotlib versions may render different bytes.
-Outputs and the generated figure manifest go only to the new directory; approved
+Outputs and the generated figure manifest go only to the new directory; current
 SVGs and frozen historical figure records are never overwritten.
 The complete-archive evidence collector is locally archived, not a public quick start.
 
