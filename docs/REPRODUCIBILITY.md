@@ -70,6 +70,11 @@ validator checks [manifest-v2](../release/manifest-v2.json) and the immutable v1
 
 ## Figure reproduction
 
+The approved current `soc_architecture.svg`, `memory_banking.svg` and
+`shared_compute_timeline.svg` under `docs/v2/figures/` are canonical reviewed SVG
+assets maintained directly. The historical generator does not reproduce these
+three assets; do not replace them with generated historical artwork.
+
 The current README online-softmax and stateful-flow figures use Python's standard
 library. Render copies outside the source tree:
 
@@ -83,15 +88,18 @@ The online-softmax diagram distinguishes ideal recurrences from fixed-point RTL,
 including masked tails and the raw-denominator/capped-PV-weight distinction.
 Its generator checks source reference anchors; it does not prove RTL correctness.
 
-With matplotlib 3.7.1 for accepted byte reproduction:
+With matplotlib 3.7.1 for historical byte reproduction:
 
 ```sh
 python3 -B tools/v2/generate_figures.py --output-dir /tmp/v2-figures-new
 ```
 
-All eight plots/diagrams use bundled accepted data. Other matplotlib versions may
-render different bytes. Outputs and the generated figure manifest go only to the
-new directory; accepted SVGs and historical figure manifests are never overwritten.
+All eight historical plots/diagrams use bundled accepted data. The original SoC
+output is now named `historical_soc_architecture.svg` and corresponds to the
+[preserved historical artifact](v2/figures/historical_soc_architecture.svg), not the
+current SoC drawing. Other matplotlib versions may render different bytes.
+Outputs and the generated figure manifest go only to the new directory; approved
+SVGs and frozen historical figure records are never overwritten.
 The complete-archive evidence collector is locally archived, not a public quick start.
 
 ## Licensed and formal rerun boundaries

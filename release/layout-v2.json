@@ -803,6 +803,11 @@
       "from": "tools/v2/m6c/normalize_activity.py",
       "to": "tools/v2/power/normalize_activity.py",
       "sha256": "d04595236ca2640325b6a15421a064652968bf57b0fd5be9b9d6b3adbe260573"
+    },
+    {
+      "from": "docs/v2/figures/soc_architecture.svg",
+      "to": "docs/v2/figures/historical_soc_architecture.svg",
+      "sha256": "16f4a15a7955fa7754a903846868fc1030dfbced7be1c61b8090ae346fe6aed4"
     }
   ],
   "path_only_derivatives": [

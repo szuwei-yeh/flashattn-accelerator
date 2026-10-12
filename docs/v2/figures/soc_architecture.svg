@@ -1,291 +1,189 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="720pt" height="324pt" viewBox="0 0 720 324" xmlns="http://www.w3.org/2000/svg" version="1.1">
- <metadata>
-  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-   <cc:Work>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:format>image/svg+xml</dc:format>
-    <dc:creator>
-     <cc:Agent>
-      <dc:title>Matplotlib v3.7.1, https://matplotlib.org/</dc:title>
-     </cc:Agent>
-    </dc:creator>
-   </cc:Work>
-  </rdf:RDF>
- </metadata>
- <defs>
-  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
- </defs>
- <g id="figure_1">
-  <g id="patch_1">
-   <path d="M 0 324 
-L 720 324 
-L 720 0 
-L 0 0 
-z
-" style="fill: #ffffff"/>
-  </g>
-  <g id="axes_1">
-   <g id="patch_2">
-    <path d="M 27.36 54 
-L 152.64 54 
-Q 158.4 54 158.4 59.76 
-L 158.4 102.24 
-Q 158.4 108 152.64 108 
-L 27.36 108 
-Q 21.6 108 21.6 102.24 
-L 21.6 59.76 
-Q 21.6 54 27.36 54 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #eff2f4; stroke: #748b99; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_3">
-    <path d="M 207.36 54 
-L 347.04 54 
-Q 352.8 54 352.8 59.76 
-L 352.8 102.24 
-Q 352.8 108 347.04 108 
-L 207.36 108 
-Q 201.6 108 201.6 102.24 
-L 201.6 59.76 
-Q 201.6 54 207.36 54 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #e4f2f8; stroke: #748b99; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_4">
-    <path d="M 401.76 54 
-L 519.84 54 
-Q 525.6 54 525.6 59.76 
-L 525.6 102.24 
-Q 525.6 108 519.84 108 
-L 401.76 108 
-Q 396 108 396 102.24 
-L 396 59.76 
-Q 396 54 401.76 54 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #e4f2f8; stroke: #748b99; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_5">
-    <path d="M 574.56 54 
-L 692.64 54 
-Q 698.4 54 698.4 59.76 
-L 698.4 102.24 
-Q 698.4 108 692.64 108 
-L 574.56 108 
-Q 568.8 108 568.8 102.24 
-L 568.8 59.76 
-Q 568.8 54 574.56 54 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #e4f2f8; stroke: #748b99; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_6">
-    <path d="M 574.56 158.4 
-L 692.64 158.4 
-Q 698.4 158.4 698.4 164.16 
-L 698.4 224.64 
-Q 698.4 230.4 692.64 230.4 
-L 574.56 230.4 
-Q 568.8 230.4 568.8 224.64 
-L 568.8 164.16 
-Q 568.8 158.4 574.56 158.4 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #fff1db; stroke: #748b99; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_7">
-    <path d="M 387.36 158.4 
-L 519.84 158.4 
-Q 525.6 158.4 525.6 164.16 
-L 525.6 224.64 
-Q 525.6 230.4 519.84 230.4 
-L 387.36 230.4 
-Q 381.6 230.4 381.6 224.64 
-L 381.6 164.16 
-Q 381.6 158.4 387.36 158.4 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #e4f2f8; stroke: #748b99; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_8">
-    <path d="M 207.36 158.4 
-L 332.64 158.4 
-Q 338.4 158.4 338.4 164.16 
-L 338.4 224.64 
-Q 338.4 230.4 332.64 230.4 
-L 207.36 230.4 
-Q 201.6 230.4 201.6 224.64 
-L 201.6 164.16 
-Q 201.6 158.4 207.36 158.4 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #e4f2f8; stroke: #748b99; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_9">
-    <path d="M 27.36 158.4 
-L 152.64 158.4 
-Q 158.4 158.4 158.4 164.16 
-L 158.4 224.64 
-Q 158.4 230.4 152.64 230.4 
-L 27.36 230.4 
-Q 21.6 230.4 21.6 224.64 
-L 21.6 164.16 
-Q 21.6 158.4 27.36 158.4 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #e4f2f8; stroke: #748b99; stroke-linejoin: miter"/>
-   </g>
-   <g id="patch_10">
-    <path d="M 160.40127 80.64 
-Q 180.001093 80.64 198.035669 80.64 
-" clip-path="url(#pca81cf9f00)" style="fill: none; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-    <path d="M 192.435669 77.84 
-L 198.035669 80.64 
-L 192.435669 83.44 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #526573; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-   </g>
-   <g id="patch_11">
-    <path d="M 354.80127 80.64 
-Q 374.401093 80.64 392.435669 80.64 
-" clip-path="url(#pca81cf9f00)" style="fill: none; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-    <path d="M 386.835669 77.84 
-L 392.435669 80.64 
-L 386.835669 83.44 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #526573; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-   </g>
-   <g id="patch_12">
-    <path d="M 527.60127 80.64 
-Q 547.201093 80.64 565.235669 80.64 
-" clip-path="url(#pca81cf9f00)" style="fill: none; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-    <path d="M 559.635669 77.84 
-L 565.235669 80.64 
-L 559.635669 83.44 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #526573; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-   </g>
-   <g id="patch_13">
-    <path d="M 633.6 110.002588 
-Q 633.6 133.201384 633.6 154.834933 
-" clip-path="url(#pca81cf9f00)" style="fill: none; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-    <path d="M 636.4 149.234933 
-L 633.6 154.834933 
-L 630.8 149.234933 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #526573; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-   </g>
-   <g id="patch_14">
-    <path d="M 566.79873 194.4 
-Q 547.198907 194.4 529.164331 194.4 
-" clip-path="url(#pca81cf9f00)" style="fill: none; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-    <path d="M 534.764331 197.2 
-L 529.164331 194.4 
-L 534.764331 191.6 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #526573; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-   </g>
-   <g id="patch_15">
-    <path d="M 379.59873 194.4 
-Q 359.998907 194.4 341.964331 194.4 
-" clip-path="url(#pca81cf9f00)" style="fill: none; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-    <path d="M 347.564331 197.2 
-L 341.964331 194.4 
-L 347.564331 191.6 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #526573; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-   </g>
-   <g id="patch_16">
-    <path d="M 199.59873 194.4 
-Q 179.998907 194.4 161.964331 194.4 
-" clip-path="url(#pca81cf9f00)" style="fill: none; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-    <path d="M 167.564331 197.2 
-L 161.964331 194.4 
-L 167.564331 191.6 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #526573; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-   </g>
-   <g id="patch_17">
-    <path d="M 86.4 156.397412 
-Q 86.4 133.198616 86.4 111.565067 
-" clip-path="url(#pca81cf9f00)" style="fill: none; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-    <path d="M 83.6 117.165067 
-L 86.4 111.565067 
-L 89.2 117.165067 
-z
-" clip-path="url(#pca81cf9f00)" style="fill: #526573; stroke: #526573; stroke-width: 1.4; stroke-linecap: round"/>
-   </g>
-   <g id="text_1">
-    <text style="fill: #163248; font: 700 15px 'DejaVu Sans'; text-anchor: start" x="21.6" y="24.48" transform="rotate(-0 21.6 24.48)">Host-controlled 4Q:2KV attention SoC</text>
-   </g>
-   <g id="text_2">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="90" y="72" transform="rotate(-0 90 72)">Host + memory model</text>
-   </g>
-   <g id="text_3">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="90" y="87.12" transform="rotate(-0 90 87.12)">Simulation only</text>
-   </g>
-   <g id="text_4">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="277.2" y="72" transform="rotate(-0 277.2 72)">AXI4-Lite CSR</text>
-   </g>
-   <g id="text_5">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="277.2" y="87.12" transform="rotate(-0 277.2 87.12)">Captured jobs / IRQ</text>
-   </g>
-   <g id="text_6">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="460.8" y="72" transform="rotate(-0 460.8 72)">Read DMA</text>
-   </g>
-   <g id="text_7">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="460.8" y="87.12" transform="rotate(-0 460.8 87.12)">AXI payload</text>
-   </g>
-   <g id="text_8">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="633.6" y="72" transform="rotate(-0 633.6 72)">Banked Q / K / V</text>
-   </g>
-   <g id="text_9">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="633.6" y="87.12" transform="rotate(-0 633.6 87.12)">Persistent cache</text>
-   </g>
-   <g id="text_10">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="633.6" y="176.4" transform="rotate(-0 633.6 176.4)">2 physical KV groups</text>
-   </g>
-   <g id="text_11">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="633.6" y="191.52" transform="rotate(-0 633.6 191.52)">Q0,Q1 → KV0</text>
-   </g>
-   <g id="text_12">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="633.6" y="206.64" transform="rotate(-0 633.6 206.64)">Q2,Q3 → KV1</text>
-   </g>
-   <g id="text_13">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="453.6" y="176.4" transform="rotate(-0 453.6 176.4)">Shared 16×16 array</text>
-   </g>
-   <g id="text_14">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="453.6" y="191.52" transform="rotate(-0 453.6 191.52)">QK and PV reuse</text>
-   </g>
-   <g id="text_15">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="453.6" y="206.64" transform="rotate(-0 453.6 206.64)">256 or16 DQ lanes</text>
-   </g>
-   <g id="text_16">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="270" y="176.4" transform="rotate(-0 270 176.4)">Online softmax</text>
-   </g>
-   <g id="text_17">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="270" y="191.52" transform="rotate(-0 270 191.52)">Output update</text>
-   </g>
-   <g id="text_18">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="270" y="206.64" transform="rotate(-0 270 206.64)">Normalize / pack</text>
-   </g>
-   <g id="text_19">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="90" y="176.4" transform="rotate(-0 90 176.4)">AXI writeback</text>
-   </g>
-   <g id="text_20">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="90" y="191.52" transform="rotate(-0 90 191.52)">Final OKAY B</text>
-   </g>
-   <g id="text_21">
-    <text style="fill: #163248; font: 10px 'DejaVu Sans'; text-anchor: middle" x="90" y="206.64" transform="rotate(-0 90 206.64)">then DONE / IRQ</text>
-   </g>
-   <g id="text_22">
-    <text style="fill: #526573; font: 9px 'DejaVu Sans'; text-anchor: start" x="21.6" y="291.6" transform="rotate(-0 21.6 291.6)">One serial compute engine for 4 query heads; cache capacity64; d16/d64; host decodeL16/17/18.</text>
-   </g>
-   <g id="text_23">
-    <text style="fill: #526573; font: 9px 'DejaVu Sans'; text-anchor: start" x="21.6" y="305.28" transform="rotate(-0 21.6 305.28)">RTL filelist selects the DUT; C++ AXI/host responder is outside all PPA boundaries.</text>
-   </g>
-  </g>
- </g>
- <defs>
-  <clipPath id="pca81cf9f00">
-   <rect x="0" y="0" width="720" height="324"/>
-  </clipPath>
- </defs>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1115" viewBox="0 0 1600 1115" role="img" aria-labelledby="title description">
+<title id="title">V2 FlashAttention SoC architecture</title>
+<desc id="description">Synthesizable production RTL: AXI4-Lite CSR, captured-descriptor job adapter, and serial Q0 to Q3 scheduler. One reusable 16-bank Q scratchpad is separate from two persistent KV groups; Q0/Q1 share KV0 and Q2/Q3 share KV1, each with separate 16-bank K and V stores. Selected-group paired reads and foreground tile loading supply one shared 16 by 16 systolic array, 256 PEs. QK scores pass through elaboration-selected 256 or 16 dequantization lanes and sixteen masked online-softmax instances. Unnormalized softmax weights feed back to the same array for PV. PV contributions with scale_v and softmax rescale/running-sum factors feed the output buffer for fused update and final normalization. Results are copied into per-head registers, packed from 32 to 64 bits, and written through AXI write DMA. B responses return from external memory to write DMA. Matching WB tags connect job-adapter pack-start and write-descriptor control; matching RET tags connect packer source retirement and write-DMA final-OKAY/outstanding/error status to the job adapter. Host DONE requires source retirement, final accepted OKAY B, no outstanding writes and successful validation. ACK releases result ownership, separately from IRQ clear. Host, external-memory responder and verification monitors are simulation-only and outside the DUT. Cache persists across healthy jobs and ACK; softmax/output state is initialized for each query pass. Fixed 4Q:2KV, d16/d64, N16 prefill, latest-position decode L16/17/18, capacity 64 tokens. APPEND updates KV without compute/writeback; prefetch is disabled. Logical memory stores are shown, not physical ASIC macros; published PPA uses a separate frozen d16 baseline.</desc>
+<!-- Production sources: rtl/v2/soc/soc.f; flash_attn_soc.sv:79-135;
+     flash_attn_serial.sv:74-83,121-189; kv_cache_banked_decode.sv:47-113;
+     flash_attn_core_decode.sv:274-300,378-441,475-529; tile_controller_decode.sv:278;
+     soc_job_adapter.sv:57-117; gqa_output_packer.sv:34-44; dma_write_engine.sv:89-99.
+     Functional groups are shown. Only the outer DUT marks the RTL boundary; inner outlines are functional groupings, not an exhaustive module hierarchy.
+     Named nets WB and RET avoid long perimeter wires; all matching tags denote the same logical signal group.
+     WB = pack_start plus write descriptor. RET = source-retired plus write-DMA completion/outstanding/fault status.
+     Detailed operation and PPA notes belong in the accompanying README caption. -->
+<defs>
+<marker id="data-tip" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L9 4.5 L0 9 Z" fill="#334155" /></marker>
+<marker id="control-tip" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L9 4.5 L0 9 Z" fill="#2563EB" /></marker>
+<marker id="status-tip" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L9 4.5 L0 9 Z" fill="#B45309" /></marker>
+</defs>
+<style>
+text{font-family:Arial,Helvetica,sans-serif;fill:#0F172A}
+.secondary{fill:#475569}.memory{fill:#0F766E}.control{fill:#2563EB}.status{fill:#B45309}
+.edge-label{paint-order:stroke;stroke:#F8FAFC;stroke-width:5px;stroke-linejoin:round}
+</style>
+<rect width="1600" height="1115" fill="#F8FAFC" />
+
+<text x="30" y="44" font-size="34" font-weight="700" text-anchor="start" class="">V2 FlashAttention SoC</text>
+<text x="30" y="75" font-size="21" font-weight="400" text-anchor="start" class="secondary">4Q:2KV · serial heads · persistent KV state · shared QKᵀ / PV compute</text>
+<g id="legend-data"><path d="M1000 39 H1038" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1000 39 H1038" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="1049" y="45" font-size="18" font-weight="400" text-anchor="start" class="secondary">Data</text>
+<g id="legend-control"><path d="M1145 39 H1183" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1145 39 H1183" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<text x="1194" y="45" font-size="18" font-weight="400" text-anchor="start" class="secondary">Control</text>
+<g id="legend-status"><path d="M1325 39 H1363" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1325 39 H1363" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 6" marker-end="url(#status-tip)" /></g>
+<text x="1374" y="45" font-size="18" font-weight="400" text-anchor="start" class="secondary">Status / completion</text>
+<rect id="synthesizable-dut" x="265" y="95" width="1300" height="1000" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.8" rx="7" />
+<text x="290" y="119" font-size="17" font-weight="600" text-anchor="start" class="secondary">SYNTHESIZABLE RTL DUT</text>
+<rect id="host" x="30" y="145" width="200" height="100" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="5" stroke-dasharray="5 4" />
+<text x="130.0" y="177" font-size="28" font-weight="600" text-anchor="middle" class="">Host</text>
+<text x="130.0" y="206" font-size="18" font-weight="400" text-anchor="middle" class="secondary">32-bit AXI4-Lite</text>
+<text x="130.0" y="231" font-size="17" font-weight="400" text-anchor="middle" class="secondary">Simulation only</text>
+<rect id="csr" x="310" y="145" width="270" height="100" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="445.0" y="177" font-size="25" font-weight="600" text-anchor="middle" class="">AXI4-Lite CSR</text>
+<text x="445.0" y="206" font-size="19" font-weight="400" text-anchor="middle" class="secondary">Configuration / status</text>
+<text x="445.0" y="231" font-size="18" font-weight="400" text-anchor="middle" class="secondary">IRQ / IRQ clear</text>
+<rect id="adapter" x="660" y="145" width="350" height="100" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="835.0" y="177" font-size="26" font-weight="600" text-anchor="middle" class="">Job adapter</text>
+<text x="835.0" y="206" font-size="19" font-weight="400" text-anchor="middle" class="secondary">Captured descriptor / ownership</text>
+<text x="835.0" y="231" font-size="18" font-weight="400" text-anchor="middle" class="secondary">DONE: retired + OKAY B + drained</text>
+<rect id="scheduler" x="1090" y="145" width="420" height="100" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="1300.0" y="177" font-size="26" font-weight="600" text-anchor="middle" class="">Serial head scheduler</text>
+<text x="1300.0" y="206" font-size="24" font-weight="400" text-anchor="middle" class="secondary">Q0 → Q1 → Q2 → Q3</text>
+<text x="1300.0" y="231" font-size="19" font-weight="400" text-anchor="middle" class="secondary">Load · select KV · run · copy</text>
+<g id="host-to-csr"><path d="M230 173 H310" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M230 173 H310" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<g id="csr-to-host-status-irq"><path d="M310 222 H230" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M310 222 H230" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 6" marker-end="url(#status-tip)" /></g>
+<g id="csr-candidate-to-adapter"><path d="M580 173 H660" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M580 173 H660" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<g id="adapter-status-to-csr"><path d="M660 222 H580" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M660 222 H580" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 6" marker-end="url(#status-tip)" /></g>
+<g id="adapter-to-scheduler"><path d="M1010 173 H1090" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1010 173 H1090" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<g id="scheduler-child-status"><path d="M1090 222 H1010" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1090 222 H1010" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 6" marker-end="url(#status-tip)" /></g>
+<g id="adapter-wb-control" data-net="WB"><path d="M691 258 H809 L817 272 L809 286 H691 Z" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.4" />
+<text x="750.0" y="279" font-size="19" font-weight="600" text-anchor="middle" class="control">WB control</text>
+</g>
+<g id="adapter-to-wb"><path d="M750 245 V258" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M750 245 V258" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<g id="adapter-ret-status" data-net="RET"><path d="M876 258 H994 L1002 272 L994 286 H876 Z" fill="#FFFFFF" stroke="#B45309" stroke-width="1.4" />
+<text x="935.0" y="279" font-size="19" font-weight="600" text-anchor="middle" class="status">RET status</text>
+</g>
+<g id="ret-to-adapter"><path d="M935 258 V245" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M935 258 V245" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 6" marker-end="url(#status-tip)" /></g>
+<text x="1000" y="75" font-size="18" font-weight="400" text-anchor="start" class="secondary">Matching WB / RET tags connect grouped signals.</text>
+<rect id="external-memory" x="30" y="530" width="200" height="160" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="5" stroke-dasharray="5 4" />
+<text x="130.0" y="562" font-size="21" font-weight="600" text-anchor="middle" class="">External memory</text>
+<text x="130.0" y="595" font-size="20" font-weight="400" text-anchor="middle" class="secondary">AXI responder</text>
+<text x="130.0" y="624" font-size="17" font-weight="400" text-anchor="middle" class="secondary">Simulation only</text>
+<text x="130.0" y="660" font-size="20" font-weight="400" text-anchor="middle" class="secondary">64-bit AXI</text>
+<rect id="read-dma" x="310" y="380" width="220" height="95" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="420.0" y="412" font-size="24" font-weight="600" text-anchor="middle" class="">AXI read DMA</text>
+<text x="420.0" y="441" font-size="18" font-weight="400" text-anchor="middle" class="secondary">64-bit R → 128-bit</text>
+<text x="420.0" y="464" font-size="17" font-weight="400" text-anchor="middle" class="secondary">128-bit Q / K / V writes</text>
+<rect id="q-scratchpad" x="590" y="360" width="260" height="80" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="720.0" y="392" font-size="25" font-weight="600" text-anchor="middle" class="">Q scratchpad</text>
+<text x="720.0" y="422" font-size="18" font-weight="400" text-anchor="middle" class="secondary">One reusable 16-bank store</text>
+<rect id="persistent-kv-cache" x="930" y="360" width="580" height="155" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="950" y="389" font-size="23" font-weight="600" text-anchor="start" class="memory">Persistent KV cache</text>
+<text x="1490" y="388" font-size="18" font-weight="400" text-anchor="end" class="secondary">64 tokens / group</text>
+<rect id="group-KV0" x="950" y="403" width="260" height="95" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="964" y="429" font-size="22" font-weight="600" text-anchor="start" class="memory">KV0</text>
+<text x="1194" y="429" font-size="19" font-weight="400" text-anchor="end" class="secondary">Q0 / Q1</text>
+<rect id="KV0-K" x="962" y="441" width="110" height="44" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3" />
+<text x="1017" y="469" font-size="17" font-weight="500" text-anchor="middle" class="">K · 16 banks</text>
+<rect id="KV0-V" x="1088" y="441" width="110" height="44" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3" />
+<text x="1143" y="469" font-size="17" font-weight="500" text-anchor="middle" class="">V · 16 banks</text>
+<rect id="group-KV1" x="1230" y="403" width="260" height="95" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="1244" y="429" font-size="22" font-weight="600" text-anchor="start" class="memory">KV1</text>
+<text x="1474" y="429" font-size="19" font-weight="400" text-anchor="end" class="secondary">Q2 / Q3</text>
+<rect id="KV1-K" x="1242" y="441" width="110" height="44" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3" />
+<text x="1297" y="469" font-size="17" font-weight="500" text-anchor="middle" class="">K · 16 banks</text>
+<rect id="KV1-V" x="1368" y="441" width="110" height="44" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3" />
+<text x="1423" y="469" font-size="17" font-weight="500" text-anchor="middle" class="">V · 16 banks</text>
+<rect id="selected-group-read" x="1030" y="535" width="400" height="35" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="4" />
+<text x="1230" y="559" font-size="20" font-weight="500" text-anchor="middle" class="memory">Selected group · paired K / V reads</text>
+<rect id="shared-compute-datapath" x="570" y="595" width="970" height="335" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="6" />
+<text x="950" y="621" font-size="18" font-weight="600" text-anchor="start" class="memory">SHARED COMPUTE DATAPATH</text>
+<text x="1515" y="621" font-size="17" font-weight="400" text-anchor="end" class="secondary">Tile / phase FSM</text>
+<rect id="tile-loader-registers" x="590" y="645" width="260" height="135" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="720.0" y="677" font-size="23" font-weight="600" text-anchor="middle" class="">Foreground tile loader</text>
+<text x="720.0" y="711" font-size="21" font-weight="400" text-anchor="middle" class="secondary">Q / K / V tile registers</text>
+<text x="720.0" y="741" font-size="19" font-weight="400" text-anchor="middle" class="secondary">16-byte stripes</text>
+<text x="720.0" y="767" font-size="18" font-weight="400" text-anchor="middle" class="secondary">Prefetch disabled</text>
+<rect id="shared-array" x="950" y="645" width="300" height="140" fill="#F0FDFA" stroke="#0F766E" stroke-width="2.5" rx="5" />
+<text x="1100.0" y="677" font-size="26" font-weight="600" text-anchor="middle" class="memory">16 × 16 systolic array</text>
+<text x="1100.0" y="714" font-size="20" font-weight="400" text-anchor="middle" class="secondary">256 PEs · one physical array</text>
+<text x="1100.0" y="754" font-size="30" font-weight="400" text-anchor="middle" class="secondary">QKᵀ ↔ PV</text>
+<text x="1100.0" y="777" font-size="18" font-weight="400" text-anchor="middle" class="secondary">Scheduled phases</text>
+<rect id="score-dequantization" x="1290" y="645" width="220" height="70" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="1400.0" y="677" font-size="19" font-weight="600" text-anchor="middle" class="">Score dequantization</text>
+<text x="1400.0" y="704" font-size="18" font-weight="400" text-anchor="middle" class="secondary">256 / 16 lanes (elab.)</text>
+<rect id="online-softmax" x="1290" y="775" width="220" height="70" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="1400.0" y="807" font-size="25" font-weight="600" text-anchor="middle" class="">Online softmax</text>
+<text x="1400.0" y="834" font-size="19" font-weight="400" text-anchor="middle" class="secondary">16 masked instances</text>
+<rect id="output-buffer" x="950" y="865" width="300" height="60" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="1100.0" y="892" font-size="23" font-weight="600" text-anchor="middle" class="">Output buffer</text>
+<text x="1100.0" y="917" font-size="18" font-weight="400" text-anchor="middle" class="secondary">Fused update + normalization</text>
+<rect id="result-registers" x="1160" y="1015" width="350" height="65" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="1335.0" y="1047" font-size="24" font-weight="600" text-anchor="middle" class="">Per-head result registers</text>
+<text x="1335.0" y="1070" font-size="18" font-weight="400" text-anchor="middle" class="secondary">Copied normalized INT32 words</text>
+<rect id="output-packer" x="790" y="1015" width="300" height="65" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="940.0" y="1047" font-size="25" font-weight="600" text-anchor="middle" class="">32 → 64-bit packer</text>
+<text x="940.0" y="1070" font-size="18" font-weight="400" text-anchor="middle" class="secondary">Head order 0 → 3</text>
+<rect id="write-dma" x="310" y="1015" width="220" height="65" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5" />
+<text x="420.0" y="1047" font-size="23" font-weight="600" text-anchor="middle" class="">AXI write DMA</text>
+<text x="420.0" y="1070" font-size="18" font-weight="400" text-anchor="middle" class="secondary">AW / W / B</text>
+<g id="write-wb" data-net="WB"><path d="M325 971 H379 L387 985 L379 999 H325 Z" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.4" />
+<text x="352.0" y="992" font-size="19" font-weight="600" text-anchor="middle" class="control">WB</text>
+</g>
+<g id="write-ret" data-net="RET"><path d="M460 971 H514 L522 985 L514 999 H460 Z" fill="#FFFFFF" stroke="#B45309" stroke-width="1.4" />
+<text x="487.0" y="992" font-size="19" font-weight="600" text-anchor="middle" class="status">RET</text>
+</g>
+<g id="pack-wb" data-net="WB"><path d="M830 971 H884 L892 985 L884 999 H830 Z" fill="#FFFFFF" stroke="#2563EB" stroke-width="1.4" />
+<text x="857.0" y="992" font-size="19" font-weight="600" text-anchor="middle" class="control">WB</text>
+</g>
+<g id="pack-ret" data-net="RET"><path d="M1000 971 H1054 L1062 985 L1054 999 H1000 Z" fill="#FFFFFF" stroke="#B45309" stroke-width="1.4" />
+<text x="1027.0" y="992" font-size="19" font-weight="600" text-anchor="middle" class="status">RET</text>
+</g>
+<g id="wb-to-write-descriptor"><path d="M350 999 V1015" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M350 999 V1015" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<g id="wb-to-pack-start"><path d="M855 999 V1015" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M855 999 V1015" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<g id="write-status-to-ret"><path d="M485 1015 V999" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M485 1015 V999" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 6" marker-end="url(#status-tip)" /></g>
+<g id="source-retired-to-ret"><path d="M1025 1015 V999" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1025 1015 V999" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 6" marker-end="url(#status-tip)" /></g>
+<text x="350" y="961" font-size="18" font-weight="400" text-anchor="middle" class="secondary">Descriptor</text>
+<text x="485" y="961" font-size="18" font-weight="400" text-anchor="middle" class="secondary">B / drain / fault</text>
+<text x="855" y="961" font-size="18" font-weight="400" text-anchor="middle" class="secondary">Pack start</text>
+<text x="1025" y="961" font-size="19" font-weight="400" text-anchor="middle" class="secondary">Source retired</text>
+<g id="axi-read-ar"><path d="M310 400 H238 V545 H230" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M310 400 H238 V545 H230" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<g id="axi-read-r"><path d="M230 570 H254 V430 H310" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M230 570 H254 V430 H310" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="278" y="392" font-size="18" font-weight="400" text-anchor="middle" class="control">AR</text>
+<text x="278" y="419" font-size="18" font-weight="400" text-anchor="middle" class="secondary">R · 64b</text>
+<g id="axi-write-aw-w"><path d="M310 1035 H254 V645 H230" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M310 1035 H254 V645 H230" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<g id="axi-write-b"><path d="M230 670 H238 V1060 H310" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M230 670 H238 V1060 H310" fill="none" stroke="#B45309" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 6" marker-end="url(#status-tip)" /></g>
+<text x="276" y="1025" font-size="17" font-weight="400" text-anchor="middle" class="secondary">AW / W</text>
+<text x="279" y="1053" font-size="18" font-weight="400" text-anchor="middle" class="status">B</text>
+<g id="dma-q-writes"><path d="M530 428 H590" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M530 428 H590" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="575" y="453" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">Q</text>
+<g id="dma-kv-writes"><path d="M552 428 V349 H1220 V360" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M552 428 V349 H1220 V360" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="570" y="376" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">K / V</text>
+<circle cx="552" cy="428" r="3.5" fill="#334155" />
+<g id="q-to-loader"><path d="M720 440 V645" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M720 440 V645" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="720" y="520" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">Q · 128b</text>
+<g id="cache-to-group-selection"><path d="M1220 515 V535" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1220 515 V535" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<g id="selected-kv-to-loader"><path d="M1030 552 H840 V645" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1030 552 H840 V645" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="835" y="636" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">K / V · 128b each</text>
+<g id="scheduler-read-descriptors"><path d="M1140 245 V304 H420 V380" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1140 245 V304 H420 V380" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<text x="540" y="294" font-size="18" font-weight="400" text-anchor="middle" class="edge-label control">Read descriptors</text>
+<g id="scheduler-cache-control"><path d="M1435 245 V360" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1435 245 V360" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<text x="1428" y="280" font-size="17" font-weight="400" text-anchor="end" class="control">KV select / ownership</text>
+<g id="scheduler-core-control"><path d="M1510 245 H1527 V595 H1495" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1510 245 H1527 V595 H1495" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)" /></g>
+<g id="qk-operands"><path d="M850 687 H950" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M850 687 H950" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="900" y="672" font-size="20" font-weight="400" text-anchor="middle" class="edge-label secondary">Q / Kᵀ</text>
+<g id="v-operands"><path d="M850 735 H950" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M850 735 H950" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="900" y="722" font-size="20" font-weight="400" text-anchor="middle" class="edge-label secondary">V</text>
+<g id="qk-acc-to-dequant"><path d="M1250 682 H1290" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1250 682 H1290" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="1270" y="670" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">QK</text>
+<g id="dequant-to-softmax"><path d="M1400 715 V775" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1400 715 V775" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="1450" y="754" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">Scores</text>
+<g id="softmax-weights-to-shared-array"><path d="M1290 810 H1010 V785" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1290 810 H1010 V785" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="1130" y="841" font-size="20" font-weight="400" text-anchor="middle" class="edge-label secondary">PV weights · uint8</text>
+<g id="pv-contribution-to-output"><path d="M950 765 H880 V895 H950" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M950 765 H880 V895 H950" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="855" y="840" font-size="20" font-weight="400" text-anchor="end" class="secondary">PV × scale_v</text>
+<g id="softmax-factors-to-output"><path d="M1400 845 V857 H1470 V900 H1250" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1400 845 V857 H1470 V900 H1250" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="1360" y="885" font-size="19" font-weight="400" text-anchor="middle" class="edge-label secondary">Rescale / running sum</text>
+<g id="normalized-copy-to-head-results"><path d="M1100 925 V990 H1335 V1015" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1100 925 V990 H1335 V1015" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<g id="result-registers-to-packer"><path d="M1160 1048 H1090" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M1160 1048 H1090" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="1125" y="1038" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">32b</text>
+<g id="packed-stream-to-write-dma"><path d="M790 1048 H530" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round" /><path d="M790 1048 H530" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)" /></g>
+<text x="660" y="1037" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">64-bit result stream</text>
 </svg>

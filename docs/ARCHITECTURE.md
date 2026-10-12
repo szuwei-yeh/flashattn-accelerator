@@ -6,7 +6,7 @@
 
 ## Production boundary
 
-[`rtl/v2/soc/soc.f`](../rtl/v2/soc/soc.f) selects the synthesizable production top and 23 RTL files (top included). The AXI4-Lite CSR captures accepted descriptors; the job adapter owns compute/output/writeback lifetime. The serial engine schedules four Q heads over two physical K/V groups: Q0/Q1→KV0, Q2/Q3→KV1. There is one shared 16×16 array,256 PEs,81 logical SRAM instances and 16 exponential ROMs. The C++ host and coherent byte-addressed AXI responder are simulation-only.
+[`rtl/v2/soc/soc.f`](../rtl/v2/soc/soc.f) selects the synthesizable production top and 23 RTL files (top included). The AXI4-Lite CSR maintains configuration and exposes control/status and IRQ; the job adapter captures accepted active descriptors and owns compute/output/writeback lifetime. The serial engine schedules four Q heads over two physical K/V groups: Q0/Q1→KV0, Q2/Q3→KV1. There is one shared 16×16 array,256 PEs,81 logical SRAM instances and 16 exponential ROMs. The C++ host and coherent byte-addressed AXI responder are simulation-only.
 
 Banked scratchpads stage DMA data. The V2 controller uses foreground tile loads. Reused loader/core sources retain active/shadow registers and prefetch machinery, but this controller explicitly disables prefetch; no V2 overlap benefit is claimed. The read DMA writes accepted K/V stripes directly into the selected physical persistent cache during PREFILL/APPEND; Q is loaded into the shared compute scratchpad. Cache decode reads use the real banked loader path; no testbench substitutes cache contents. K then V DMA writes remain provisional until complete-pair commit publishes the new valid length. Physical SRAM data has no reset; validity/ownership gates exclude stale contents.
 

@@ -90,9 +90,33 @@ class ReleaseControls(unittest.TestCase):
         self.rejected('protected_source_or_evidence_hash')
 
     def test_accepted_figure_drift(self):
-        p = self.root / 'docs/v2/figures/soc_architecture.svg'
+        p = self.root / 'docs/v2/figures/historical_soc_architecture.svg'
         p.write_bytes(p.read_bytes() + b'\n<!-- Integrity negative control -->\n')
         self.rejected('figure_hash')
+
+    def test_rehashed_inventory_cannot_accept_historical_figure_drift(self):
+        p = self.root / 'docs/v2/figures/historical_soc_architecture.svg'
+        p.write_bytes(p.read_bytes() + b'\n<!-- Integrity negative control -->\n')
+        manifest = self.root / self.inventory
+        value = json.loads(manifest.read_text())
+        row = next(x for x in value['files'] if x['path'] == str(p.relative_to(self.root)))
+        row.update(sha256=hashlib.sha256(p.read_bytes()).hexdigest(), bytes=p.stat().st_size)
+        manifest.write_text(json.dumps(value))
+        self.rejected('protected_source_or_evidence_hash')
+
+    def test_current_architecture_figure_drift(self):
+        for name in ('soc_architecture', 'memory_banking', 'shared_compute_timeline'):
+            with self.subTest(figure=name):
+                relative = f'docs/v2/figures/{name}.svg'
+                p = self.root / relative
+                original = p.read_bytes()
+                try:
+                    p.write_bytes(original + b'\n<!-- Integrity negative control -->\n')
+                    result = self.rejected('payload_hash')
+                    self.assertTrue(any(x.get('payload_hash') == relative
+                                        for x in result['errors']), result['errors'])
+                finally:
+                    p.write_bytes(original)
 
     def test_undeclared_payload(self):
         (self.root / 'unreviewed-file.txt').write_text('Unreviewed addition\n')

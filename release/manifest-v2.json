@@ -27,8 +27,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "4c4a806ac6c0e80664c3e15515e4288326808a2cfd3a11fa63cdad1e03548549",
-      "bytes": 24241,
+      "sha256": "9644e2cb73b579628c061735af600f4bb1684f01f70d8ef41e0b74b3f53e0971",
+      "bytes": 32578,
       "mode": "100644"
     },
     {
@@ -597,8 +597,8 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "sha256": "8f5647304ae44d1e0abface9069d0c1e5525d17e92a6ddc291f0cd755a6db89c",
-      "bytes": 4858,
+      "sha256": "31064086c1ee222f0928ced5b48f02b2995ed9d01875dd973f311058ef77e4a3",
+      "bytes": 4928,
       "mode": "100644"
     },
     {
@@ -645,14 +645,14 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "48a4b4f89f1e05030460a2facbee1fdc2f7e84aaf97b2532e002d6f004804d2f",
-      "bytes": 7052,
+      "sha256": "c19608823d34243577347a924b243c3cc672d3186e9674a13424fa8606479ba9",
+      "bytes": 7832,
       "mode": "100644"
     },
     {
       "path": "docs/REPRODUCIBILITY.md",
-      "sha256": "aac9d910c58be4858c6eebf52a73709a4406d407d90be03efa69f8f367b8ca13",
-      "bytes": 6396,
+      "sha256": "b993016d8da40f59f43d48832536cba16c58e5259772aed763a32cd495584f59",
+      "bytes": 6914,
       "mode": "100644"
     },
     {
@@ -1670,6 +1670,18 @@
       "mode": "100644"
     },
     {
+      "path": "docs/v2/figures/historical_soc_architecture.svg",
+      "sha256": "16f4a15a7955fa7754a903846868fc1030dfbced7be1c61b8090ae346fe6aed4",
+      "bytes": 11223,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/figures/memory_banking.svg",
+      "sha256": "c778724d904790fa3432805f96dc2ababb42598f172e85e3de76ddb85f28f3e7",
+      "bytes": 50198,
+      "mode": "100644"
+    },
+    {
       "path": "docs/v2/figures/online_softmax.svg",
       "sha256": "a33b1ac5cef3d1a424cfe00b527524b0db7094b2589082265e1718dac9dc3959",
       "bytes": 19713,
@@ -1682,9 +1694,15 @@
       "mode": "100644"
     },
     {
+      "path": "docs/v2/figures/shared_compute_timeline.svg",
+      "sha256": "31ab39b353d1eec08491923405de49ec6421845f8e0f2877c8a884bee6265f95",
+      "bytes": 26217,
+      "mode": "100644"
+    },
+    {
       "path": "docs/v2/figures/soc_architecture.svg",
-      "sha256": "16f4a15a7955fa7754a903846868fc1030dfbced7be1c61b8090ae346fe6aed4",
-      "bytes": 11223,
+      "sha256": "b72fbe82e117cf1b5a7f0fd639741edd1a5548e357ef8cd043aaaacbd13768b2",
+      "bytes": 29689,
       "mode": "100644"
     },
     {
@@ -1875,8 +1893,8 @@
     },
     {
       "path": "release/layout-v2.json",
-      "sha256": "597427304f4072d77fa40f091e54cf1093947b003477b582a9733039e20f62d7",
-      "bytes": 51116,
+      "sha256": "b7be6122e4bd4eec6a123886b7cd5f23a5a0ccfc34205b42650e77b3cb369052",
+      "bytes": 51329,
       "mode": "100644"
     },
     {
@@ -2811,14 +2829,14 @@
     },
     {
       "path": "tools/v2/README.md",
-      "sha256": "89d6eb8722af8f723e911801cd070d2b65f5a40348a619989e561b64c6f25566",
-      "bytes": 2399,
+      "sha256": "b7f15b16501fe0e5bf9156c227e6007ab4776a881d9ca9f0adc42970524323a9",
+      "bytes": 2810,
       "mode": "100644"
     },
     {
       "path": "tools/v2/generate_figures.py",
-      "sha256": "05b974cfa4073a3f34609744af48e742405a41005a48141394f3ba48d4c15c86",
-      "bytes": 7942,
+      "sha256": "dc3d451a144e35456336631f61423e8c8fb79fcbc64fa86b74f3053e53b17a21",
+      "bytes": 8185,
       "mode": "100644"
     },
     {
@@ -2853,8 +2871,8 @@
     },
     {
       "path": "tools/v2/test_validate_release.py",
-      "sha256": "32ac17e57061bca1b2110fca2d50193126c9fd31021129a83cbc25c3f3f6caff",
-      "bytes": 7301,
+      "sha256": "5f3f58de01be340e36c72b05d75cf80b8494ee30396a002708e1408c3a88dc30",
+      "bytes": 8658,
       "mode": "100644"
     },
     {

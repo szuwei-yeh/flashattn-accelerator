@@ -1,0 +1,336 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1085" viewBox="0 0 1600 1085" role="img" aria-labelledby="title description">
+<title id="title">V2 memory banking and persistent KV cache</title>
+<desc id="description">Production V2 memory data movement, fixed 4Q:2KV and HEAD_DIM 16 or 64. AXI read DMA combines two accepted good 64-bit beats: the held first beat supplies stripe bytes 0 to 7; the live second beat supplies bytes 8 to 15. Each vector write is a full aligned 128-bit, 16-byte stripe and targets one destination per descriptor. Q uses one reusable 4096-byte scratchpad reloaded before each serial query head. Two physical KV groups each contain separate 4096-byte K and V stores; Q0 and Q1 select KV0, Q2 and Q3 select KV1. All five stores use sixteen byte-wide banks of 256 entries, with bank=a[3:0] and bank row=a shifted right by 4. A worked local-address example maps bytes 0x040 through 0x04F to banks 0 through 15 at bank row 4. Each bank has one synchronous read and one synchronous write port; memory read latency is one cycle. The bank primitive supports one read plus one write, but cache read/write overlap is not scheduled in the production path. K/V writes are ordered K then V for KV0, then KV1; read-group selection is separate from load-group selection. During foreground loading, Q is read in Q mode and paired K and V are read together at the same address in KV mode, from only the selected group. The loader emits aligned stripes into active row-major Q, K and V tile registers, each with 16 times HEAD_DIM elements. Invalid tail stripes have no memory read request and are emitted as zeros; attention masking separately excludes invalid keys. K stays row-major; K transpose is implemented in compute operand selection, not a transpose memory. One shared 16 by 16, 256-PE array executes all four heads serially. V2 prefetch is disabled. The allocated size is 4096 bytes per K/V store, while logical capacity is 64 tokens times HEAD_DIM: 1024 bytes for d16 or 4096 for d64. KV residency persists across healthy commands and ACK, subject to replacement, append, invalidation and common-reset lifecycle rules. External memory responder is simulation-only. These are logical RTL stores, not physically implemented SRAM macros or memory-inclusive PPA; no sustained throughput claim is made.</desc>
+<!-- RTL sources: rtl/v2/soc/soc.f; flash_attn_soc.sv:108 selects 4Q:2KV.
+     banked_scratchpad.sv:22-30,49-87; sram_1r1w.sv:28-37.
+     dma_engine_vec.sv:95,102-119,145-150,168-176.
+     kv_cache_banked_decode.sv:47-78,87,95-113; flash_attn_serial.sv:79,111-148,168-188.
+     banked_tile_loader_decode.sv:85-103,133-149; flash_attn_core_decode.sv:39-43,288-300,321-345,378-384.
+     tile_controller_decode.sv:211-242,278: foreground only, no active prefetch.
+     This is a functional memory-path diagram; only pictured data and select paths are expanded.
+     The bank-row inset shows byte ADDRESSES, not stored data; it is the same organization in each of five stores.
+     DMA selects one Q/K/V destination and one KV load group; branches are gated destinations, not concurrent broadcasts.
+     No full softmax/output/host-control schematic is repeated here. -->
+<defs>
+<marker id="data-tip" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L9 4.5 L0 9 Z" fill="#334155"/></marker>
+<marker id="control-tip" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L9 4.5 L0 9 Z" fill="#2563EB"/></marker>
+</defs>
+<style>
+text{font-family:Arial,Helvetica,sans-serif;fill:#0F172A}
+.secondary{fill:#475569}.memory{fill:#0F766E}.control{fill:#2563EB}
+.code{font-family:Consolas,Menlo,monospace}
+.edge-label{paint-order:stroke;stroke:#F8FAFC;stroke-width:5px;stroke-linejoin:round}
+</style>
+<rect width="1600" height="1085" fill="#F8FAFC"/>
+
+<text x="30" y="44" font-size="34" font-weight="700" text-anchor="start" class="">V2 memory banking &amp; persistent KV cache</text>
+<text x="30" y="76" font-size="21" font-weight="400" text-anchor="start" class="secondary">Five banked stores · d16 / d64 · one shared serial compute engine</text>
+<g id="legend-data"><path d="M1110 37 H1150" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1110 37 H1150" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="1160" y="43" font-size="18" font-weight="400" text-anchor="start" class="secondary">Data</text>
+<g id="legend-control"><path d="M1260 37 H1300" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1260 37 H1300" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)"/></g>
+<text x="1310" y="43" font-size="18" font-weight="400" text-anchor="start" class="secondary">Control / select</text>
+<text x="1110" y="75" font-size="17" font-weight="400" text-anchor="start" class="secondary">Arrows show supported phases; no concurrent broadcast.</text>
+<rect id="external-memory" x="30" y="180" width="190" height="100" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="5" stroke-dasharray="5 4"/>
+<text x="125.0" y="212" font-size="21" font-weight="600" text-anchor="middle" class="">External memory</text>
+<text x="125.0" y="242" font-size="20" font-weight="400" text-anchor="middle" class="secondary">AXI responder</text>
+<text x="125.0" y="267" font-size="17" font-weight="400" text-anchor="middle" class="secondary">Simulation only</text>
+<rect id="read-dma" x="285" y="155" width="250" height="200" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="410.0" y="187" font-size="25" font-weight="600" text-anchor="middle" class="">AXI read DMA</text>
+<rect id="dma-beat0" x="300" y="225" width="105" height="52" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="352.5" y="249" font-size="19" font-weight="500" text-anchor="middle" class="">Beat 0</text>
+<text x="352.5" y="270" font-size="17" font-weight="400" text-anchor="middle" class="secondary">held 64b</text>
+<rect id="dma-beat1" x="415" y="225" width="105" height="52" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="467.5" y="249" font-size="19" font-weight="500" text-anchor="middle" class="">Beat 1</text>
+<text x="467.5" y="270" font-size="17" font-weight="400" text-anchor="middle" class="secondary">live 64b</text>
+<rect id="dma-stripe" x="300" y="295" width="220" height="30" fill="#F0FDFA" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<path d="M410 295 V325" stroke="#CBD5E1" stroke-width="1.3"/>
+<text x="355" y="317" font-size="18" font-weight="400" text-anchor="middle" class="memory">bytes 0–7</text>
+<text x="465" y="317" font-size="18" font-weight="400" text-anchor="middle" class="memory">bytes 8–15</text>
+<g id="beat0-to-low-stripe"><path d="M352.5 277 V295" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M352.5 277 V295" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<g id="beat1-to-high-stripe"><path d="M467.5 277 V295" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M467.5 277 V295" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="410" y="345" font-size="19" font-weight="400" text-anchor="middle" class="secondary">128-bit / 16-byte stripe</text>
+<text x="410" y="386" font-size="18" font-weight="400" text-anchor="middle" class="secondary">One destination per descriptor</text>
+<g id="external-read-r"><path d="M220 207 H285" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M220 207 H285" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="253" y="196" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">R · 64b</text>
+<g id="external-read-ar"><path d="M285 248 H220" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M285 248 H220" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)"/></g>
+<text x="253" y="239" font-size="18" font-weight="400" text-anchor="middle" class="edge-label control">AR</text>
+<rect id="q-scratchpad" x="630" y="165" width="390" height="90" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="825.0" y="197" font-size="26" font-weight="600" text-anchor="middle" class="">Reusable Q scratchpad</text>
+<text x="825.0" y="230" font-size="20" font-weight="400" text-anchor="middle" class="secondary">Reloaded before each query head</text>
+<rect id="kv-cache" x="610" y="305" width="430" height="250" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="825" y="337" font-size="26" font-weight="600" text-anchor="middle" class="memory">Persistent KV cache</text>
+<rect id="group-KV0" x="630" y="355" width="190" height="160" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="644" y="383" font-size="23" font-weight="600" text-anchor="start" class="memory">KV0</text>
+<text x="804" y="382" font-size="18" font-weight="400" text-anchor="end" class="secondary">Q0 / Q1</text>
+<rect id="KV0-K" x="645" y="395" width="160" height="42" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="725" y="423" font-size="19" font-weight="500" text-anchor="middle" class="">K · row-major</text>
+<rect id="KV0-V" x="645" y="455" width="160" height="42" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="725" y="483" font-size="19" font-weight="500" text-anchor="middle" class="">V · row-major</text>
+<rect id="group-KV1" x="835" y="355" width="190" height="160" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="849" y="383" font-size="23" font-weight="600" text-anchor="start" class="memory">KV1</text>
+<text x="1009" y="382" font-size="18" font-weight="400" text-anchor="end" class="secondary">Q2 / Q3</text>
+<rect id="KV1-K" x="850" y="395" width="160" height="42" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="930" y="423" font-size="19" font-weight="500" text-anchor="middle" class="">K · row-major</text>
+<rect id="KV1-V" x="850" y="455" width="160" height="42" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="930" y="483" font-size="19" font-weight="500" text-anchor="middle" class="">V · row-major</text>
+<text x="825" y="543" font-size="18" font-weight="400" text-anchor="middle" class="secondary">64 tokens / group · persistent across ACK</text>
+<text x="825" y="610" font-size="19" font-weight="400" text-anchor="middle" class="secondary">Logical capacity per K/V store: 64 × d bytes</text>
+<text x="825" y="638" font-size="19" font-weight="400" text-anchor="middle" class="secondary">d16: 1024 B · d64: 4096 B</text>
+<g id="dma-write-stream"><path d="M535 310 H565" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M535 310 H565" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<g id="dma-q-destination"><path d="M565 310 V210 H630" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M565 310 V210 H630" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="590" y="199" font-size="20" font-weight="400" text-anchor="middle" class="edge-label secondary">Q</text>
+<g id="dma-k-destination"><path d="M565 310 V408 H610" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M565 310 V408 H610" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="590" y="397" font-size="20" font-weight="400" text-anchor="middle" class="edge-label secondary">K</text>
+<g id="dma-v-destination"><path d="M565 408 V478 H610" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M565 408 V478 H610" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="590" y="467" font-size="20" font-weight="400" text-anchor="middle" class="edge-label secondary">V</text>
+<circle cx="565" cy="310" r="3.5" fill="#334155"/>
+<circle cx="565" cy="408" r="3.5" fill="#334155"/>
+<text x="825" y="579" font-size="18" font-weight="400" text-anchor="middle" class="secondary">KV population: K then V; KV0 then KV1</text>
+<rect id="serial-head-selection" x="1090" y="140" width="470" height="135" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="1325.0" y="172" font-size="27" font-weight="600" text-anchor="middle" class="">Serial head selection</text>
+<text x="1325.0" y="212" font-size="26" font-weight="400" text-anchor="middle" class="secondary">Q0 → Q1 → Q2 → Q3</text>
+<text x="1325.0" y="250" font-size="22" font-weight="400" text-anchor="middle" class="secondary">Q0/Q1 → KV0 · Q2/Q3 → KV1</text>
+<rect id="kv-read-mux" x="1090" y="360" width="210" height="90" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="1195.0" y="392" font-size="20" font-weight="600" text-anchor="middle" class="">KV-group read mux</text>
+<text x="1195.0" y="421" font-size="18" font-weight="400" text-anchor="middle" class="secondary">K and V: same address</text>
+<text x="1195.0" y="442" font-size="17" font-weight="400" text-anchor="middle" class="secondary">Only selected group reads</text>
+<g id="head-to-read-group"><path d="M1195 275 V360" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1195 275 V360" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="8 6" marker-end="url(#control-tip)"/></g>
+<text x="1250" y="320" font-size="18" font-weight="400" text-anchor="middle" class="edge-label control">Group select</text>
+<g id="cache-to-read-group"><path d="M1040 400 H1090" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1040 400 H1090" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="foreground-loader" x="1090" y="525" width="210" height="110" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="1195.0" y="557" font-size="21" font-weight="600" text-anchor="middle" class="">Foreground loader</text>
+<text x="1195.0" y="589" font-size="19" font-weight="400" text-anchor="middle" class="secondary">Q mode → KV mode</text>
+<text x="1195.0" y="618" font-size="17" font-weight="400" text-anchor="middle" class="secondary">Valid stripes / zero tails</text>
+<g id="q-stripes-to-loader"><path d="M1020 210 H1060 V570 H1090" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1020 210 H1060 V570 H1090" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="1080" y="310" font-size="19" font-weight="400" text-anchor="start" class="edge-label secondary">Q · 128b</text>
+<g id="kv-stripes-to-loader"><path d="M1195 450 V525" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1195 450 V525" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="1215" y="488" font-size="19" font-weight="400" text-anchor="start" class="secondary">K + V · 128b each</text>
+<rect id="active-tile-registers" x="1360" y="525" width="210" height="110" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="1465.0" y="557" font-size="20" font-weight="600" text-anchor="middle" class="">Active tile registers</text>
+<text x="1465.0" y="622" font-size="17" font-weight="400" text-anchor="middle" class="secondary">16 × HEAD_DIM each</text>
+<rect id="active-Q" x="1375" y="572" width="60" height="34" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1405" y="597" font-size="22" font-weight="500" text-anchor="middle" class="">Q</text>
+<rect id="active-K" x="1435" y="572" width="60" height="34" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1465" y="597" font-size="22" font-weight="500" text-anchor="middle" class="">K</text>
+<rect id="active-V" x="1495" y="572" width="60" height="34" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1525" y="597" font-size="22" font-weight="500" text-anchor="middle" class="">V</text>
+<text x="1465" y="510" font-size="17" font-weight="400" text-anchor="middle" class="secondary">Stripe ports: 128b each</text>
+<g id="loader-q-to-active"><path d="M1300 560 H1360" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1300 560 H1360" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="1330" y="552" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">Q</text>
+<g id="loader-k-to-active"><path d="M1300 588 H1360" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1300 588 H1360" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="1330" y="579" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">K</text>
+<g id="loader-v-to-active"><path d="M1300 615 H1360" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1300 615 H1360" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<text x="1330" y="607" font-size="18" font-weight="400" text-anchor="middle" class="edge-label secondary">V</text>
+<rect id="operand-selection" x="1360" y="670" width="210" height="45" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="5"/>
+<text x="1465.0" y="702" font-size="20" font-weight="600" text-anchor="middle" class="">Operand selection</text>
+<g id="registers-to-operands"><path d="M1465 635 V670" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1465 635 V670" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<g id="operands-to-array"><path d="M1465 715 V750" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1465 715 V750" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="shared-array-endpoint" x="1360" y="750" width="210" height="95" fill="#F0FDFA" stroke="#0F766E" stroke-width="2.5" rx="5"/>
+<text x="1465.0" y="782" font-size="26" font-weight="600" text-anchor="middle" class="memory">16 × 16 array</text>
+<text x="1465.0" y="812" font-size="18" font-weight="400" text-anchor="middle" class="secondary">256 PEs · one engine</text>
+<text x="1465.0" y="835" font-size="19" font-weight="400" text-anchor="middle" class="secondary">QKᵀ / PV phases</text>
+<text x="1350" y="658" font-size="18" font-weight="400" text-anchor="end" class="secondary">K stays row-major; Kᵀ via operand selection</text>
+<text x="30" y="436" font-size="24" font-weight="600" text-anchor="start" class="memory">Supported access behavior</text>
+<path d="M30 448 H535" stroke="#CBD5E1" stroke-width="1.4"/>
+<text x="30" y="479" font-size="18" font-weight="400" text-anchor="start" class="secondary">Aligned full stripes; no partial-byte DMA writes.</text>
+<text x="30" y="511" font-size="18" font-weight="400" text-anchor="start" class="secondary">Q load first; then paired K + V reads.</text>
+<text x="30" y="543" font-size="18" font-weight="400" text-anchor="start" class="secondary">Memory read: 1 cycle; loader aligns register writes.</text>
+<text x="30" y="575" font-size="18" font-weight="400" text-anchor="start" class="secondary">Cache read/write overlap is not scheduled.</text>
+<text x="30" y="607" font-size="18" font-weight="400" text-anchor="start" class="secondary">Invalid tail: no memory read; loader emits zeros.</text>
+<text x="30" y="639" font-size="18" font-weight="400" text-anchor="start" class="secondary">DMA loads retire before the compute pass.</text>
+<text x="1360" y="882" font-size="19" font-weight="400" text-anchor="start" class="secondary">Foreground loads only</text>
+<text x="1360" y="909" font-size="19" font-weight="400" text-anchor="start" class="secondary">Prefetch disabled</text>
+<g id="banking-detail" transform="translate(0 15)">
+<rect id="banking-inset" x="30" y="660" width="1280" height="360" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="6"/>
+<text x="50" y="692" font-size="25" font-weight="600" text-anchor="start" class="memory">Bank interleaving — each of the five stores</text>
+<text x="1290" y="692" font-size="20" font-weight="400" text-anchor="end" class="secondary">16 banks × 256 entries × 8 bits = 4096 B / store</text>
+<text x="50" y="728" font-size="22" font-weight="400" text-anchor="start" class="code">bank = a[3:0]     row = a &gt;&gt; 4</text>
+<text x="1290" y="727" font-size="19" font-weight="400" text-anchor="end" class="secondary">1R1W / bank · synchronous read: 1 cycle</text>
+<text x="165" y="759" font-size="21" font-weight="400" text-anchor="start" class="secondary">Aligned local stripe: A = 0x040</text>
+<text x="1290" y="759" font-size="21" font-weight="400" text-anchor="end" class="secondary">16 consecutive bytes → 16 banks, row 4</text>
+<text x="150" y="790" font-size="18" font-weight="400" text-anchor="end" class="secondary">Offset</text>
+<text x="150" y="840" font-size="18" font-weight="400" text-anchor="end" class="secondary">Bank</text>
+<text x="150" y="870" font-size="18" font-weight="400" text-anchor="end" class="secondary">row 0</text>
+<text x="150" y="914" font-size="18" font-weight="600" text-anchor="end" class="memory">row 4</text>
+<text x="150" y="966" font-size="18" font-weight="400" text-anchor="end" class="secondary">row 255</text>
+<rect id="byte-offset-0" x="165" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="196" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+0</text>
+<g id="lane-0-to-bank-0"><path d="M196 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M196 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-0" x="165" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="196" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B0</text>
+<rect id="bank-0-row0" x="170" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-1" aria-label="Additional bank rows omitted"><circle cx="196" cy="877" r="1.35" fill="#475569"/><circle cx="196" cy="882" r="1.35" fill="#475569"/><circle cx="196" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-0-row4" x="170" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="196" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">040</text>
+<g id="omitted-bank-rows-2" aria-label="Additional bank rows omitted"><circle cx="196" cy="932" r="1.35" fill="#475569"/><circle cx="196" cy="938" r="1.35" fill="#475569"/><circle cx="196" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-0-row255" x="170" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-1" x="235" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="266" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+1</text>
+<g id="lane-1-to-bank-1"><path d="M266 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M266 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-1" x="235" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="266" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B1</text>
+<rect id="bank-1-row0" x="240" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-3" aria-label="Additional bank rows omitted"><circle cx="266" cy="877" r="1.35" fill="#475569"/><circle cx="266" cy="882" r="1.35" fill="#475569"/><circle cx="266" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-1-row4" x="240" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="266" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">041</text>
+<g id="omitted-bank-rows-4" aria-label="Additional bank rows omitted"><circle cx="266" cy="932" r="1.35" fill="#475569"/><circle cx="266" cy="938" r="1.35" fill="#475569"/><circle cx="266" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-1-row255" x="240" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-2" x="305" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="336" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+2</text>
+<g id="lane-2-to-bank-2"><path d="M336 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M336 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-2" x="305" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="336" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B2</text>
+<rect id="bank-2-row0" x="310" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-5" aria-label="Additional bank rows omitted"><circle cx="336" cy="877" r="1.35" fill="#475569"/><circle cx="336" cy="882" r="1.35" fill="#475569"/><circle cx="336" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-2-row4" x="310" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="336" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">042</text>
+<g id="omitted-bank-rows-6" aria-label="Additional bank rows omitted"><circle cx="336" cy="932" r="1.35" fill="#475569"/><circle cx="336" cy="938" r="1.35" fill="#475569"/><circle cx="336" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-2-row255" x="310" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-3" x="375" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="406" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+3</text>
+<g id="lane-3-to-bank-3"><path d="M406 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M406 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-3" x="375" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="406" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B3</text>
+<rect id="bank-3-row0" x="380" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-7" aria-label="Additional bank rows omitted"><circle cx="406" cy="877" r="1.35" fill="#475569"/><circle cx="406" cy="882" r="1.35" fill="#475569"/><circle cx="406" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-3-row4" x="380" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="406" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">043</text>
+<g id="omitted-bank-rows-8" aria-label="Additional bank rows omitted"><circle cx="406" cy="932" r="1.35" fill="#475569"/><circle cx="406" cy="938" r="1.35" fill="#475569"/><circle cx="406" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-3-row255" x="380" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-4" x="445" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="476" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+4</text>
+<g id="lane-4-to-bank-4"><path d="M476 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M476 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-4" x="445" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="476" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B4</text>
+<rect id="bank-4-row0" x="450" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-9" aria-label="Additional bank rows omitted"><circle cx="476" cy="877" r="1.35" fill="#475569"/><circle cx="476" cy="882" r="1.35" fill="#475569"/><circle cx="476" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-4-row4" x="450" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="476" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">044</text>
+<g id="omitted-bank-rows-10" aria-label="Additional bank rows omitted"><circle cx="476" cy="932" r="1.35" fill="#475569"/><circle cx="476" cy="938" r="1.35" fill="#475569"/><circle cx="476" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-4-row255" x="450" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-5" x="515" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="546" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+5</text>
+<g id="lane-5-to-bank-5"><path d="M546 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M546 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-5" x="515" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="546" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B5</text>
+<rect id="bank-5-row0" x="520" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-11" aria-label="Additional bank rows omitted"><circle cx="546" cy="877" r="1.35" fill="#475569"/><circle cx="546" cy="882" r="1.35" fill="#475569"/><circle cx="546" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-5-row4" x="520" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="546" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">045</text>
+<g id="omitted-bank-rows-12" aria-label="Additional bank rows omitted"><circle cx="546" cy="932" r="1.35" fill="#475569"/><circle cx="546" cy="938" r="1.35" fill="#475569"/><circle cx="546" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-5-row255" x="520" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-6" x="585" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="616" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+6</text>
+<g id="lane-6-to-bank-6"><path d="M616 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M616 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-6" x="585" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="616" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B6</text>
+<rect id="bank-6-row0" x="590" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-13" aria-label="Additional bank rows omitted"><circle cx="616" cy="877" r="1.35" fill="#475569"/><circle cx="616" cy="882" r="1.35" fill="#475569"/><circle cx="616" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-6-row4" x="590" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="616" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">046</text>
+<g id="omitted-bank-rows-14" aria-label="Additional bank rows omitted"><circle cx="616" cy="932" r="1.35" fill="#475569"/><circle cx="616" cy="938" r="1.35" fill="#475569"/><circle cx="616" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-6-row255" x="590" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-7" x="655" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="686" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+7</text>
+<g id="lane-7-to-bank-7"><path d="M686 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M686 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-7" x="655" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="686" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B7</text>
+<rect id="bank-7-row0" x="660" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-15" aria-label="Additional bank rows omitted"><circle cx="686" cy="877" r="1.35" fill="#475569"/><circle cx="686" cy="882" r="1.35" fill="#475569"/><circle cx="686" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-7-row4" x="660" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="686" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">047</text>
+<g id="omitted-bank-rows-16" aria-label="Additional bank rows omitted"><circle cx="686" cy="932" r="1.35" fill="#475569"/><circle cx="686" cy="938" r="1.35" fill="#475569"/><circle cx="686" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-7-row255" x="660" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-8" x="725" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="756" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+8</text>
+<g id="lane-8-to-bank-8"><path d="M756 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M756 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-8" x="725" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="756" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B8</text>
+<rect id="bank-8-row0" x="730" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-17" aria-label="Additional bank rows omitted"><circle cx="756" cy="877" r="1.35" fill="#475569"/><circle cx="756" cy="882" r="1.35" fill="#475569"/><circle cx="756" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-8-row4" x="730" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="756" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">048</text>
+<g id="omitted-bank-rows-18" aria-label="Additional bank rows omitted"><circle cx="756" cy="932" r="1.35" fill="#475569"/><circle cx="756" cy="938" r="1.35" fill="#475569"/><circle cx="756" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-8-row255" x="730" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-9" x="795" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="826" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+9</text>
+<g id="lane-9-to-bank-9"><path d="M826 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M826 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-9" x="795" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="826" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B9</text>
+<rect id="bank-9-row0" x="800" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-19" aria-label="Additional bank rows omitted"><circle cx="826" cy="877" r="1.35" fill="#475569"/><circle cx="826" cy="882" r="1.35" fill="#475569"/><circle cx="826" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-9-row4" x="800" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="826" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">049</text>
+<g id="omitted-bank-rows-20" aria-label="Additional bank rows omitted"><circle cx="826" cy="932" r="1.35" fill="#475569"/><circle cx="826" cy="938" r="1.35" fill="#475569"/><circle cx="826" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-9-row255" x="800" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-10" x="865" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="896" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+10</text>
+<g id="lane-10-to-bank-10"><path d="M896 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M896 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-10" x="865" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="896" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B10</text>
+<rect id="bank-10-row0" x="870" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-21" aria-label="Additional bank rows omitted"><circle cx="896" cy="877" r="1.35" fill="#475569"/><circle cx="896" cy="882" r="1.35" fill="#475569"/><circle cx="896" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-10-row4" x="870" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="896" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">04A</text>
+<g id="omitted-bank-rows-22" aria-label="Additional bank rows omitted"><circle cx="896" cy="932" r="1.35" fill="#475569"/><circle cx="896" cy="938" r="1.35" fill="#475569"/><circle cx="896" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-10-row255" x="870" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-11" x="935" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="966" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+11</text>
+<g id="lane-11-to-bank-11"><path d="M966 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M966 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-11" x="935" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="966" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B11</text>
+<rect id="bank-11-row0" x="940" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-23" aria-label="Additional bank rows omitted"><circle cx="966" cy="877" r="1.35" fill="#475569"/><circle cx="966" cy="882" r="1.35" fill="#475569"/><circle cx="966" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-11-row4" x="940" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="966" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">04B</text>
+<g id="omitted-bank-rows-24" aria-label="Additional bank rows omitted"><circle cx="966" cy="932" r="1.35" fill="#475569"/><circle cx="966" cy="938" r="1.35" fill="#475569"/><circle cx="966" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-11-row255" x="940" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-12" x="1005" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1036" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+12</text>
+<g id="lane-12-to-bank-12"><path d="M1036 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1036 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-12" x="1005" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1036" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B12</text>
+<rect id="bank-12-row0" x="1010" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-25" aria-label="Additional bank rows omitted"><circle cx="1036" cy="877" r="1.35" fill="#475569"/><circle cx="1036" cy="882" r="1.35" fill="#475569"/><circle cx="1036" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-12-row4" x="1010" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="1036" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">04C</text>
+<g id="omitted-bank-rows-26" aria-label="Additional bank rows omitted"><circle cx="1036" cy="932" r="1.35" fill="#475569"/><circle cx="1036" cy="938" r="1.35" fill="#475569"/><circle cx="1036" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-12-row255" x="1010" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-13" x="1075" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1106" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+13</text>
+<g id="lane-13-to-bank-13"><path d="M1106 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1106 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-13" x="1075" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1106" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B13</text>
+<rect id="bank-13-row0" x="1080" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-27" aria-label="Additional bank rows omitted"><circle cx="1106" cy="877" r="1.35" fill="#475569"/><circle cx="1106" cy="882" r="1.35" fill="#475569"/><circle cx="1106" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-13-row4" x="1080" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="1106" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">04D</text>
+<g id="omitted-bank-rows-28" aria-label="Additional bank rows omitted"><circle cx="1106" cy="932" r="1.35" fill="#475569"/><circle cx="1106" cy="938" r="1.35" fill="#475569"/><circle cx="1106" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-13-row255" x="1080" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-14" x="1145" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1176" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+14</text>
+<g id="lane-14-to-bank-14"><path d="M1176 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1176 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-14" x="1145" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1176" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B14</text>
+<rect id="bank-14-row0" x="1150" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-29" aria-label="Additional bank rows omitted"><circle cx="1176" cy="877" r="1.35" fill="#475569"/><circle cx="1176" cy="882" r="1.35" fill="#475569"/><circle cx="1176" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-14-row4" x="1150" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="1176" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">04E</text>
+<g id="omitted-bank-rows-30" aria-label="Additional bank rows omitted"><circle cx="1176" cy="932" r="1.35" fill="#475569"/><circle cx="1176" cy="938" r="1.35" fill="#475569"/><circle cx="1176" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-14-row255" x="1150" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<rect id="byte-offset-15" x="1215" y="769" width="62" height="30" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1246" y="791" font-size="18" font-weight="400" text-anchor="middle" class="code secondary">+15</text>
+<g id="lane-15-to-bank-15"><path d="M1246 799 V818" fill="none" stroke="#F8FAFC" stroke-width="7" stroke-linejoin="round"/><path d="M1246 799 V818" fill="none" stroke="#334155" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="" marker-end="url(#data-tip)"/></g>
+<rect id="bank-15" x="1215" y="818" width="62" height="166" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.6" rx="3"/>
+<text x="1246" y="842" font-size="21" font-weight="500" text-anchor="middle" class="">B15</text>
+<rect id="bank-15-row0" x="1220" y="858" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<g id="omitted-bank-rows-31" aria-label="Additional bank rows omitted"><circle cx="1246" cy="877" r="1.35" fill="#475569"/><circle cx="1246" cy="882" r="1.35" fill="#475569"/><circle cx="1246" cy="887" r="1.35" fill="#475569"/></g>
+<rect id="bank-15-row4" x="1220" y="895" width="52" height="29" fill="#F0FDFA" stroke="#94B8B3" stroke-width="1.6" rx="2"/>
+<text x="1246" y="916" font-size="18" font-weight="400" text-anchor="middle" class="code memory">04F</text>
+<g id="omitted-bank-rows-32" aria-label="Additional bank rows omitted"><circle cx="1246" cy="932" r="1.35" fill="#475569"/><circle cx="1246" cy="938" r="1.35" fill="#475569"/><circle cx="1246" cy="944" r="1.35" fill="#475569"/></g>
+<rect id="bank-15-row255" x="1220" y="954" width="52" height="12" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1.6" rx="1"/>
+<text x="165" y="1010" font-size="18" font-weight="400" text-anchor="start" class="secondary">Highlighted cells show byte addresses (hex), not stored data.</text>
+<text x="1290" y="1010" font-size="18" font-weight="400" text-anchor="end" class="secondary">16-byte aligned vector accesses</text>
+</g>
+<text x="30" y="1069" font-size="18" font-weight="400" text-anchor="start" class="secondary">Logical RTL stores; physical SRAM macros and memory-inclusive PPA are not established. No sustained-throughput claim.</text>
+</svg>

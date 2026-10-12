@@ -23,7 +23,17 @@ the complete payload, modes, functional inputs, accepted evidence/provenance,
 filelists, figures, historical link mappings and privacy patterns.
 [Original curation verification](../release/verification-v1.json) is a separate historical receipt.
 
+The current `soc_architecture.svg`, `memory_banking.svg` and
+`shared_compute_timeline.svg` under `docs/v2/figures/` are canonical reviewed SVG
+assets maintained directly. The original generated SoC illustration is preserved
+byte-for-byte as [historical_soc_architecture.svg](v2/figures/historical_soc_architecture.svg);
+the layout mapping keeps historical figure hashes bound to that original artifact.
+The artwork revision does not change measured RTL, PPA or verification evidence.
+
 ## Current functional-layout checks
+
+The checks below were recorded before the current architecture-artwork revision;
+their counts and source identities retain their original scope.
 
 On macOS, fresh d16/16 and d64/16 SoC builds each passed eight executions at
 modeled latency0, seeds0/17 and final-B hold37 across prefill/focus/warm/append_fault.
@@ -37,15 +47,16 @@ recorded reversible path-only adaptations; all56 production RTL source files are
 byte-identical. Renamed filenames use narrowly scoped DECLFILENAME lint rules
 while original module identifiers remain intact; assertions and numerical checks
 are unchanged. Fresh V1 N64/d16 core/top causal/noncausal smoke passed four
-invocations, with top latency models0/20/100. Eight accepted SVGs reproduced
-byte-for-byte; the new stateful-flow SVG also reproduced deterministically.
+invocations, with top latency models0/20/100. Eight historical generated SVGs reproduced
+byte-for-byte; the stateful-flow SVG also reproduced deterministically.
 The README online-softmax figure also reproduces byte-for-byte. Its ideal
 recurrence passed304 independent row comparisons and rejected a missing-rescale
 control in both dimensions. Existing scalar reference tests and L16/17/18 tail
 traces pass; the documented255/256 precision example remains intact. These
 figure checks supplement existing evidence; they are not a new RTL regression,
 coverage measurement, floating-point equivalence proof or licensed EDA result.
-Strict release validation and17 corruption/default-inventory tests pass locally.
+At that checkpoint, strict release validation and17 corruption/default-inventory
+tests passed locally.
 No licensed EDA, mapping or physical validation was rerun.
 
 ## Recorded representative checks for the published layout
@@ -72,7 +83,7 @@ binaries with seed0/final-B hold0: d16 cycles1228/1292, d64 cycles4210/4272.
 These add 20 commands / 21760 words and are not folded into the table above.
 V1 N64/d16 core/top causal/noncausal smoke, representative reference/runner
 checks, two Icarus four-state units and four corrupted/missing-fixture controls
-also passed. Fourteen release-integrity tests passed; all eight accepted SVGs
+also passed. Fourteen release-integrity tests passed; all eight historical generated SVGs
 reproduced byte-for-byte with matplotlib3.7.1. No licensed EDA or formal rerun
 was performed.
 
@@ -92,9 +103,10 @@ was performed.
 - d64/16 mapping is resource-limited; d64/256 mapping was not run; matched d64 PPA
   is unavailable. No physical/electrical/reset signoff or achieved Fmax is claimed.
 
-Successful host DONE/success IRQ requires final successful AXI B and output
-retirement. Fault/reject IRQ is distinct. Fatal AXI recovery uses common reset
-with the endpoint; external writes are not rolled back.
+For PREFILL/DECODE output jobs, successful host DONE/success IRQ requires final
+successful AXI B and output retirement. APPEND/CLEAR have no output writeback and
+complete after child completion. Fault/reject IRQ is distinct. Fatal AXI recovery
+uses common reset with the endpoint; external writes are not rolled back.
 [Operating contract](v2/VERIFICATION.md)
 
 ## Historical navigation and formatting
