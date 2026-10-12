@@ -10,8 +10,13 @@ local commits and history consolidation do not imply GitHub publication.
 
 The historical release receipt records **CONDITIONAL PASS for the bounded
 Mac-validated portfolio scope**. The current layout is locally validated and
-registered in manifest-v2. Linux/V2 Actions validation of this revision remains
-pending; open closure and physical limitations remain part of the release claim.
+registered in manifest-v2.
+[Ubuntu Verification run 38274178267](https://github.com/szuwei-yeh/flashattn-accelerator/actions/runs/38274178267)
+passed all 12 jobs for commit `b0ee70d6565f85698d196f6f1c3abe9b498f8196`:
+six V1 RTL profiles, four V2 SoC profiles, reference/accuracy and release-integrity
+checks. This result applies to that tested commit; later documentation-only
+revisions require their own CI result. Open closure and physical limitations
+remain part of the release claim.
 
 The current [inventory](../release/manifest-v2.json), functional [layout mapping](../release/layout-v2.json),
 original [path map](../release/path-map-v1.json) and [evidence lock](../release/evidence-lock-v1.json)
@@ -97,9 +102,9 @@ was performed.
   rejected controls counted separately. [Recorded campaign](v2/evidence/verification/verification.json)
 - Historical four-state and bounded formal receipts remain distinct from new
   two-state representative curation tests.
-- Linux/V2 Actions validation of this revised layout remains NOT RUN. Historical
-  receipts keep their capture-time CI status. Full integrated formal/coverage
-  closure and mapped equivalence remain open.
+- The completed Linux CI matrix is separate from the local and historical
+  campaigns. Historical receipts keep their capture-time CI status. Full
+  integrated formal/coverage closure and mapped equivalence remain open.
 - d64/16 mapping is resource-limited; d64/256 mapping was not run; matched d64 PPA
   is unavailable. No physical/electrical/reset signoff or achieved Fmax is claimed.
 

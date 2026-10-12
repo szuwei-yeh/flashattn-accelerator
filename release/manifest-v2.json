@@ -27,8 +27,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "9644e2cb73b579628c061735af600f4bb1684f01f70d8ef41e0b74b3f53e0971",
-      "bytes": 32578,
+      "sha256": "8ab54e96c330c06959b2806c7ef8bd5ab793f3e56365380da33dfb3d8f88e055",
+      "bytes": 32874,
       "mode": "100644"
     },
     {
@@ -627,8 +627,8 @@
     },
     {
       "path": "docs/LIMITATIONS.md",
-      "sha256": "8ef9fc95dc6338a0f5e028b566d1c4044cab21eb0dddda58f1bb4c304895d18a",
-      "bytes": 4746,
+      "sha256": "b2962462d9585d9e06f86e822859b0bc658cee2592f515ea942f305bf576d0ed",
+      "bytes": 4916,
       "mode": "100644"
     },
     {
@@ -645,14 +645,14 @@
     },
     {
       "path": "docs/RELEASE.md",
-      "sha256": "c19608823d34243577347a924b243c3cc672d3186e9674a13424fa8606479ba9",
-      "bytes": 7832,
+      "sha256": "564ca09091c2845c604c7a491f1c1af93a04a8006b43b0e3636641683e615f44",
+      "bytes": 8174,
       "mode": "100644"
     },
     {
       "path": "docs/REPRODUCIBILITY.md",
-      "sha256": "08c6e15d337c48d3749a0ab8aebcad544a89bc5e6e576d08eb89ae348d22ed72",
-      "bytes": 7815,
+      "sha256": "2d6a146f6dabc214a3009d20d9397c10218ae1271b03f0ce86c38e6b49aa8be2",
+      "bytes": 8716,
       "mode": "100644"
     },
     {
@@ -933,8 +933,8 @@
     },
     {
       "path": "docs/v2/README.md",
-      "sha256": "04749d7e8c0d10bafbf375f13eed3f369696c5d9e749f859721ce06661326056",
-      "bytes": 1184,
+      "sha256": "ff3cfef28682b584bfc138dfe318439e7bbc89059ef5c2360ac059517cd067a5",
+      "bytes": 1530,
       "mode": "100644"
     },
     {

@@ -280,8 +280,14 @@ tails, head/result ownership, AXI backpressure and faults, and reset boundaries.
 - **Historical genuine four-state VCS, V2 d64:** 1,098 commands / 1,317,888 exact words, plus 126 faults and 78 reset checkpoints, in a separate campaign.
 
 **Closure remains partial:** integrated formal, coverage, mapped equivalence and
-physical/reset signoff are incomplete. The four-profile Ubuntu matrix is configured,
-but **this revised layout has not run in Linux/V2 Actions**.
+physical/reset signoff are incomplete.
+
+[Ubuntu Verification run 38274178267](https://github.com/szuwei-yeh/flashattn-accelerator/actions/runs/38274178267)
+passed all 12 jobs for commit `b0ee70d6565f85698d196f6f1c3abe9b498f8196`:
+six V1 RTL profiles, four V2 SoC profiles, reference/accuracy and release-integrity
+checks. Its V2 `prefill,focus` scope is separate from the recorded campaigns above.
+This result applies to that tested commit; later documentation-only revisions
+require their own CI result.
 
 [Recorded SoC campaign](docs/v2/evidence/verification/verification.json) · [Safety scope](docs/v2/VERIFICATION.md) ·
 [Historical VCS provenance](docs/v2/evidence/results/soc_provenance.json) · [Regression receipts](docs/v2/evidence/verification/regression.json)
@@ -352,7 +358,7 @@ equivalence is claimed.
 - **Bounded geometry:** fixed 4Q:2KV, d16/d64, N16 prefill and host decode L16/17/18. No arbitrary shape or model-level floating-point accuracy claim.
 - **Verification:** two-state bounded SoC qualification tests supplement historical four-state campaigns; full integrated formal and coverage closure, mapped equivalence and exhaustive fault interleavings remain open.
 - **PPA:** d16 mapped standard-cell results only; d64/16 mapping stopped at the 12 GiB resource guard, d64/256 mapping not run. Logical memories, electrical violations and absent physical/reset signoff preclude silicon or achieved-Fmax claims.
-- **Reproducibility:** Linux/V2 CI validation of this revised layout remains pending; licensed PPA artifacts and the complete historical archive are not public quick-start dependencies.
+- **Reproducibility:** licensed PPA artifacts and the complete historical archive are not public quick-start dependencies.
 
 [Detailed limits](docs/LIMITATIONS.md) · [Bounded release verdict](docs/RELEASE.md)
 

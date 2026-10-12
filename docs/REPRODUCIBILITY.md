@@ -136,6 +136,19 @@ Some earlier single-head/serial GQA comparison benchmark sources likewise remain
 archive. Current SoC RTL is publicly rerunnable; that does not reproduce every
 historical experiment or licensed measurement.
 
-Linux/new V2 Actions execution remains UNVERIFIED. The Ubuntu matrix is configured
-with Python3.12, NumPy2.2.6 and pinned Verilator5.046; a configuration is not a
-completed Actions run. No fresh VCS, formal, synthesis or power run is implied.
+Ubuntu 24.04 [Verification run 38274178267](https://github.com/szuwei-yeh/flashattn-accelerator/actions/runs/38274178267)
+succeeded on attempt 1 for commit `b0ee70d6565f85698d196f6f1c3abe9b498f8196`,
+using Python 3.12, NumPy 2.2.6 and pinned Verilator 5.046. All 12 jobs passed:
+six V1 RTL profiles, four V2 SoC profiles, reference/accuracy and release-integrity
+checks, including all 28 integrity tests. V2 CI covered `prefill,focus` at modeled
+latency 0, seeds 0/17 and final-B hold 37: 48 successful commands / 43,520 exact
+words, with eight mandatory negative controls rejected. This matrix is separate
+from broader local `warm`, `append_fault` and noncompact tests and historical campaigns.
+This result applies to the tested commit; later documentation-only revisions
+require their own CI result.
+No licensed VCS, DC, formal or PrimePower experiments were rerun in Actions.
+
+The `Linux/newlicensedcampaign UNEXECUTED` entry in the
+[historical evidence catalogue](v2/evidence/README.md) describes the captured local
+quick-start campaign, not this later CI run. Its licensed-campaign boundary and
+original receipt statuses remain unchanged.

@@ -16,6 +16,11 @@ measurements, provenance and source identities; `evidence/verification/` holds
 bounded qualification records. `figures/` contains README assets.
 Development preparation records are local-only under ignored `private/`.
 
-The restructured checkout has not been run in Linux/V2 Actions. Formal/coverage
-closure remains partial, d64 mapped PPA is unavailable, and physical/electrical
-signoff is absent. Historical receipts retain their original platform and source scope.
+[Ubuntu Verification run 38274178267](https://github.com/szuwei-yeh/flashattn-accelerator/actions/runs/38274178267)
+passed all 12 jobs for commit `b0ee70d6565f85698d196f6f1c3abe9b498f8196`,
+including four V2 d16/d64 × 256/16-lane SoC profiles. This result applies to that
+tested commit; later documentation-only revisions require their own CI result.
+This CI result is separate from the historical
+campaigns; formal/coverage closure remains partial, d64 mapped PPA is unavailable,
+and physical/electrical signoff is absent. Historical receipts retain their
+original platform and source scope.
