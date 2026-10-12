@@ -1,5 +1,7 @@
 # FlashAttention Accelerator — RTL / ASIC Portfolio
 
+[![Verification CI](https://github.com/szuwei-yeh/flashattn-accelerator/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/szuwei-yeh/flashattn-accelerator/actions/workflows/ci.yml)
+
 **Stateful INT8 attention in SystemVerilog — persistent KV cache, shared 16 × 16 compute and an AXI host SoC.**
 
 ## Project Overview & Recorded Highlights
