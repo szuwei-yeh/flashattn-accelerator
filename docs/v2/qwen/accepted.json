@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "scope": "Original Phase 2B frozen real-activation production RTL run; curated receipt, not a new PPA or full-model measurement.",
+  "source_git_head": "d2087b786068a69c2ae621e0b73cd67ca5e9feaf",
+  "original_results_sha256": "3e1b64c88bd4b91820af5617a7aebfcf32725121e7f101261e0c4228dc0a0b82",
+  "conditions": {
+    "head_dim": 64,
+    "dequant_lanes": 256,
+    "compact_decode_output": 1,
+    "axi_latency": 0,
+    "timing_seed": 0,
+    "verilator": "Verilator 5.046 2026-02-28 rev vUNKNOWN-built20260228"
+  },
+  "driver_sha256": "bb22136ba19917d6385202c537e8e63b623c4fa764f94b6c61f942a6f31737e9",
+  "host_monitor_source_sha256": {
+    "sim/v2/common/axi_monitor.hpp": "b7cbc38cd6f24f913b767deeb253e89fa7eb5169b9a6b55ee50ad9cd6b3509c1",
+    "sim/v2/soc/tb_soc.cpp": "b5d256c1af90779f88f16705357a93f2a282f329a04c212be9d3a024edc904d0",
+    "sim/v2/soc/tb_soc.sv": "c6784441ac7dd366625d2864c67b05e523e0b3a99e774a746ca78c0af355b94e",
+    "sim/v2/soc/timing.hpp": "36b3e0a3d52d9e31fe31dcfe4315369d1c5ca46612c83bbf23d624ad7729161b"
+  },
+  "production_rtl_sha256": {
+    "rtl/v2/interface/types_pkg.sv": "04a54d4460721cf5b3d26c6e3035e3b3993fa1466088d179a472cecac9945bb6",
+    "rtl/memory/sram_1r1w.sv": "c958106159d57ad7294753b085a9b339c373d2a96244042831f1e4baa9af4fd5",
+    "rtl/systolic/pe.sv": "40cd1bdee315ee16ffeaf46ecac35b8f6fc2d0f6e8e25ce1ba8fa92ff45e42eb",
+    "rtl/systolic/systolic_array.sv": "d86f54408d10e33e6786bfebdf602fc4a216e670ae39e221c2a469a8f04d339d",
+    "rtl/systolic/array_controller.sv": "0cf0cf337efdba71308037dd60d6e383104ef9242cd0e8ed0b9f2435da2a57bc",
+    "rtl/quantization/dequantizer.sv": "6ec665292432d32ea31d57df4065da58a6cf0e2de724e92fd9d3d0449cbc9f97",
+    "rtl/quantization/dequantizer_tile.sv": "07cd945cce2007753fbb7b57120a4470fd14508302bedce71276b718efdbb765",
+    "rtl/softmax/exp_lut.sv": "1f8f1d5ae96de4113501293ef464de14a9f15ced34ad64b6470e6d2fd608d411",
+    "rtl/memory/banked_scratchpad.sv": "90fa93cab878043847df0a4839dca410d6146609dd02f0b4f8e24a205cf56c0f",
+    "rtl/memory/output_buffer.sv": "e784cce001ca734f3ab53f56ba4eccc7c2835569a626b1009e388cba87e31daa",
+    "rtl/ctrl/addr_gen.sv": "192c6a77fc1d82289605db80e828622cb9ba556bf8768bf5c0cc2286d78d7383",
+    "rtl/interface/dma_engine_vec.sv": "db2c446b7edd8decaa4d0399eb736226c04248d4ed9856235f56d488de57870d",
+    "rtl/v2/cache/kv_cache_banked_decode.sv": "9948210aec4e76a0c27dd3de5de3b073a667953400c7e41db09aba0dad5a6406",
+    "rtl/v2/compute/online_softmax_masked.sv": "13f8bd0d3e49eb32f7fc1c76d654a1caa67d81528ac9f36e4a3ddf04addf017a",
+    "rtl/v2/compute/tile_controller_decode.sv": "9fb5828d271487fca2419ac539892135724b22417d6ff5753cb82c8218b1569a",
+    "rtl/v2/compute/banked_tile_loader_decode.sv": "1634c71575898b958f52cc1ee18ca421c343797512155d71fc973dde507c68da",
+    "rtl/v2/compute/flash_attn_core_decode.sv": "f6414a13e03a0a3b23b788c8c88f49ceb55890ea5c5013205c28621063125450",
+    "rtl/v2/soc/flash_attn_serial.sv": "a244abaeb79810bb3c24ff48b24412a2934cdc1b2a4b440ef314289c12e35823",
+    "rtl/v2/soc/axi_lite_csr.sv": "48374918ee44b156bbb085fdd0b10336861b24d430c5735a0ef85862ca458d70",
+    "rtl/v2/soc/soc_job_adapter.sv": "00947b953da2e95ef7a9f4017c4657ffbb5589a301adb515a91b1ddb8aaec0f0",
+    "rtl/v2/soc/gqa_output_packer.sv": "590af53e5ae9604afadc023bea276f33c485d378bb155f5cd0fe29cf569de363",
+    "rtl/v2/interface/dma_write_engine.sv": "6583c9c900c5a3f1d0a83a9da701cea21356ea39c491ae5e03c28e57ab9ec09f",
+    "rtl/v2/soc/flash_attn_soc.sv": "88e203d104fc74daeee8171cff267ff294dc8c605862273ee541bd5aef93a66c"
+  },
+  "oracle_lut_sha256": {
+    "golden/v2/stateful/decode_reference.py": "61dc8128fd7b4dc98164c698ab2b84b5c96ad7defa12e80bfc9fe34b0c64246f",
+    "golden/v2/decode_reference.py": "5920b49159a677df7022fa3929e053d8a075f45dc172773fbf48196124091f6f",
+    "data/exp_lut.hex": "231426352ac24b9db01139926763565da8b80ba8799ea838f481e5b708944c5c"
+  },
+  "fixture_manifest_sha256": "1baf4e8994b0ec9d26d913536e65f5c34de6184de74fafdb4bf1bdffbcea2544",
+  "binary_sha256": "6aee53c5542e89118604c65b882d716950635191f88d45233de9e8983e611788",
+  "comparison": {
+    "successful": 5,
+    "exact_words": 4608,
+    "mismatches": 0,
+    "csr_checks": 334
+  },
+  "sequence": [
+    {
+      "pop": 1,
+      "latency": 0,
+      "compact": 1,
+      "cycles_with_host_service": 46320,
+      "commands": 5,
+      "includes_CSR_programming_snapshots_IRQ_ACK_release": 1
+    }
+  ],
+  "jobs": [
+    {
+      "op": 0,
+      "length": 16,
+      "host_cycles": 31643,
+      "compute_cycles": 24126,
+      "dma_wb_cycles": 7511,
+      "wb_phase_cycles": 7514,
+      "read_bytes": 8192,
+      "write_bytes": 16384,
+      "ar": 64,
+      "r": 1024,
+      "aw": 129,
+      "w": 2048,
+      "b": 129,
+      "okay": 129,
+      "words": 4096,
+      "cache_reads": 256,
+      "cache_writes": 256,
+      "copy_cycles": 12288
+    },
+    {
+      "op": 1,
+      "length": 16,
+      "host_cycles": 52,
+      "compute_cycles": 49,
+      "dma_wb_cycles": 0,
+      "wb_phase_cycles": 0,
+      "read_bytes": 256,
+      "write_bytes": 0,
+      "ar": 4,
+      "r": 32,
+      "aw": 0,
+      "w": 0,
+      "b": 0,
+      "okay": 0,
+      "words": 0,
+      "cache_reads": 0,
+      "cache_writes": 16,
+      "copy_cycles": 0
+    },
+    {
+      "op": 2,
+      "length": 17,
+      "host_cycles": 6557,
+      "compute_cycles": 6080,
+      "dma_wb_cycles": 471,
+      "wb_phase_cycles": 474,
+      "read_bytes": 256,
+      "write_bytes": 1024,
+      "ar": 4,
+      "r": 32,
+      "aw": 9,
+      "w": 128,
+      "b": 9,
+      "okay": 9,
+      "words": 256,
+      "cache_reads": 272,
+      "cache_writes": 0,
+      "copy_cycles": 768
+    },
+    {
+      "op": 1,
+      "length": 17,
+      "host_cycles": 52,
+      "compute_cycles": 49,
+      "dma_wb_cycles": 0,
+      "wb_phase_cycles": 0,
+      "read_bytes": 256,
+      "write_bytes": 0,
+      "ar": 4,
+      "r": 32,
+      "aw": 0,
+      "w": 0,
+      "b": 0,
+      "okay": 0,
+      "words": 0,
+      "cache_reads": 0,
+      "cache_writes": 16,
+      "copy_cycles": 0
+    },
+    {
+      "op": 2,
+      "length": 18,
+      "host_cycles": 6557,
+      "compute_cycles": 6080,
+      "dma_wb_cycles": 471,
+      "wb_phase_cycles": 474,
+      "read_bytes": 256,
+      "write_bytes": 1024,
+      "ar": 4,
+      "r": 32,
+      "aw": 9,
+      "w": 128,
+      "b": 9,
+      "okay": 9,
+      "words": 256,
+      "cache_reads": 288,
+      "cache_writes": 0,
+      "copy_cycles": 768
+    }
+  ],
+  "output_sha256": {
+    "N16": "36d126651c08789759ccd153c47f6f92058e9de32409752da5b5f3d3a91bf940",
+    "L17": "c3ae7a04c50e07ad0050484d0628bf8f83f8529d755f80e3adfcdaaf35e1b36a",
+    "L18": "359303d0b8550b513291bde45bc41ce5e0b4d1fd32050f0cdbd86a8b3b23a6e3",
+    "all": "8731bbef603802f82344b9fa7d5d87e05dc4a00cc0c3462eedf92e9c597379e5"
+  },
+  "safety": [
+    {
+      "seed": 0,
+      "final_b_hold": 0,
+      "held_edges": 0,
+      "completion_edges": 3,
+      "owner_edges": 9153,
+      "publication_edges": 3,
+      "head_edges": 21088
+    }
+  ],
+  "negative_controls": [
+    {
+      "name": "negative_wrong_final_word",
+      "exit": 1,
+      "detector": "M5C_CHECK corrupt/missing/duplicated byte or wrong head/word order",
+      "diagnostic": "M5C_CHECK corrupt/missing/duplicated byte or wrong head/word order clock=46230 phase=3 job=5 child_cycles=6080"
+    },
+    {
+      "name": "negative_missing_fixture",
+      "exit": 1,
+      "detector": "M5D_CHECK missing fixture",
+      "diagnostic": "M5D_CHECK missing fixture <OUT>/empty_fixtures/p1/k0.hex clock=0 phase=0 job=0 child_cycles=0"
+    }
+  ],
+  "logs_sha256": {
+    "qwen.log": "fb15d378590fba2dd7c3623b2e248acc9fbc6ae01cb1e90b7dc1a9f52264f8cb",
+    "negative_wrong_final_word.log": "52fd19329e5c192c5db7eaeb7ee485075d25401238d7a18d4ca2c3fc3367d82e",
+    "negative_missing_fixture.log": "cf96d7020cb0b214e92a51770d751d91bc32a47e36cafc9ac1ec35158fe97799"
+  },
+  "phase2a_numerical_reference": {
+    "source_accuracy_csv_sha256": "ae8f3b704134f0f18f261e131416eacb66542e61b4619184a5fbf7ca0d862859",
+    "original_reference": "CPU FP32 post-RoPE causal attention, before output projection; oracle INT32 / 256",
+    "overall_relative_l2": 0.04061058591108217,
+    "scope": "one fixed prompt/layer/four heads; unchanged original Phase 2A measurements"
+  }
+}

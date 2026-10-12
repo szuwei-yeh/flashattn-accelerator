@@ -271,6 +271,28 @@ comparison excludes later SoC writeback and AXI control overhead.
 
 [Results and exact boundaries](docs/RESULTS.md) · [PPA provenance](docs/v2/evidence/results/ppa_provenance.json)
 
+## Real-Model Activation Validation — Qwen2.5
+
+Frozen **Qwen2.5-0.5B-Instruct** activations from revision
+[`7ae5576`](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct/tree/7ae557604adf67be50417f59c2c2f167def9a775),
+layer 11, Q heads **0/1/7/8**, map to the existing **d64 / 4Q:2KV** SoC.
+The causal sequence **N16 PREFILL → APPEND → L17 DECODE → APPEND → L18 DECODE**
+runs through the actual production AXI/control, persistent cache, compute and
+writeback path, with **zero production RTL changes**.
+
+**4,608/4,608 externally written INT32 words match the independent fixed-point
+oracle, with zero mismatches.** The complete measured sequence takes **46,320
+RTL cycles**, including CSR service and ACK, at modeled AXI latency 0
+(256 dequantizers, compact decode output, timing seed 0).
+
+**Fixed-point correctness is separate from numerical fidelity:** overall relative
+L2 error against FP32 is **4.061%**, while selected heads **7/8 show approximately
+24%–41% error**. This bounded activation replay does not establish full Qwen
+inference, high-fidelity model equivalence, silicon throughput or new PPA.
+
+[Frozen fixtures, measurements and reproduction](docs/v2/qwen/README.md) require
+no model-weight download for RTL verification.
+
 ## Verification & Reproduction
 
 Independent bit-exact oracles check every valid external-memory output from the

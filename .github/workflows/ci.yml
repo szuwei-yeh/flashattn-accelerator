@@ -58,6 +58,7 @@ jobs:
         run: |
           python golden/test_hw_reference.py
           python golden/test_accuracy.py
+          python -B tools/v2/qwen/test_fixtures.py
           python syn/scripts/test_run_metadata.py
           make -C sim/verilator test_runners PYTHON=python
       - name: Reproduce arithmetic error analysis
@@ -164,3 +165,19 @@ jobs:
           path: |
             ${{ runner.temp }}/v2-results
             ${{ runner.temp }}/release-validation.json
+      - name: Frozen Qwen activation RTL replay (no model weights)
+        if: matrix.dim == 64 && matrix.lanes == 256
+        run: python -B tools/v2/qwen/run.py --output-dir "$RUNNER_TEMP/qwen-results"
+      - name: Preserve Qwen exact outputs and negative controls
+        if: always() && matrix.dim == 64 && matrix.lanes == 256
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: qwen-real-activation-validation
+          path: |
+            ${{ runner.temp }}/qwen-results/results.json
+            ${{ runner.temp }}/qwen-results/fixture_manifest.json
+            ${{ runner.temp }}/qwen-results/cycles.csv
+            ${{ runner.temp }}/qwen-results/integrity.json
+            ${{ runner.temp }}/qwen-results/qwen.log
+            ${{ runner.temp }}/qwen-results/negative_*.log
+            ${{ runner.temp }}/qwen-results/outputs
