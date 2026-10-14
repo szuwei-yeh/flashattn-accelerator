@@ -1,0 +1,18 @@
+# Copy to an isolated viewer working directory as .surfer/config.toml.
+# No global Surfer preferences need to change.
+show_divider_text = false
+animation_enabled = false
+
+[layout]
+show_hierarchy = false
+show_menu = false
+show_toolbar = false
+show_overview = false
+show_variable_indices = false
+show_variable_direction = false
+show_statusbar = false
+window_width = 1000
+window_height = 810
+waveforms_text_size = 13.0
+waveforms_line_height = 16.0
+waveforms_gap = 2.5

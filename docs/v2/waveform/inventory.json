@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "physical_dequantizers": 16,
+  "module_counts": {
+    "tb_soc_m6b3": 1,
+    "flash_attn_soc_m6b3": 1,
+    "axi_lite_csr_m6b3": 1,
+    "soc_job_adapter_m6b3": 1,
+    "flash_attn_serial_m6b3": 1,
+    "dma_engine_vec": 1,
+    "kv_cache_banked_decode_m2c3": 2,
+    "banked_scratchpad": 5,
+    "sram_1r1w": 81,
+    "flash_attn_core_decode_m3b": 1,
+    "tile_controller_decode_m2c3": 1,
+    "addr_gen": 1,
+    "banked_tile_loader_decode_m2c3": 1,
+    "array_controller": 1,
+    "systolic_array": 1,
+    "pe": 256,
+    "dequantizer_tile": 1,
+    "dequantizer": 16,
+    "online_softmax_masked_m2c3": 16,
+    "exp_lut": 16,
+    "output_buffer": 1,
+    "gqa_output_packer_m6b3": 1,
+    "dma_write_engine_m5": 1
+  },
+  "tree_sha256": "d9fbd85d9921db6c38d529fc583e7c95c1cda9cb1d5e6b1624d2a77d2d3e1679"
+}

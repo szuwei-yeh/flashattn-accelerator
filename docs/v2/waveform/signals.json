@@ -1,0 +1,328 @@
+{
+  "overview": [
+    {
+      "signal": "TOP.clk",
+      "label": "clk",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.rst_n",
+      "label": "rst_n",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_command",
+      "label": "cmd_accept",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_job.owned",
+      "label": "job_owned",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_phase",
+      "label": "job_phase",
+      "format": "JobPhase"
+    },
+    {
+      "signal": "TOP.obs_irq_pending",
+      "label": "IRQ_pending",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.desc_valid",
+      "label": "Q_DMA_req",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_araddr",
+      "label": "Q_ARADDR",
+      "format": "hex"
+    },
+    {
+      "signal": "TOP.obs_ar",
+      "label": "AR_accept",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_r",
+      "label": "R_accept",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.dma_done",
+      "label": "Q_DMA_done",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.g_cache[0].u_cache.cache_length",
+      "label": "KV0_length",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.g_cache[1].u_cache.cache_length",
+      "label": "KV1_length",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.obs_kvhead",
+      "label": "kv_group",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.obs_cache_read",
+      "label": "KV_rd_accept",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_cache_write",
+      "label": "KV_wr_accept",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_qhead",
+      "label": "q_head",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.obs_core_active",
+      "label": "core_active",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.u_fsm.state",
+      "label": "tile_state",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.tile_col",
+      "label": "KV_base",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.gen_shared_dequant.batch_busy",
+      "label": "dq_busy",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.gen_softmax[0].active_row.u_softmax.exp_out_valid",
+      "label": "sfx_exp_valid",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.fused_update_en",
+      "label": "update_en",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.norm_en",
+      "label": "norm_en",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_compute_done",
+      "label": "compute_done",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_pack_start",
+      "label": "pack_start",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_awvalid",
+      "label": "AWVALID",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_wvalid",
+      "label": "WVALID",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_bvalid",
+      "label": "BVALID",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_wb_done",
+      "label": "wb_final_OK",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_output_committed",
+      "label": "DONE",
+      "format": "bit"
+    }
+  ],
+  "completion": [
+    {
+      "signal": "TOP.clk",
+      "label": "clk",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_phase",
+      "label": "job_phase",
+      "format": "JobPhase"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_job.source_seen",
+      "label": "source_seen",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_awvalid",
+      "label": "AWVALID",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_awready",
+      "label": "AWREADY",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_awaddr",
+      "label": "AWADDR",
+      "format": "hex"
+    },
+    {
+      "signal": "TOP.m_awlen",
+      "label": "AWLEN",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.m_wvalid",
+      "label": "WVALID",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_wready",
+      "label": "WREADY",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_wlast",
+      "label": "WLAST",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_bvalid",
+      "label": "BVALID",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_bready",
+      "label": "BREADY",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.m_bresp",
+      "label": "BRESP",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.obs_wb_done",
+      "label": "wb_final_OK",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_wb_busy",
+      "label": "wb_busy",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_output_committed",
+      "label": "DONE",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.irq",
+      "label": "IRQ",
+      "format": "bit"
+    }
+  ],
+  "compute": [
+    {
+      "signal": "TOP.clk",
+      "label": "clk",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_qhead",
+      "label": "q_head",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.obs_core_active",
+      "label": "core_active",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.u_fsm.state",
+      "label": "tile_state",
+      "format": "TilePhase"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.tile_col",
+      "label": "KV_base",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.gen_shared_dequant.batch_busy",
+      "label": "dq_busy",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.gen_softmax[0].active_row.u_softmax.exp_out_valid",
+      "label": "sfx_exp_valid",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.fused_update_en",
+      "label": "update_en",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.tb_soc_m6b3.u_dut.u_engine.u_core.norm_en",
+      "label": "norm_en",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_array_start",
+      "label": "array_start",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_array_compute",
+      "label": "array_compute",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_dq_retire",
+      "label": "dq_retire",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_dq_group",
+      "label": "dq_batch",
+      "format": "unsigned"
+    },
+    {
+      "signal": "TOP.obs_dq_publish",
+      "label": "dq_publish",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_dq_consume",
+      "label": "dq_consume",
+      "format": "bit"
+    },
+    {
+      "signal": "TOP.obs_core_done",
+      "label": "core_done",
+      "format": "bit"
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "status": "PASS",
+  "note": "Publication review of the 28 original waveform artifacts. 23 retained; 5 preserved privately. files.json has no self-referential hash.",
+  "source_commit": "0d05a6cd695ce7fec78c4af4722300756cf9585d",
+  "files": [
+    {
+      "path": "docs/v2/figures/decode_waveform.png",
+      "classification": "required published artifact",
+      "purpose": "Approved, byte-identical native RTL waveform screenshot.",
+      "sha256": "f80ced56fee7f4c0d08254dbdeeba08b92cae835a751f0c3d819f7e89405b227",
+      "bytes": 794122
+    },
+    {
+      "path": "docs/v2/figures/decode_waveform_compute.png",
+      "classification": "required published artifact",
+      "purpose": "Approved, byte-identical native RTL waveform screenshot.",
+      "sha256": "8549aa6176823c50d5050486ec14a956571dd556d6c3e0ddd13674bf0a2ed9e2",
+      "bytes": 402609
+    },
+    {
+      "path": "docs/v2/figures/decode_waveform_detail.png",
+      "classification": "required published artifact",
+      "purpose": "Approved, byte-identical native RTL waveform screenshot.",
+      "sha256": "4171a3460e3565cf20a4b4dec7c2ae5ec45df74963d68f64ac286ab22e402a87",
+      "bytes": 530562
+    },
+    {
+      "path": "docs/v2/waveform/JobPhase.txt",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "29ad6866da7f15e157bad93bf238f93e4ae14fe5e379bce6d4980f8d15e8d600",
+      "bytes": 152
+    },
+    {
+      "path": "docs/v2/waveform/README.md",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "70e4dce6775d62759881ff50fc4d070b6a227e531fa723b224ec57df642e1b58",
+      "bytes": 11409
+    },
+    {
+      "path": "docs/v2/waveform/TilePhase.txt",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "f07c7d0791278960c57f8bf1cf2691be58cf56f5627bc7bc706dfbb5d491264c",
+      "bytes": 265
+    },
+    {
+      "path": "docs/v2/waveform/completion.sucl",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "b5b4e1bbac5a75d3d3ad3cc6227d5645beae98d20e00e3b8f100aeb66f818a67",
+      "bytes": 1734
+    },
+    {
+      "path": "docs/v2/waveform/compute.sucl",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "a7378f8d7abf20dad1e02c686dca370840646a5641a7fa95efa016a0d144a55a",
+      "bytes": 2010
+    },
+    {
+      "path": "docs/v2/waveform/decode.vcd.gz",
+      "classification": "required reproduction/configuration",
+      "purpose": "Small compressed authentic source trace permits independent edge verification and viewer inspection without a rebuild.",
+      "sha256": "9a82a6ad2e11180216fa503c43b4185998061ff0f1223e516fa8c2f003901057",
+      "bytes": 383066
+    },
+    {
+      "path": "docs/v2/waveform/events.json",
+      "classification": "optional supporting evidence",
+      "purpose": "Compact measured timestamps, transfer counts and cache/head observations.",
+      "sha256": "db0c2f2640c4c33c72bbb946db463b6d8b557ac6c05ad94e07b5a145f14e39f9",
+      "bytes": 1405
+    },
+    {
+      "path": "docs/v2/waveform/image_provenance.json",
+      "classification": "optional supporting evidence",
+      "purpose": "Approved PNG and raw-capture hashes, viewer binary identity and processing provenance.",
+      "sha256": "25ecd60e01a9486c0e25643624b9b5fa720a8fd81ede6493d294f7d862ff94b9",
+      "bytes": 1530
+    },
+    {
+      "path": "docs/v2/waveform/inventory.json",
+      "classification": "optional supporting evidence",
+      "purpose": "Small elaborated resource inventory confirms physical dequantizer/PE/cache/core counts.",
+      "sha256": "fc6f4d0b57667a9abda94b189c0491cc708b6aa9e3cf9fbc99395b794598eade",
+      "bytes": 816
+    },
+    {
+      "path": "docs/v2/waveform/overview.sucl",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "951e4f967cb174672fe16f8852ffd81b111d743fc50424d957a633ef94cddd91",
+      "bytes": 3762
+    },
+    {
+      "path": "docs/v2/waveform/provenance.json",
+      "classification": "optional supporting evidence",
+      "purpose": "Source SHA, exact simulator commands, version, original-source and trace hashes.",
+      "sha256": "949174d31a4490f179cabf9fa2a190507acbc01abd8cd115a48307ec6182c060",
+      "bytes": 6988
+    },
+    {
+      "path": "docs/v2/waveform/regression_results.json",
+      "classification": "optional supporting evidence",
+      "purpose": "Original successful regression command records, golden verification and negative-control diagnostics.",
+      "sha256": "83b31431bcf8b6b21fc985fa9e2e06ae2ec524db3bfabfb53c450d79587c4a74",
+      "bytes": 40158
+    },
+    {
+      "path": "docs/v2/waveform/signals.json",
+      "classification": "optional supporting evidence",
+      "purpose": "Exact viewer-label-to-VCD signal mapping for technical interpretation.",
+      "sha256": "dd82ee7d7f18b3f06ae34ec47e8c7232f7d96e6c9bdf0ddd7ab9b68de9c191ef",
+      "bytes": 7021
+    },
+    {
+      "path": "docs/v2/waveform/simulation.log",
+      "classification": "optional supporting evidence",
+      "purpose": "One positive run log links stateful preparation, L17 job metrics and exact golden comparisons.",
+      "sha256": "58cd2f1805ab52f7477b46ca76427f36d0401516ce7328f5b69f3d402d4041c4",
+      "bytes": 4975
+    },
+    {
+      "path": "docs/v2/waveform/surfer-config.toml",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "ee747c5463bd6235ea63716baa64f97db7935c6912c515debb3ce08f31f32991",
+      "bytes": 465
+    },
+    {
+      "path": "tools/v2/waveform/capture.py",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "0d31dd25ee3bd9cd2b2d434194aba48fb856a69904a5dac386f0dbc161f6c664",
+      "bytes": 5424
+    },
+    {
+      "path": "tools/v2/waveform/check_trace.py",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "078eda395a00b0ec27a8c8c749cf9e8a0c2525c225d1226ebc0c7a2c5227692d",
+      "bytes": 5250
+    },
+    {
+      "path": "tools/v2/waveform/layouts.py",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "07a56b52dbda7df35035bfd7742d1a685b2e98e9af800c39249f1c0282f9aa44",
+      "bytes": 6197
+    },
+    {
+      "path": "tools/v2/waveform/prepare_figures.py",
+      "classification": "required reproduction/configuration",
+      "purpose": "Recreates or explains simulation tracing, waveform layout, FSM labels or deterministic screenshot processing.",
+      "sha256": "f3295b99780534ee5030bc1cfc8b2751e10a26b8fc222777c185a7170dd6a782",
+      "bytes": 3688
+    },
+    {
+      "path": "docs/v2/waveform/files.json",
+      "classification": "optional supporting evidence",
+      "purpose": "Compact integrity and publication disposition manifest.",
+      "sha256": null
+    }
+  ],
+  "excluded_generated_artifacts": [
+    {
+      "path": "docs/v2/waveform/README_insertion.md",
+      "classification": "temporary/redundant",
+      "purpose": "Superseded by the reviewed root README integration.",
+      "sha256": "ce4f8057f911802b7c9a7366d65f1073b69cec5d821722753574e6aab695abf0",
+      "bytes": 749,
+      "preservation": "Local ignored private review archive; not deleted."
+    },
+    {
+      "path": "docs/v2/waveform/negative_missing_fixture.log",
+      "classification": "temporary/redundant",
+      "purpose": "Negative-control exit and diagnostic already preserved in regression_results.json.",
+      "sha256": "67eede03f1ae146ba71ec93ea6e1433f1eb940f295d67b9a9ed5a10b73b6e0bf",
+      "bytes": 163,
+      "preservation": "Local ignored private review archive; not deleted."
+    },
+    {
+      "path": "docs/v2/waveform/negative_wrong_final_word.log",
+      "classification": "temporary/redundant",
+      "purpose": "Negative-control exit and diagnostic already preserved in regression_results.json.",
+      "sha256": "65b2da40eac1f138c240d000a52b5fc98f7b6931943b7b8c62710ea8a635d659",
+      "bytes": 423,
+      "preservation": "Local ignored private review archive; not deleted."
+    },
+    {
+      "path": "docs/v2/waveform/oracle.log",
+      "classification": "optional supporting evidence",
+      "purpose": "Original oracle console output is preserved locally; suite PASS and its successful command exit remain in the reproduction README and public regression record.",
+      "sha256": "e8b87fc14d3c7fb0ea88fff398ba3c257e73c6ca0cc85a63fa696cc53345a07c",
+      "bytes": 101,
+      "preservation": "Local ignored private review archive; not deleted."
+    },
+    {
+      "path": "docs/v2/waveform/raw_screenshots.zip",
+      "classification": "optional supporting evidence",
+      "purpose": "Duplicates native screenshot bodies in the approved PNGs; archive preserved locally, with public screenshot hashes and the authentic VCD retained.",
+      "sha256": "fc0adc6de10d3cee154b84c350fbbd715badbcaf259c02cb441fafe9380ff661",
+      "bytes": 593262,
+      "preservation": "Local ignored private review archive; not deleted."
+    }
+  ]
+}

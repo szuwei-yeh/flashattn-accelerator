@@ -1,0 +1,36 @@
+{
+  "viewer": "surfer 0.7.0 (git: 1cdbaa9)",
+  "viewer_download": "https://gitlab.com/api/v4/projects/42073614/jobs/artifacts/main/raw/surfer_macos-aarch64.zip?job=macos-aarch64_build",
+  "viewer_binary_sha256": "2e05ba785eaaa0c94c407d62f930d8b10ad1e3e34a8391be353fdc74652a086f",
+  "viewer_archive_sha256": "d762dc9e96e297feeff9fb99bd64916a3551dd61706996124ebf772da1bec351",
+  "capture": "Native Surfer app screenshot obtained through computer-use API on macOS",
+  "raw_screenshots": {
+    "overview_raw.png": "7e384413ba02083b06a135a5a80823e0f61556eb54927f4ba4337c09b6275776",
+    "compute_raw.png": "a4bfe7b6853e8b678571013bcd025d2bcf4ea1b2c7e691738f9cedee031869fa",
+    "completion_raw.png": "277bbb932021f990c7a46cecb80e21477058b9805a389d407295ffaf178709e3"
+  },
+  "figures": {
+    "decode_waveform_detail.png": {
+      "sha256": "4171a3460e3565cf20a4b4dec7c2ae5ec45df74963d68f64ac286ab22e402a87",
+      "bytes": 530562
+    },
+    "decode_waveform.png": {
+      "sha256": "f80ced56fee7f4c0d08254dbdeeba08b92cae835a751f0c3d819f7e89405b227",
+      "bytes": 794122
+    },
+    "decode_waveform_compute.png": {
+      "sha256": "8549aa6176823c50d5050486ec14a956571dd556d6c3e0ddd13674bf0a2ed9e2",
+      "bytes": 402609
+    }
+  },
+  "processing": "Deterministic crop + separate title/footer bands only; prepare_figures.py asserts waveform pixels unchanged.",
+  "simulation_command": [
+    "/tmp/flashattn-wave/portfolio/obj/sim_soc",
+    "/tmp/flashattn-wave/regression/fixtures",
+    "0",
+    "focus",
+    "",
+    "0",
+    "0"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "status": "PASS",
+  "time_unit": "ps",
+  "cycle_ps": 10000,
+  "trace_start_ps": 86710000,
+  "trace_end_ps": 108120000,
+  "command_accept_ps": 86755000,
+  "done_ps": 107475000,
+  "host_cycles": 2072,
+  "final_b_accept_ps": 107455000,
+  "done_after_final_b_cycles": 2,
+  "q_ar": [
+    {
+      "time_ps": 86795000,
+      "address": 4096
+    },
+    {
+      "time_ps": 91655000,
+      "address": 8192
+    },
+    {
+      "time_ps": 96515000,
+      "address": 12288
+    },
+    {
+      "time_ps": 101395000,
+      "address": 16384
+    }
+  ],
+  "core_start": [
+    {
+      "time_ps": 86835000,
+      "head": 0
+    },
+    {
+      "time_ps": 91695000,
+      "head": 1
+    },
+    {
+      "time_ps": 96565000,
+      "head": 2
+    },
+    {
+      "time_ps": 101435000,
+      "head": 3
+    }
+  ],
+  "core_done": [
+    {
+      "time_ps": 91135000,
+      "head": 0
+    },
+    {
+      "time_ps": 95995000,
+      "head": 1
+    },
+    {
+      "time_ps": 100865000,
+      "head": 2
+    },
+    {
+      "time_ps": 105735000,
+      "head": 3
+    }
+  ],
+  "aw_accept_ps": [
+    106305000,
+    106335000,
+    106935000
+  ],
+  "b_accept_ps": [
+    106325000,
+    106905000,
+    107455000
+  ],
+  "w_beats": 32,
+  "r_beats": 8,
+  "cache_reads": 68,
+  "cache_writes": 0,
+  "persistent_length": 17,
+  "tile_states_observed": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "golden_words": 64
+}

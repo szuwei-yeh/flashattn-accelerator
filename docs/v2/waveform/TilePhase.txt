@@ -1,0 +1,16 @@
+# Exact state encodings in rtl/v2/compute/tile_controller_decode.sv.
+# Short labels: SM is S_UPDATE_SOFTMAX, which includes waiting for dequant.
+Name = TilePhase
+Bits = 4
+0 IDLE
+1 LD_Q
+2 LD_KV
+3 QK
+4 SM
+6 PV
+7 UPDATE
+8 CHECK_KV
+9 NORM
+10 CHECK_Q
+11 DONE
+12 PF_WAIT

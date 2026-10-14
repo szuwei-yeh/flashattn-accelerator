@@ -1,0 +1,10 @@
+# rtl/v2/interface/types_pkg.sv: host phase localparams. WB = WRITEBACK.
+Name = JobPhase
+Bits = 3
+0 IDLE
+1 DISPATCH
+2 RUN
+3 WB
+4 DONE
+5 RELEASE
+6 ERROR

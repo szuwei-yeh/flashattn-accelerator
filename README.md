@@ -70,6 +70,37 @@ APPEND completes after paired K/V stores and child completion, without compute
 or output writeback. **ACK releases job/result ownership; IRQ clear is separate.**
 CLEAR invalidates cache metadata without zeroing SRAM.
 
+### Measured L17 DECODE RTL Waveform
+
+[![Measured FlashAttention V2 full L17 DECODE RTL simulation waveform](docs/v2/figures/decode_waveform.png)](docs/v2/figures/decode_waveform.png)
+
+*Measured V2 RTL simulation of one L17 DECODE transaction following PREFILL N16
+and APPEND token 16. Four query heads execute serially over two persistent KV
+groups, followed by AXI output writeback and host-visible completion.*
+
+d16, 4Q:2KV, 16 dequantizers, modeled AXI latency 0. The measured
+host-command-acceptance-to-DONE interval is **2,072 cycles**, including output
+writeback. DONE and success IRQ assert **two cycles after the final accepted
+OKAY AXI B response**.
+
+<details>
+<summary>Compute scheduling and AXI completion — measured waveform details</summary>
+
+[![Query Head 0 compute phases across two resident KV tiles](docs/v2/figures/decode_waveform_compute.png)](docs/v2/figures/decode_waveform_compute.png)
+
+*Query Head 0 processes KV tiles at bases 0 and 16 using the shared QK/PV array.
+Dequantization and softmax feed PV and output updates, followed by final
+normalization.*
+
+[![AXI output writeback handshakes and final response before DONE and IRQ](docs/v2/figures/decode_waveform_detail.png)](docs/v2/figures/decode_waveform_detail.png)
+
+*AW/W/B VALID/READY handshakes complete the output writeback. The final accepted
+OKAY B response precedes DONE and success IRQ by two clock cycles.*
+
+</details>
+
+[Reproduction, exact signal mappings and verification evidence](docs/v2/waveform/README.md)
+
 <details>
 <summary>Command dataflow, cache publication and fault recovery</summary>
 
