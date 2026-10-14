@@ -27,8 +27,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "9b23b05ea46bf901e1dfce7579f02064a325c4f35352f2b359e1689724e54490",
-      "bytes": 34321,
+      "sha256": "bc32a77c93627d7631c4216854579c4077f5d584d83745209359c5b09d213265",
+      "bytes": 35824,
       "mode": "100644"
     },
     {
@@ -825,8 +825,8 @@
     },
     {
       "path": "docs/README.md",
-      "sha256": "d4aa3ecaf6f4c5eb19b8d39f2cc9c70db1c3b8011ef1e9ca0938142a60d01b94",
-      "bytes": 1774,
+      "sha256": "d2d4a109e97c98c194cbb31ad8a3eed07f286144325dd3f109bb5dc0f2d3014e",
+      "bytes": 2736,
       "mode": "100644"
     },
     {
@@ -1119,8 +1119,8 @@
     },
     {
       "path": "docs/v2/README.md",
-      "sha256": "ff3cfef28682b584bfc138dfe318439e7bbc89059ef5c2360ac059517cd067a5",
-      "bytes": 1530,
+      "sha256": "5e4829db217cf44f79e3e54ea99d4e1cafa3e54f198fcd919b317a86054a9825",
+      "bytes": 1665,
       "mode": "100644"
     },
     {
@@ -1850,6 +1850,24 @@
       "mode": "100644"
     },
     {
+      "path": "docs/v2/figures/decode_waveform.png",
+      "sha256": "f80ced56fee7f4c0d08254dbdeeba08b92cae835a751f0c3d819f7e89405b227",
+      "bytes": 794122,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/figures/decode_waveform_compute.png",
+      "sha256": "8549aa6176823c50d5050486ec14a956571dd556d6c3e0ddd13674bf0a2ed9e2",
+      "bytes": 402609,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/figures/decode_waveform_detail.png",
+      "sha256": "4171a3460e3565cf20a4b4dec7c2ae5ec45df74963d68f64ac286ab22e402a87",
+      "bytes": 530562,
+      "mode": "100644"
+    },
+    {
       "path": "docs/v2/figures/dequantizer_sharing.svg",
       "sha256": "25f45fe72b4b39dc694badbfc4f8bbd50c4d7f3bfc2c36e4b5990961d3677739",
       "bytes": 5500,
@@ -1955,6 +1973,102 @@
       "path": "docs/v2/qwen/qwen.log",
       "sha256": "fb15d378590fba2dd7c3623b2e248acc9fbc6ae01cb1e90b7dc1a9f52264f8cb",
       "bytes": 5336,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/JobPhase.txt",
+      "sha256": "29ad6866da7f15e157bad93bf238f93e4ae14fe5e379bce6d4980f8d15e8d600",
+      "bytes": 152,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/README.md",
+      "sha256": "70e4dce6775d62759881ff50fc4d070b6a227e531fa723b224ec57df642e1b58",
+      "bytes": 11409,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/TilePhase.txt",
+      "sha256": "f07c7d0791278960c57f8bf1cf2691be58cf56f5627bc7bc706dfbb5d491264c",
+      "bytes": 265,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/completion.sucl",
+      "sha256": "b5b4e1bbac5a75d3d3ad3cc6227d5645beae98d20e00e3b8f100aeb66f818a67",
+      "bytes": 1734,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/compute.sucl",
+      "sha256": "a7378f8d7abf20dad1e02c686dca370840646a5641a7fa95efa016a0d144a55a",
+      "bytes": 2010,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/decode.vcd.gz",
+      "sha256": "9a82a6ad2e11180216fa503c43b4185998061ff0f1223e516fa8c2f003901057",
+      "bytes": 383066,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/events.json",
+      "sha256": "db0c2f2640c4c33c72bbb946db463b6d8b557ac6c05ad94e07b5a145f14e39f9",
+      "bytes": 1405,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/files.json",
+      "sha256": "2067bce00258c84c33c7e44c7b9e0c4113c3d386a3c0c85cf2e68e3888609107",
+      "bytes": 10164,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/image_provenance.json",
+      "sha256": "25ecd60e01a9486c0e25643624b9b5fa720a8fd81ede6493d294f7d862ff94b9",
+      "bytes": 1530,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/inventory.json",
+      "sha256": "fc6f4d0b57667a9abda94b189c0491cc708b6aa9e3cf9fbc99395b794598eade",
+      "bytes": 816,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/overview.sucl",
+      "sha256": "951e4f967cb174672fe16f8852ffd81b111d743fc50424d957a633ef94cddd91",
+      "bytes": 3762,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/provenance.json",
+      "sha256": "949174d31a4490f179cabf9fa2a190507acbc01abd8cd115a48307ec6182c060",
+      "bytes": 6988,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/regression_results.json",
+      "sha256": "83b31431bcf8b6b21fc985fa9e2e06ae2ec524db3bfabfb53c450d79587c4a74",
+      "bytes": 40158,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/signals.json",
+      "sha256": "dd82ee7d7f18b3f06ae34ec47e8c7232f7d96e6c9bdf0ddd7ab9b68de9c191ef",
+      "bytes": 7021,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/simulation.log",
+      "sha256": "58cd2f1805ab52f7477b46ca76427f36d0401516ce7328f5b69f3d402d4041c4",
+      "bytes": 4975,
+      "mode": "100644"
+    },
+    {
+      "path": "docs/v2/waveform/surfer-config.toml",
+      "sha256": "ee747c5463bd6235ea63716baa64f97db7935c6912c515debb3ce08f31f32991",
+      "bytes": 465,
       "mode": "100644"
     },
     {
@@ -3063,8 +3177,8 @@
     },
     {
       "path": "tools/v2/README.md",
-      "sha256": "9622a31e57a846221ada42a61079890da58eb970147e50bb4d0cea6cb661fd29",
-      "bytes": 2783,
+      "sha256": "670fe1afc1b5aa3d79eccf2f78aecf76bd2a65f2964af50040153156d49baffc",
+      "bytes": 4793,
       "mode": "100644"
     },
     {
@@ -3123,20 +3237,44 @@
     },
     {
       "path": "tools/v2/test_validate_release.py",
-      "sha256": "cb1437d3012534ab7a2100b4ff2074e920e0d84ba6552f23b51c1f375f5af200",
-      "bytes": 16700,
+      "sha256": "135b81b37787bfa821982772792433f9be2b027df42a62545273a2e85f2ecbc4",
+      "bytes": 20797,
       "mode": "100644"
     },
     {
       "path": "tools/v2/validate_release.py",
-      "sha256": "986cc8db50b3dca86ea36ca82f1b9b1d1fb1c9130e693c43538a9bd2c66bbc24",
-      "bytes": 24166,
+      "sha256": "5c3295e965fc0e9d5872bfeebbe830d0788a96222cd67d2236d49c919846c2a2",
+      "bytes": 26066,
       "mode": "100644"
     },
     {
       "path": "tools/v2/verify.py",
       "sha256": "fdadd788def6d48093508e09cccf5f87929c2bfba29608bfacbc9767599e234c",
       "bytes": 10998,
+      "mode": "100644"
+    },
+    {
+      "path": "tools/v2/waveform/capture.py",
+      "sha256": "0d31dd25ee3bd9cd2b2d434194aba48fb856a69904a5dac386f0dbc161f6c664",
+      "bytes": 5424,
+      "mode": "100644"
+    },
+    {
+      "path": "tools/v2/waveform/check_trace.py",
+      "sha256": "078eda395a00b0ec27a8c8c749cf9e8a0c2525c225d1226ebc0c7a2c5227692d",
+      "bytes": 5250,
+      "mode": "100644"
+    },
+    {
+      "path": "tools/v2/waveform/layouts.py",
+      "sha256": "07a56b52dbda7df35035bfd7742d1a685b2e98e9af800c39249f1c0282f9aa44",
+      "bytes": 6197,
+      "mode": "100644"
+    },
+    {
+      "path": "tools/v2/waveform/prepare_figures.py",
+      "sha256": "f3295b99780534ee5030bc1cfc8b2751e10a26b8fc222777c185a7170dd6a782",
+      "bytes": 3688,
       "mode": "100644"
     }
   ]

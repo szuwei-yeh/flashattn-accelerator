@@ -2,7 +2,9 @@
 """Strict versioned portfolio inventory, evidence, provenance and link validation."""
 import argparse
 import csv
+import gzip
 import hashlib
+import io
 import json
 import pathlib
 import posixpath
@@ -13,6 +15,13 @@ import urllib.parse
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 MANIFEST = 'release/manifest-v1.json'
 DEFAULT_INVENTORY = 'release/manifest-v2.json'
+# Exact reviewed publication, independent of the refreshable inventory. This
+# is not a suffix allowlist: replacing or removing the trace requires review.
+WAVEFORM_TRACE = 'docs/v2/waveform/decode.vcd.gz'
+WAVEFORM_GZIP_SHA256 = '9a82a6ad2e11180216fa503c43b4185998061ff0f1223e516fa8c2f003901057'
+WAVEFORM_GZIP_BYTES = 383066
+WAVEFORM_VCD_SHA256 = 'f4b90d857778411ef867c3fb9cc41d45ed9bc136a40bdd689bd1834bccb8a321'
+WAVEFORM_VCD_BYTES = 2730265
 LINK = re.compile(r'!?\[[^\]\n]*\]\(([^)]+)\)')
 PRIVACY = {
     'credential': r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{30,}|AKIA[A-Z0-9]{16}',
@@ -25,6 +34,24 @@ PRIVACY = {
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def reviewed_waveform_text(root):
+    """Authenticate the exact gzip and bounded VCD before inspecting its text."""
+    path = root / WAVEFORM_TRACE
+    if path.is_symlink() or not path.is_file():
+        raise ValueError('missing or symlinked trace')
+    if path.stat().st_size != WAVEFORM_GZIP_BYTES:
+        raise ValueError('compressed trace size')
+    data = path.read_bytes()
+    if hashlib.sha256(data).hexdigest() != WAVEFORM_GZIP_SHA256:
+        raise ValueError('compressed trace hash')
+    with gzip.GzipFile(fileobj=io.BytesIO(data)) as stream:
+        vcd = stream.read(WAVEFORM_VCD_BYTES + 1)
+    if (len(vcd) != WAVEFORM_VCD_BYTES
+            or hashlib.sha256(vcd).hexdigest() != WAVEFORM_VCD_SHA256):
+        raise ValueError('decompressed trace size or hash')
+    return vcd.decode('utf-8')
 
 
 def safe_name(name):
@@ -358,18 +385,31 @@ def validate(root, inventory=DEFAULT_INVENTORY):
         mapped_links = 0
         privacy = []
         lists = 0
+        waveform_text = None
+        try:
+            waveform_text = reviewed_waveform_text(root)
+        except (OSError, ValueError, EOFError) as exc:
+            fail('waveform_trace_integrity', {'path': WAVEFORM_TRACE, 'reason': str(exc)})
         for p in files:
             rel = str(p.relative_to(root))
             if p.is_symlink():
                 fail('symlink', rel)
             if p.stat().st_size > 50 * 1024**2:
                 fail('oversized_payload', rel)
-            try:
-                text = p.read_text()
-            except UnicodeDecodeError:
-                if p.suffix not in {'.png', '.jpg', '.jpeg', '.pdf'}:
-                    fail('unexpected_binary', rel)
+            if rel == WAVEFORM_TRACE:
+                if waveform_text is None:
+                    continue
+                text = waveform_text
+            elif p.suffix == '.gz':
+                fail('unexpected_binary', rel)
                 continue
+            else:
+                try:
+                    text = p.read_text()
+                except UnicodeDecodeError:
+                    if p.suffix not in {'.png', '.jpg', '.jpeg', '.pdf'}:
+                        fail('unexpected_binary', rel)
+                    continue
             for kind, pattern in PRIVACY.items():
                 if re.search(pattern, text, re.M):
                     privacy.append({'path': rel, 'kind': kind})
@@ -427,6 +467,7 @@ def validate(root, inventory=DEFAULT_INVENTORY):
                 'archived_references_resolved_by_explicit_ledger': len(used),
                 'privacy_pattern_hits': len(privacy), 'archived_preparation_records': len(retired),
                 'local_archives_verified': archived_verified, 'path_only_derivatives': len(patches), 'errors': errors,
+                'reviewed_waveform_traces_checked': int(waveform_text is not None),
                 'comment_only_derivatives': len(reconstructed_comments),
                 'comment_source_hashes': {row['to']: {
                     'current_sha256': row['current_sha256'],

@@ -7,6 +7,9 @@ query heads over two physical KV groups, shared compute, CSR/IRQ and AXI writeba
 [Verification](VERIFICATION.md) · [Reproduction](../REPRODUCIBILITY.md) ·
 [Limitations](../LIMITATIONS.md) · [Evidence](evidence/README.md)
 
+[Waveform reproduction](waveform/README.md) ·
+[Qwen activation validation](qwen/README.md) · [V2 tooling](../../tools/v2/README.md)
+
 `rtl/v2/soc/soc.f` selects the current d16/d64 SoC. The frozen d16 synthesis
 baseline is separately preserved in `rtl/v2/ppa_baseline/`; its mapped results do
 not establish mapped PPA or equivalence for the current integration.
